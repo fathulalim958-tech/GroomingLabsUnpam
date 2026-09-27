@@ -22,7 +22,7 @@ class DashboardController extends Controller
         return view('admin.Dashboard');
     }
 
-    function barbershop(){
+    function Barbershop(){
         return view('pelanggan.Barbershop');
     }
     function MUA(){
@@ -31,5 +31,17 @@ class DashboardController extends Controller
 
     function booking(){
         return view('pelanggan.Booking');
+    }
+
+    function riwayat(){
+        return view('pelanggan.Riwayat');
+    }
+
+    function order(){
+        return view('pelanggan.Order');
+    }
+
+    function profile(){
+        return view('pelanggan.Profile');
     }
 }

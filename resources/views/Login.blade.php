@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,10 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --bg-dark: #0a0a0a;
@@ -38,20 +41,23 @@
         /* Container responsif utama */
         .login-wrapper {
             width: 100%;
-            max-width: 420px; /* Default ukuran mobile */
+            max-width: 420px;
+            /* Default ukuran mobile */
             transition: all 0.4s ease;
         }
 
         /* Tampilan Melebar pada Laptop/Desktop (min-width: 768px) */
         @media (min-width: 768px) {
             .login-wrapper {
-                max-width: 900px; /* Melebar di laptop */
+                max-width: 900px;
+                /* Melebar di laptop */
             }
         }
 
         @media (min-width: 1200px) {
             .login-wrapper {
-                max-width: 1020px; /* Sangat leluasa di layar desktop besar */
+                max-width: 1020px;
+                /* Sangat leluasa di layar desktop besar */
             }
         }
 
@@ -282,7 +288,8 @@
             margin: 22px 0;
         }
 
-        .divider::before, .divider::after {
+        .divider::before,
+        .divider::after {
             content: '';
             flex: 1;
             border-bottom: 1px solid var(--border-color);
@@ -365,13 +372,13 @@
             --surface-2: #1e1e1e;
             --surface-3: #262626;
             --text: #f5f5f5;
-            --text-soft: rgba(255,255,255,0.8);
+            --text-soft: rgba(255, 255, 255, 0.8);
             --muted: #9e9e9e;
             --border: #2a2a2a;
             --gold: #e5c158;
             --gold-strong: #d4b046;
             --gold-glow: rgba(229, 193, 88, 0.25);
-            --shadow: rgba(0,0,0,0.7);
+            --shadow: rgba(0, 0, 0, 0.7);
         }
 
         body {
@@ -465,16 +472,17 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="login-wrapper">
         <div class="main-card">
             <div class="row g-0">
-                
+
                 <!-- KOLOM KIRI / HERO BANNER (Di Desktop/Laptop melebar di sebelah kiri, di HP berada di paling atas) -->
                 <div class="col-12 col-md-5 col-lg-6 banner-side">
                     <div class="banner-overlay"></div>
-                    
+
                     <!-- Konten Khusus Desktop (Atas) -->
                     <div class="banner-content d-none d-md-block">
                         <span class="brand-badge">GROOMINGLABS UNPAM</span>
@@ -486,7 +494,8 @@
                             <span class="brand-badge">PREMIUM SINCE 2019</span>
                         </div>
                         <h2 class="brand-heading d-none d-md-block fs-2 mb-2">Gentlemen's Choice</h2>
-                        <p class="brand-subtext d-none d-md-block mb-0">Pengalaman cukur rambut & perawatan maskulin terbaik dengan standar pelayanan kelas dunia.</p>
+                        <p class="brand-subtext d-none d-md-block mb-0">Pengalaman cukur rambut & perawatan maskulin
+                            terbaik dengan standar pelayanan kelas dunia.</p>
                         <div class="d-none d-md-block mt-4">
                             <span class="badge rounded-pill bg-dark border border-secondary text-warning px-3 py-2">
                                 <i class="bi bi-star-fill me-1"></i> Rating 4.9 (2,400+ Ulasan)
@@ -497,37 +506,29 @@
 
                 <!-- KOLOM KANAN / FORM LOGIN -->
                 <div class="col-12 col-md-7 col-lg-6 form-side">
-                    
+
                     <!-- Judul Formulir -->
                     <div class="mb-4">
-                        <h3 class="fw-bold mb-1 text-center" style="font-family: 'Cinzel', serif; font-size: 1.85rem;">Selamat Datang</h3>
+                        <h3 class="fw-bold mb-1 text-center" style="font-family: 'Cinzel', serif; font-size: 1.85rem;">
+                            Selamat Datang</h3>
                         {{-- <p class="text-secondary small mb-0">Masuk sebagai siapa?</p> --}}
                     </div>
 
-                    <!-- Tab Switcher (Pelanggan / Kasir) -->
-                    {{-- <div class="role-switcher" role="tablist">
-                        <button type="button" class="role-btn active" id="btnPelanggan" onclick="switchRole('pelanggan')">
-                            <i class="bi bi-person-fill"></i> Pelanggan
-                        </button>
-                        <button type="button" class="role-btn" id="btnKasir" onclick="switchRole('kasir')">
-                            <i class="bi bi-receipt"></i> Kasir / Karyawan
-                        </button>
-                    </div> --}}
-                    
                     <!-- Pesan Notifikasi Simulasi -->
                     <div id="alertBox" class="toast-msg bg-danger-subtle text-danger border border-danger-subtle">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i><span id="alertMsg">Terjadi kesalahan</span>
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i><span id="alertMsg">Terjadi
+                            kesalahan</span>
                     </div>
-                    
+
                     <!-- Form Login -->
-                    @if($errors->any())
+                    @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
-                        </div> 
+                        </div>
                     @endif
                     <form action="{{ route('login') }}" method="POST" id="loginForm">
                         @csrf
@@ -536,7 +537,8 @@
                             <label for="emailInput" class="form-label-custom">EMAIL</label>
                             <div class="custom-input-group">
                                 <span class="input-icon"><i class="bi bi-envelope"></i></span>
-                                <input type="email" name="email" value="{{ old('email') }}" id="emailInput" class="form-control-custom" placeholder="example@email.com" autocomplete="email" >
+                                <input type="email" name="email" value="{{ old('email') }}" id="emailInput"
+                                    class="form-control-custom" placeholder="example@email.com" autocomplete="email">
                             </div>
                         </div>
 
@@ -545,8 +547,10 @@
                             <label for="passwordInput" class="form-label-custom">PASSWORD</label>
                             <div class="custom-input-group">
                                 <i class="bi bi-lock input-icon me-2"></i>
-                                <input type="password" name="password" id="passwordInput" class="form-control-custom" placeholder="••••••••">
-                                <i class="bi bi-eye input-icon ms-2" id="togglePasswordBtn" style="cursor: pointer;" title="Tampilkan/Sembunyikan Password"></i>
+                                <input type="password" name="password" id="passwordInput" class="form-control-custom"
+                                    placeholder="••••••••">
+                                <i class="bi bi-eye input-icon ms-2" id="togglePasswordBtn" style="cursor: pointer;"
+                                    title="Tampilkan/Sembunyikan Password"></i>
                             </div>
                             <div class="d-flex justify-content-end mt-2">
                                 <a href="#" class="forgot-link" onclick="handleForgot(event)">Lupa password?</a>
@@ -563,11 +567,16 @@
                     </div>
 
                     <!-- Tombol Daftar Akun Baru -->
-                    <button type="button" class="btn btn-register" onclick="handleRegister()">Daftar Akun Baru</button>
+                    <a href="/Register">
+                        <button type="button" class="btn btn-register" onclick="handleRegister()">Daftar Akun Baru
+                        </button>
+                    </a>
 
                     <!-- Syarat dan Ketentuan -->
                     <p class="terms-text">
-                        Dengan masuk, kamu menyetujui <a href="#" onclick="event.preventDefault(); alert('Ketentuan Layanan: Menjaga privasi & kenyamanan bersama.');">Syarat & Ketentuan</a>
+                        Dengan masuk, kamu menyetujui <a href="#"
+                            onclick="event.preventDefault(); alert('Ketentuan Layanan: Menjaga privasi & kenyamanan bersama.');">Syarat
+                            & Ketentuan</a>
                     </p>
 
                 </div>
@@ -662,7 +671,7 @@
     {{-- <button type="button" class="theme-toggle-btn" id="themeToggle" aria-label="Ganti tema">🌙</button> --}}
 
     <script>
-        (function () {
+        (function() {
             const saved = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', saved);
             const themeToggle = document.getElementById('themeToggle');
@@ -670,11 +679,12 @@
                 themeToggle.textContent = saved === 'dark' ? '🌙' : '☀️';
             }
 
-            document.addEventListener('click', function (event) {
+            document.addEventListener('click', function(event) {
                 const toggle = event.target.closest('#themeToggle');
                 if (!toggle) return;
 
-                const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' :
+                    'dark';
                 document.documentElement.setAttribute('data-theme', current);
                 localStorage.setItem('theme', current);
                 toggle.textContent = current === 'dark' ? '🌙' : '☀️';
@@ -682,4 +692,5 @@
         })();
     </script>
 </body>
-</html> 
+
+</html>

@@ -317,26 +317,32 @@
     <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom border-secondary border-opacity-25 sticky-top d-none d-md-block"
         style="background-color: var(--bg-dark) !important;">
         <div class="container-xl">
-            <a class="navbar-brand d-flex items-center gap-2" href="#">
-                <span class="badge bg-gold p-2 rounded-3 text-dark fw-bold me-1">B</span>
-                <span class="fw-bold tracking-wide">GROOMINGLABS <span class="text-gold">BARBER & MUA</span></span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <img src="path/ke/logo-anda.png" alt="Logo" class="brand-logo" style="height: 40px; width: auto;">
+                <span class="fw-bold tracking-wide">
+                    GROOMINGLABS <br>
+                    <span class="text-gold">BARBER & MUA</span>
+                </span>
             </a>
             <div class="collapse navbar-collapse" id="desktopNavbar">
                 <ul class="navbar-menu navbar-nav mx-auto mb-2 mb-lg-0 gap-3">
                     <li class="nav-item">
-                        <a class="nav-link active text-gold fw-semibold" href="#"><i
-                                class="fa-solid fa-house me-1"></i> Beranda</a>
+                        <a class="nav-link text-white-50 fw-semibold" href="/dashboard/pelanggan">
+                            <i class="fa-solid fa-house me-1"></i> Beranda
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" href="#" onclick="openModal()"><i
-                                class="fa-solid fa-calendar-check me-1"></i> Booking</a>
+                        <a class="nav-link active text-gold fw-semibold" href="/dashboard/pelanggan/order">
+                            <i class="fa-solid fa-calendar-check me-1"></i> Order
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" href="#"><i
-                                class="fa-solid fa-clock-rotate-left me-1"></i> Riwayat</a>
+                        <a class="nav-link text-white-50 fw-semibold" href="/dashboard/pelanggan/riwayat">
+                            <i class="fa-solid fa-clock-rotate-left me-1"></i> Riwayat
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" href="#"><i class="fa-solid fa-user me-1"></i>
+                        <a class="nav-link text-white-50" href="/dashboard/pelanggan/profile"><i class="fa-solid fa-user me-1"></i>
                             Profil</a>
                     </li>
                     <li class="nav-item">
@@ -347,7 +353,7 @@
                 <div class="d-flex align-items-center gap-3 ps-3 border-start border-secondary border-opacity-25">
                     <div class="text-end">
                         <div class="small text-muted">Selamat Datang,</div>
-                        <div class="fw-bold text-white">Pelanggan 👋</div>
+                        <div class="fw-bold text-white">{{ Auth::user()->name ?? 'Pelanggan' }} 👋</div>
                     </div>
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
                         alt="Profile" class="rounded-circle border border-2 border-warning" width="42"
@@ -364,7 +370,7 @@
             <div>
                 <span class="text-uppercase text-muted fw-bold small tracking-wider" style="font-size: 0.7rem;">Selamat
                     datang kembali</span>
-                <h2 class="h4 fw-extrabold text-white mb-0">Ahmad Rizky <span
+                <h2 class="h4 fw-extrabold text-white mb-0">Pelanggan <span
                         class="d-inline-block animate-bounce">👋</span></h2>
             </div>
             <div class="position-relative">
@@ -377,10 +383,14 @@
         </div>
 
         <section class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-white mb-0">Layanan Kami</h5>
+                <span class="small text-muted">Pilih kategori layanan</span>
+            </div>
             <div class="horizontal-scroll-container">
                 <!-- Hero Card 1: Barbershop -->
                 <div class="scroll-card">
-                    <a href="/dashboard/pelanggan/Barbershop" class="text-decoration-none">
+                    <a href="pelanggan/Barbershop" class="text-decoration-none">
                         <div class="hero-card bg-card-custom">
                             <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=80"
                                 alt="Barbershop">
@@ -402,7 +412,7 @@
 
                 <!-- Hero Card 2: MUA Wisuda -->
                 <div class="scroll-card">
-                    <a href="/dashboard/pelanggan/MUA" class="text-decoration-none">
+                    <a href="pelanggan/MUA" class="text-decoration-none">
                         <div class="hero-card bg-card-custom">
                             <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&auto=format&fit=crop&q=80"
                                 alt="MUA Wisuda">
@@ -427,8 +437,7 @@
 
         <section class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold text-white mb-0">Layanan Kami</h5>
-                <span class="small text-muted">Pilih kategori layanan</span>
+                <h5 class="fw-bold text-white mb-0">Lihat Paket Layanan</h5>
             </div>
 
             <div class="row g-3">
@@ -589,26 +598,26 @@
 
     <nav class="bottom-nav d-md-none">
         <div class="container d-flex justify-content-around">
-            <a href="#" class="nav-link active">
+            <a href="/dashboard/pelanggan" class="nav-link active">
                 <i class="fa-solid fa-house-chimney"></i>
                 <span>Beranda</span>
             </a>
-            <a href="#" class="nav-link" onclick="openModal(); return false;">
+            <a href="/dashboard/pelanggan/order" class="nav-link">
                 <i class="fa-solid fa-calendar-day"></i>
-                <span>Booking</span>
+                <span>Order</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="/dashboard/pelanggan/riwayat" class="nav-link">
                 <i class="fa-solid fa-file-invoice"></i>
                 <span>Riwayat</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="/dashboard/pelanggan/profile" class="nav-link">
                 <i class="fa-solid fa-user"></i>
                 <span>Profil</span>
             </a>
-            <a href="/logout" class="nav-link">
+            {{-- <a href="/logout" class="nav-link">
                 <i class="fa-solid fa-user"></i>
                 <span>Keluar</span>
-            </a>
+            </a> --}}
         </div>
     </nav>
 
@@ -704,47 +713,6 @@
                 return bootstrap.Toast.getOrCreateInstance(toastEl);
             }
             return null;
-        }
-
-        function openModal(serviceName = null) {
-            if (serviceName) {
-                const select = document.getElementById('serviceSelect');
-                if (select) {
-                    for (let option of select.options) {
-                        if (option.value.includes(serviceName)) {
-                            option.selected = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            const modal = getModalInstance();
-            if (modal) {
-                modal.show();
-            } else {
-                // Fallback display if Bootstrap JS is not available
-                const modalEl = document.getElementById('bookingModal');
-                if (modalEl) {
-                    modalEl.classList.add('show');
-                    modalEl.style.display = 'block';
-                    document.body.classList.add('modal-open');
-                }
-            }
-        }
-
-        function closeModal() {
-            const modal = getModalInstance();
-            if (modal) {
-                modal.hide();
-            } else {
-                const modalEl = document.getElementById('bookingModal');
-                if (modalEl) {
-                    modalEl.classList.remove('show');
-                    modalEl.style.display = 'none';
-                    document.body.classList.remove('modal-open');
-                }
-            }
         }
 
         function handleFormSubmit(e) {
