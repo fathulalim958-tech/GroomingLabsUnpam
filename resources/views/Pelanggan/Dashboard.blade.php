@@ -402,8 +402,8 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <h3 class="h4 fw-bold text-white mb-1">Premium Haircut</h3>
-                                    <p class="small text-white-50 mb-0">Fade · Classic · Coloring · Beard Trim</p>
+                                    <h3 class="h4 fw-bold text-white mb-1">Barbershop Khalayak Unpam</h3>
+                                    <p class="small text-white-50 mb-0">Fast · Classic · Grooming</p>
                                 </div>
                             </div>
                         </div>
@@ -511,16 +511,16 @@
                                     <span class="badge bg-gold text-dark fw-bold"
                                         style="font-size: 0.6rem;">TERPOPULER</span>
                                 </div>
-                                <h6 class="fw-bold text-white mb-1 text-truncate">Haircut Classic</h6>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Fast Haircut</h6>
                                 <p class="small text-muted mb-0 d-flex align-items-center gap-1"
                                     style="font-size: 0.75rem;">
-                                    <i class="fa-regular fa-clock"></i> 45 mnt
+                                    Cukur Rambut + Shaving jenggot
                                 </p>
                             </div>
                         </div>
                         <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
-                            <div class="fw-extrabold text-gold fs-5">Rp 75k</div>
-                            <button onclick="openModal('Haircut Classic', '75000')"
+                            <div class="fw-extrabold text-gold fs-5">Rp 25k</div>
+                            <button onclick="openModal('Fast Haircut', '25000')"
                                 class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
                                 style="font-size: 0.75rem;">
                                 Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>
@@ -541,16 +541,45 @@
                                 <div class="d-flex gap-1 mb-1">
                                     <span class="badge badge-barber" style="font-size: 0.6rem;">Barbershop</span>
                                 </div>
-                                <h6 class="fw-bold text-white mb-1 text-truncate">Fade Cut</h6>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Rileks Ganteng</h6>
                                 <p class="small text-muted mb-0 d-flex align-items-center gap-1"
                                     style="font-size: 0.75rem;">
-                                    <i class="fa-regular fa-clock"></i> 60 mnt
+                                    Fast Haircut + Cuci Rambut + Pijat + Styling Pomade
                                 </p>
                             </div>
                         </div>
                         <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
-                            <div class="fw-extrabold text-gold fs-5">Rp 90k</div>
-                            <button onclick="openModal('Fade Cut', '90000')"
+                            <div class="fw-extrabold text-gold fs-5">Rp 35k</div>
+                            <button onclick="openModal('Rileks Ganteng', '35000')"
+                                class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
+                                style="font-size: 0.75rem;">
+                                Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Package Item 3 -->
+                <div
+                    class="package-item barbershop card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=400&auto=format&fit=crop"
+                                alt="Fade Cut" class="rounded-3" width="65" height="65"
+                                style="object-fit: cover;">
+                            <div class="text-truncate">
+                                <div class="d-flex gap-1 mb-1">
+                                    <span class="badge badge-barber" style="font-size: 0.6rem;">Barbershop</span>
+                                </div>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Full Grooming</h6>
+                                <p class="small text-muted mb-0 d-flex align-items-center gap-1"
+                                    style="font-size: 0.75rem;">
+                                    Rileks Ganteng + Creambath + Hot towel Treatment + Tonik + Black Pore Mask + Pijat Wajah
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
+                            <div class="fw-extrabold text-gold fs-5">Rp 50k</div>
+                            <button onclick="openModal('Full Grooming', '50000')"
                                 class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
                                 style="font-size: 0.75rem;">
                                 Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>
@@ -559,7 +588,7 @@
                     </div>
                 </div>
 
-                <!-- Package Item 3 -->
+                <!-- Package Item 4 -->
                 <div
                     class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
@@ -573,16 +602,106 @@
                                     <span class="badge bg-danger text-white fw-bold"
                                         style="font-size: 0.6rem;">TERLARIS</span>
                                 </div>
-                                <h6 class="fw-bold text-white mb-1 text-truncate">Makeup Natural Wisuda</h6>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Makeup Only</h6>
                                 <p class="small text-muted mb-0 d-flex align-items-center gap-1"
                                     style="font-size: 0.75rem;">
-                                    <i class="fa-regular fa-clock"></i> 90 mnt
+                                    <i class="fa-regular fa-clock"></i> 30 mnt
                                 </p>
                             </div>
                         </div>
                         <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
-                            <div class="fw-extrabold text-gold fs-5">Rp 350k</div>
-                            <button onclick="openModal('Makeup Natural Wisuda', '350000')"
+                            <div class="fw-extrabold text-gold fs-5">Rp 250k</div>
+                            <button onclick="openModal('Makeup Only', '250000')"
+                                class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
+                                style="font-size: 0.75rem;">
+                                Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Package Item 5 -->
+                <div
+                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
+                                alt="Makeup Natural Wisuda" class="rounded-3" width="65" height="65"
+                                style="object-fit: cover;">
+                            <div class="text-truncate">
+                                <div class="d-flex gap-1 mb-1">
+                                    <span class="badge badge-mua" style="font-size: 0.6rem;">MUA Wisuda</span>
+                                </div>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Make Up + Soft Lens</h6>
+                                <p class="small text-muted mb-0 d-flex align-items-center gap-1"
+                                    style="font-size: 0.75rem;">
+                                    <i class="fa-regular fa-clock"></i> 30 mnt
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
+                            <div class="fw-extrabold text-gold fs-5">Rp 300k</div>
+                            <button onclick="openModal('Make Up + Soft Lens', '300000')"
+                                class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
+                                style="font-size: 0.75rem;">
+                                Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Package Item 6 -->
+                <div
+                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
+                                alt="Makeup Natural Wisuda" class="rounded-3" width="65" height="65"
+                                style="object-fit: cover;">
+                            <div class="text-truncate">
+                                <div class="d-flex gap-1 mb-1">
+                                    <span class="badge badge-mua" style="font-size: 0.6rem;">MUA Wisuda</span>
+                                </div>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Make Up + Hijab/Hair Do</h6>
+                                <p class="small text-muted mb-0 d-flex align-items-center gap-1"
+                                    style="font-size: 0.75rem;">
+                                    <i class="fa-regular fa-clock"></i> 45 mnt
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
+                            <div class="fw-extrabold text-gold fs-5">Rp 320k</div>
+                            <button onclick="openModal('Make Up + Hijab/Hair Do', '320000')"
+                                class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
+                                style="font-size: 0.75rem;">
+                                Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Package Item 7 -->
+                <div
+                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
+                                alt="Makeup Natural Wisuda" class="rounded-3" width="65" height="65"
+                                style="object-fit: cover;">
+                            <div class="text-truncate">
+                                <div class="d-flex gap-1 mb-1">
+                                    <span class="badge badge-mua" style="font-size: 0.6rem;">MUA Wisuda</span>
+                                </div>
+                                <h6 class="fw-bold text-white mb-1 text-truncate">Make Up + Hijab/Hair Do + Soft Lens</h6>
+                                <p class="small text-muted mb-0 d-flex align-items-center gap-1"
+                                    style="font-size: 0.75rem;">
+                                    <i class="fa-regular fa-clock"></i> 60 mnt
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-end ps-2 border-start border-secondary border-opacity-25 ms-2">
+                            <div class="fw-extrabold text-gold fs-5">Rp 360k</div>
+                            <button onclick="openModal('Make Up + Hijab/Hair Do + Soft Lens', '360000')"
                                 class="btn btn-sm btn-outline-gold rounded-3 mt-1 fw-bold px-3 py-1"
                                 style="font-size: 0.75rem;">
                                 Pilih <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.6rem;"></i>

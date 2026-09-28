@@ -378,7 +378,7 @@
                 <div class="tagline-badge">
                     <i class="bi bi-scissors"></i> GLOWCUT BARBERSHOP
                 </div>
-                <h1 class="hero-title">Premium Haircut</h1>
+                <h1 class="hero-title">Barbershop Khalayak Unpam</h1>
                 <p class="hero-subtitle mb-0">Seni memangkas rambut modern</p>
             </div>
         </header>
@@ -499,65 +499,49 @@
                 <div class="d-flex flex-column gap-3">
                     
                     <!-- Service 1 -->
-                    <div class="service-card" onclick="selectService('Haircut Classic', '75k')">
+                    <div class="service-card" onclick="selectService('Fast Haircut', '25k')">
                         <div class="d-flex align-items-center gap-3">
                             <div class="service-icon">
                                 <i class="bi bi-scissors"></i>
                             </div>
                             <div>
-                                <div class="service-title">Haircut Classic</div>
-                                <div class="service-desc">Potong rambut presisi, finishing pomade premium.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 45 mnt</div>
+                                <div class="service-title">Fast Haircut</div>
+                                <div class="service-desc">Cukur Rambut + Shaving jenggot</div>
+                                <div class="service-duration"><i class="bi bi-clock"></i> 15 mnt</div>
                             </div>
                         </div>
-                        <div class="service-price">Rp 75k</div>
+                        <div class="service-price">Rp 25k</div>
                     </div>
 
                     <!-- Service 2 -->
-                    <div class="service-card" onclick="selectService('Fade Cut', '90k')">
+                    <div class="service-card" onclick="selectService('Rileks Ganteng', '35k')">
                         <div class="d-flex align-items-center gap-3">
                             <div class="service-icon">
                                 <i class="bi bi-scissors"></i>
                             </div>
                             <div>
-                                <div class="service-title">Fade Cut</div>
-                                <div class="service-desc">Low/mid/high fade dengan clipper profesional.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 60 mnt</div>
+                                <div class="service-title">Rileks Ganteng</div>
+                                <div class="service-desc">Fast Haircut + Cuci Rambut + Pijat + Styling Pomade</div>
+                                <div class="service-duration"><i class="bi bi-clock"></i> 20 mnt</div>
                             </div>
                         </div>
-                        <div class="service-price">Rp 90k</div>
+                        <div class="service-price">Rp 35k</div>
                     </div>
 
                     <!-- Service 3 -->
-                    <div class="service-card" onclick="selectService('Hair Coloring', '250k')">
+                    <div class="service-card" onclick="selectService('Full Grooming', '50k')">
                         <div class="d-flex align-items-center gap-3">
                             <div class="service-icon">
                                 <i class="bi bi-scissors"></i>
                             </div>
                             <div>
-                                <div class="service-title">Hair Coloring</div>
-                                <div class="service-desc">Pewarnaan Wella — natural, ombre, atau bold.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 90 mnt</div>
+                                <div class="service-title">Full Grooming</div>
+                                <div class="service-desc">Rileks Ganteng + Creambath + Hot towel Treatment + Tonik + Black Pore Mask + Pijat Wajah</div>
+                                <div class="service-duration"><i class="bi bi-clock"></i> 30 mnt</div>
                             </div>
                         </div>
-                        <div class="service-price">Rp 250k</div>
+                        <div class="service-price">Rp 50k</div>
                     </div>
-
-                    <!-- Service 4 -->
-                    <div class="service-card" onclick="selectService('Paket Wisuda Pria', '200k')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="service-icon">
-                                <i class="bi bi-scissors"></i>
-                            </div>
-                            <div>
-                                <div class="service-title">Paket Wisuda Pria</div>
-                                <div class="service-desc">Haircut + grooming + styling formal wisuda.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 90 mnt</div>
-                            </div>
-                        </div>
-                        <div class="service-price">Rp 200k</div>
-                    </div>
-
                 </div>
             </section>
 
