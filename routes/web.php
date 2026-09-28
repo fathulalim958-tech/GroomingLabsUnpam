@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat', [DashboardController::class, 'riwayat']);
         Route::get('/order', [DashboardController::class, 'order'])->name('pelanggan.order');
         Route::get('/profile', [DashboardController::class, 'profile'])->name('pelanggan.profile');
+        Route::get('/booking/input', [DashboardController::class, 'bookingInput'])->name('pelanggan.booking.input');
         });
     });
 

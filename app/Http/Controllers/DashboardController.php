@@ -44,4 +44,8 @@ class DashboardController extends Controller
     function profile(){
         return view('pelanggan.Profile');
     }
+
+    function bookingInput(){
+        return view('pelanggan.BookingInput');
+    }
 }

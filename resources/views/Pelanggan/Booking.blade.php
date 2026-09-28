@@ -314,7 +314,7 @@
 
                 <!-- CARD 1: BARBERSHOP -->
                 <div class="col-12 col-md-6">
-                    <a href="javascript:void(0)" class="category-card card-barbershop">
+                    <a href="/dashboard/pelanggan/booking/input" class="category-card card-barbershop">
                         <span class="card-badge badge-barbershop">BARBERSHOP</span>
                         <div class="position-relative z-1">
                             <h2 class="card-title-text font-serif">Barbershop</h2>
