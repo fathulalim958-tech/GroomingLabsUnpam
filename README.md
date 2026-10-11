@@ -91,10 +91,10 @@ http://127.0.0.1:8000
 
 Akun yang tersedia setelah seeding:
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | admin@example.com | password |
-| Kasir | kasir@example.com | password |
+| Role      | Email                 | Password |
+| --------- | --------------------- | -------- |
+| Admin     | admin@example.com     | password |
+| Kasir     | kasir@example.com     | password |
 | Pelanggan | pelanggan@example.com | password |
 
 ## Route Utama

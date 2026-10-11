@@ -562,21 +562,20 @@
                 </div>
             </section>
 
-            <!-- SECTION 5: SERVICE PACKAGES LIST -->
+                        <!-- SECTION 5: SERVICE PACKAGES LIST -->
             <section class="mb-5">
-                <h2 class="section-title">Paket Tersedia</h2>
+                <h2 class="section-title">Paket Terpopuler</h2>
                 <div class="d-flex flex-column gap-3">
                     
                     <!-- Package 1 -->
-                    <div class="service-card" onclick="selectService('Makeup Natural Wisuda', '350k')">
+                    <div class="service-card">
                         <div class="d-flex align-items-center gap-3">
                             <div class="service-icon">
                                 <i class="bi bi-brush"></i>
                             </div>
                             <div>
                                 <div class="service-title">
-                                    <span>Makeup Natural Wisuda</span>
-                                    <span class="badge-terlaris">TERLARIS</span>
+                                    <span>Makeup Only</span>
                                 </div>
                                 <div class="service-desc">Riasan dewy fresh, ringan, & tampak flawless sepanjang hari.</div>
                                 <div class="service-duration"><i class="bi bi-clock"></i> 120 mnt</div>
@@ -584,94 +583,6 @@
                         </div>
                         <div class="service-price">Rp 350k</div>
                     </div>
-
-                    <!-- Package 2 -->
-                    <div class="service-card" onclick="selectService('Makeup Glamour Wisuda', '500k')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="service-icon">
-                                <i class="bi bi-gem"></i>
-                            </div>
-                            <div>
-                                <div class="service-title">
-                                    <span>Makeup Glamour Wisuda</span>
-                                </div>
-                                <div class="service-desc">Riasan glam bold, contouring tegas & bulu mata double layer.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 150 mnt</div>
-                            </div>
-                        </div>
-                        <div class="service-price">Rp 500k</div>
-                    </div>
-
-                    <!-- Package 3 -->
-                    <div class="service-card" onclick="selectService('Paket Hijab + Makeup Wisuda', '450k')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="service-icon">
-                                <i class="bi bi-heart-fill"></i>
-                            </div>
-                            <div>
-                                <div class="service-title">
-                                    <span>Paket Hijab + Makeup</span>
-                                    <span class="badge-populer">POPULER</span>
-                                </div>
-                                <div class="service-desc">Riasan wajah lengkap + styling kreasi hijab wisuda modern.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 150 mnt</div>
-                            </div>
-                        </div>
-                        <div class="service-price">Rp 450k</div>
-                    </div>
-
-                    <!-- Package 4 -->
-                    <div class="service-card" onclick="selectService('Paket Sanggul Modern', '550k')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="service-icon">
-                                <i class="bi bi-flower1"></i>
-                            </div>
-                            <div>
-                                <div class="service-title">
-                                    <span>Paket Sanggul Modern</span>
-                                </div>
-                                <div class="service-desc">Makeup wisuda premium + hair do / sanggul kebaya rapi.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 180 mnt</div>
-                            </div>
-                        </div>
-                        <div class="service-price">Rp 550k</div>
-                    </div>
-
-                    <!-- Package 5 -->
-                    <div class="service-card" onclick="selectService('Paket Keluarga Wisuda', '1.2jt')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="service-icon">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
-                            <div>
-                                <div class="service-title">
-                                    <span>Paket Keluarga</span>
-                                    <span class="badge-hemat">HEMAT</span>
-                                </div>
-                                <div class="service-desc">Makeup wisudawati + 2 anggota keluarga (Ibu/Saudara).</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 360 mnt</div>
-                            </div>
-                        </div>
-                        <div class="service-price">Rp 1.2jt</div>
-                    </div>
-
-                    <!-- Package 6 -->
-                    <div class="service-card" onclick="selectService('Trial Makeup Wisuda', '200k')">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="service-icon">
-                                <i class="bi bi-palette-fill"></i>
-                            </div>
-                            <div>
-                                <div class="service-title">
-                                    <span>Trial Makeup</span>
-                                </div>
-                                <div class="service-desc">Sesi uji coba riasan sebelum hari H untuk hasil maksimal.</div>
-                                <div class="service-duration"><i class="bi bi-clock"></i> 90 mnt</div>
-                            </div>
-                        </div>
-                        <div class="service-price">Rp 200k</div>
-                    </div>
-
                 </div>
             </section>
 
@@ -787,51 +698,11 @@
     </div>
 
     <!-- SECTION 8: FIXED BOTTOM STICKY CTA BUTTON -->
-    <div class="fixed-bottom-bar">
-        <button type="button" class="btn-booking-sticky" data-bs-toggle="modal" data-bs-target="#bookingModal">
-            <span>Booking MUA Sekarang</span>
+        <div class="fixed-bottom-bar">
+        <a href="{{ route('pelanggan.booking.input', ['category' => 'mua']) }}" class="btn-booking-sticky text-decoration-none" style="display:flex; justify-content:center; align-items:center;">
+            <span>Booking Sekarang</span>
             <i class="bi bi-arrow-right fs-5"></i>
-        </button>
-    </div>
-
-    <!-- BOOKING MODAL -->
-    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content modal-content-dark">
-                <div class="modal-header modal-header-dark">
-                    <h5 class="modal-title font-serif fw-bold text-pink" id="bookingModalLabel" style="color: #ec4899;">
-                        <i class="bi bi-calendar-heart me-2"></i>Reservasi MUA Wisuda
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="bookingForm" onsubmit="handleFormSubmit(event)">
-                        <div class="mb-3">
-                            <label for="namaInput" class="form-label text-secondary small fw-bold">NAMA LENGKAP</label>
-                            <input type="text" class="form-control form-control-dark" id="namaInput" placeholder="Masukkan nama kamu" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="serviceSelect" class="form-label text-secondary small fw-bold">PILIH PAKET MUA</label>
-                            <select class="form-select form-control-dark" id="serviceSelect">
-                                <option value="Makeup Natural Wisuda">Makeup Natural Wisuda (Rp 350k)</option>
-                                <option value="Makeup Glamour Wisuda">Makeup Glamour Wisuda (Rp 500k)</option>
-                                <option value="Paket Hijab + Makeup Wisuda">Paket Hijab + Makeup Wisuda (Rp 450k)</option>
-                                <option value="Paket Sanggul Modern">Paket Sanggul Modern (Rp 550k)</option>
-                                <option value="Paket Keluarga Wisuda">Paket Keluarga Wisuda (Rp 1.2jt)</option>
-                                <option value="Trial Makeup Wisuda">Trial Makeup Wisuda (Rp 200k)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tanggalInput" class="form-label text-secondary small fw-bold">TANGGAL & WAKTU WISUDA</label>
-                            <input type="datetime-local" class="form-control form-control-dark" id="tanggalInput" required>
-                        </div>
-                        <button type="submit" class="btn btn-booking-sticky mt-4">
-                            Konfirmasi Booking
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        </a>
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->

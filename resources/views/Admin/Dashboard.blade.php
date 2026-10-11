@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5.3 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         :root {
@@ -69,6 +69,11 @@
                 max-width: 980px;
                 padding: 2rem;
             }
+        }
+
+        .dropdown-item:hover, .dropdown-item:focus {
+            background-color: var(--card-hover) !important;
+            color: var(--gold-primary) !important;
         }
 
         @media (min-width: 1200px) {
@@ -322,6 +327,18 @@
             border: 1px solid #333342;
         }
 
+        .avatar-initial {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            place-items: center;
+            border: 1px solid #333342;
+            border-radius: 50%;
+            background: #382957;
+            color: #c7a6ff;
+            font-weight: 800;
+        }
+
         .status-dot-active {
             position: absolute;
             bottom: 1px;
@@ -395,6 +412,269 @@
             border-color: var(--gold-primary);
             box-shadow: 0 0 0 0.25rem rgba(229, 190, 88, 0.15);
             color: #fff;
+        }
+
+        .employee-modal-dialog {
+            width: min(560px, calc(100% - 1rem));
+        }
+
+        .employee-modal-content {
+            max-height: min(90vh, 820px);
+            overflow: hidden;
+            border: 1px solid #34313d;
+            border-radius: 0.9rem;
+            background-color: #17171c !important;
+            color: #f5f5f6;
+        }
+
+        .employee-modal-body {
+            overflow-y: auto;
+        }
+
+        .employee-account-list {
+            overflow: hidden;
+            border: 1px solid #302e38;
+            border-radius: 0.8rem;
+        }
+
+        .employee-account-row {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.7rem 0.8rem;
+        }
+
+        .employee-account-row + .employee-account-row {
+            border-top: 1px solid #302e38;
+        }
+
+        .employee-avatar-initial {
+            display: grid;
+            width: 2.25rem;
+            height: 2.25rem;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 50%;
+            background: #382957;
+            color: #c7a6ff;
+            font-weight: 800;
+        }
+
+        .employee-account-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .employee-account-name {
+            overflow: hidden;
+            color: #f5f5f6;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .employee-account-meta {
+            color: #92909b;
+            font-size: 0.68rem;
+        }
+
+        .employee-account-status {
+            width: 0.45rem;
+            height: 0.45rem;
+            flex: 0 0 auto;
+            border-radius: 50%;
+            background: #43d59a;
+        }
+
+        .employee-add-toggle {
+            width: 100%;
+            border: 1px solid #382957;
+            border-radius: 0.55rem;
+            background: #292231;
+            color: #c7a6ff;
+            font-weight: 800;
+            padding: 0.72rem 1rem;
+        }
+
+        .employee-add-toggle:hover,
+        .employee-add-toggle:focus-visible {
+            border-color: #7252a8;
+            background: #33283f;
+            color: #e0d1ff;
+        }
+
+        .employee-create-form {
+            border-top: 1px solid #302e38;
+        }
+
+        .employee-form-label {
+            color: #b9b6c2;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 575.98px) {
+            .employee-modal-dialog {
+                width: 100%;
+                margin: 0;
+            }
+
+            .employee-modal-content {
+                max-height: 100vh;
+                min-height: 100vh;
+                border: 0;
+                border-radius: 0;
+            }
+        }
+
+        .report-modal-dialog {
+            max-width: 760px;
+        }
+
+        .report-modal-content {
+            max-height: min(86vh, 900px);
+            background-color: #141419 !important;
+            color: #ffffff;
+        }
+
+        .report-total {
+            background: rgba(229, 190, 88, 0.1);
+            border: 1px solid var(--gold-border);
+            border-radius: 0.9rem;
+        }
+
+        .report-filters .form-dark-input {
+            min-width: 180px;
+            padding-block: 0.55rem;
+        }
+
+        .report-category-btn {
+            background: #1a1a22;
+            border: 1px solid #2a2a36;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.55rem 0.9rem;
+        }
+
+        .report-category-btn:hover,
+        .report-category-btn.active {
+            background: var(--purple-btn);
+            border-color: var(--purple-btn);
+            color: #fff;
+        }
+
+        .report-list {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 0.85rem;
+        }
+
+        .report-list-heading,
+        .report-transaction {
+            display: grid;
+            grid-template-columns: 76px 1fr 88px;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .report-list-heading {
+            padding: 0.65rem 0.85rem;
+            background: var(--surface-2);
+            color: var(--text-muted);
+            font-size: 0.62rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .report-transaction {
+            min-height: 70px;
+            padding: 0.65rem 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .report-date-time {
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            line-height: 1.5;
+        }
+
+        .report-service-name {
+            overflow: hidden;
+            color: var(--text);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .report-service-meta {
+            color: var(--text-muted);
+            font-size: 0.66rem;
+        }
+
+        .report-type-badge {
+            display: inline-block;
+            margin-right: 0.3rem;
+            border-radius: 0.25rem;
+            background: rgba(99, 67, 206, 0.2);
+            color: #b6a2ff;
+            font-size: 0.58rem;
+            font-weight: 800;
+            padding: 0.12rem 0.32rem;
+        }
+
+        .report-type-badge.walkin {
+            background: rgba(52, 211, 153, 0.14);
+            color: #6ee7b7;
+        }
+
+        .report-amount {
+            color: var(--gold-primary);
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 575.98px) {
+            .report-modal-content {
+                max-height: 100vh;
+                border: 0;
+                border-radius: 0;
+            }
+
+            .report-filters .form-dark-input {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+
+            .report-category-filter {
+                display: flex;
+                width: 100%;
+            }
+
+            .report-category-btn {
+                flex: 1;
+                padding-inline: 0.45rem;
+            }
+
+            .report-list-heading,
+            .report-transaction {
+                grid-template-columns: 54px minmax(0, 1fr) 66px;
+                gap: 0.45rem;
+                padding-inline: 0.65rem;
+            }
+
+            .report-service-name {
+                font-size: 0.74rem;
+            }
+
+            .report-amount {
+                font-size: 0.68rem;
+            }
         }
     </style>
 
@@ -551,13 +831,40 @@
             <div>
                 <div class="header-sub">GLOWCUT &nbsp;•&nbsp; ADMIN PANEL</div>
                 <h1 class="header-title font-serif">Dashboard Admin</h1>
-                <div class="header-date">Kamis, 24 September 2026</div>
+                <div class="header-date">{{ $dashboardDate }}</div>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn-circle-icon" title="Notifikasi" onclick="showNotification()">
-                    <i class="fa-regular fa-bell"></i>
-                </button>
-                <a href="/logout" class="btn-circle-icon" title="Keluar" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <div class="dropdown">
+                    <button class="btn-circle-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" style="min-width: 320px; background-color: var(--card-bg); border-color: var(--card-border);">
+            <li>
+                <h6 class="dropdown-header text-white fw-bold d-flex justify-content-between align-items-center">
+                    Notifikasi Kehadiran
+                    @php $loggedInUsers = \App\Models\User::whereDate('last_login_at', now()->toDateString())->get(); @endphp
+                    <span class="badge bg-success rounded-pill">{{ $loggedInUsers->count() }}</span>
+                </h6>
+            </li>
+            <li><hr class="dropdown-divider" style="border-color: var(--card-border);"></li>
+            @forelse($loggedInUsers as $user)
+            <li>
+                <a class="dropdown-item d-flex align-items-center gap-3 py-2" style="color: var(--text);" href="#">
+                    <div class="avatar-initial" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size: 0.85rem;">{{ $user->name }}</div>
+                        <div class="text-success" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-check me-1"></i>Telah login hari ini</div>
+                    </div>
+                </a>
+            </li>
+            @empty
+            <li><span class="dropdown-item-text text-muted" style="font-size: 0.85rem;">Belum ada yang login hari ini.</span></li>
+            @endforelse
+        </ul>
+                </div>
+                <a href="{{ route('logout') }}" class="btn-circle-icon" title="Keluar">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </a>
             </div>
@@ -574,9 +881,9 @@
                         </div>
                     </div>
                     <div>
-                        <div class="stat-val val-gold">Rp 18.4jt</div>
+                        <div class="stat-val val-gold">Rp {{ number_format($monthRevenue, 0, ',', '.') }}</div>
                         <div class="stat-lbl">Total Pendapatan</div>
-                        <div class="stat-subtext">+12% vs minggu lalu</div>
+                        <div class="stat-subtext">{{ $monthStartLabel }} s.d. {{ $monthEndLabel }}</div>
                     </div>
                 </div>
             </div>
@@ -591,9 +898,9 @@
                         </div>
                     </div>
                     <div>
-                        <div class="stat-val val-cyan">24</div>
+                        <div class="stat-val val-cyan">{{ $todayBookingCount }}</div>
                         <div class="stat-lbl">Booking Hari Ini</div>
-                        <div class="stat-subtext">6 menunggu · 3 proses</div>
+                        <div class="stat-subtext">{{ $todayPendingCount }} menunggu · {{ $todayInProgressCount }} proses</div>
                     </div>
                 </div>
             </div>
@@ -608,9 +915,9 @@
                         </div>
                     </div>
                     <div>
-                        <div class="stat-val val-purple">9</div>
+                        <div class="stat-val val-purple">{{ $todayWalkInCount }}</div>
                         <div class="stat-lbl">Walk-in Hari Ini</div>
-                        <div class="stat-subtext">Rp 1.2jt dari walk-in</div>
+                        <div class="stat-subtext">Rp {{ number_format($todayWalkInRevenue, 0, ',', '.') }} selesai</div>
                     </div>
                 </div>
             </div>
@@ -625,9 +932,9 @@
                         </div>
                     </div>
                     <div>
-                        <div class="stat-val val-pink">8</div>
+                        <div class="stat-val val-pink">{{ $employeeCount }}</div>
                         <div class="stat-lbl">Total Karyawan</div>
-                        <div class="stat-subtext">6 aktif hari ini</div>
+                        <div class="stat-subtext">Terdaftar di database</div>
                     </div>
                 </div>
             </div>
@@ -635,137 +942,68 @@
 
         <section class="row g-2.5 mb-3">
             <div class="col-12 col-md-6">
-                <button class="btn-action-purple" data-bs-toggle="modal" data-bs-target="#employeeModal">
+                <a href="{{ route('admin.karyawan') }}" class="btn-action-purple text-decoration-none">
                     <i class="fa-solid fa-user-group fs-5"></i>
                     <span>Kelola Karyawan</span>
-                </button>
+                </a>
             </div>
             <div class="col-12 col-md-6">
-                <button class="btn-action-gold" data-bs-toggle="modal" data-bs-target="#reportModal">
+                <a href="{{ route('admin.laporan') }}" class="btn-action-gold text-decoration-none">
                     <i class="fa-solid fa-sack-dollar fs-5"></i>
                     <span>Laporan Pendapatan</span>
-                </button>
+                </a>
             </div>
         </section>
 
         <section class="revenue-chart-card mb-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="h6 fw-bold text-white mb-0">Pendapatan Minggu Ini</h2>
-                <div class="fw-extrabold text-gold fs-6">Rp 5.3jt</div>
+                <div class="fw-extrabold text-gold fs-6">Rp {{ number_format($weeklyRevenue, 0, ',', '.') }}</div>
             </div>
 
             <!-- Bar Chart Display -->
             <div class="d-flex justify-content-between align-items-end pt-2 pb-1 px-1">
-                <div class="chart-day-col">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 35%;"></div>
+                @foreach ($weeklyDays as $day)
+                    <div class="chart-day-col {{ $day['isToday'] ? 'active' : '' }}" title="{{ $day['date']->format('d/m/Y') }} · Rp {{ number_format($day['revenue'], 0, ',', '.') }}">
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill" style="height: {{ $day['barHeight'] }}%;"></div>
+                        </div>
+                        <span class="chart-day-label">{{ $day['label'] }}</span>
                     </div>
-                    <span class="chart-day-label">Sen</span>
-                </div>
-                <div class="chart-day-col">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 50%;"></div>
-                    </div>
-                    <span class="chart-day-label">Sel</span>
-                </div>
-                <div class="chart-day-col">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 65%;"></div>
-                    </div>
-                    <span class="chart-day-label">Rab</span>
-                </div>
-                <!-- Active Day (Kamis) -->
-                <div class="chart-day-col active">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 90%;"></div>
-                    </div>
-                    <span class="chart-day-label">Kam</span>
-                </div>
-                <div class="chart-day-col">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 40%;"></div>
-                    </div>
-                    <span class="chart-day-label">Jum</span>
-                </div>
-                <div class="chart-day-col">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 75%;"></div>
-                    </div>
-                    <span class="chart-day-label">Sab</span>
-                </div>
-                <div class="chart-day-col">
-                    <div class="chart-bar-bg">
-                        <div class="chart-bar-fill" style="height: 60%;"></div>
-                    </div>
-                    <span class="chart-day-label">Min</span>
-                </div>
+                @endforeach
             </div>
+            <div class="small text-muted text-center mt-2">{{ $weeklyStartLabel }} – {{ $weeklyEndLabel }} · Pendapatan booking selesai</div>
         </section>
 
         <section>
             <div class="d-flex justify-content-between align-items-center mb-2.5">
                 <h2 class="h6 fw-bold text-white mb-0">Daftar Karyawan</h2>
-                <a href="#" class="text-decoration-none small text-purple fw-bold" style="color: #a78bfa;" data-bs-toggle="modal" data-bs-target="#employeeModal">
+                <a href="{{ route('admin.karyawan') }}" class="text-decoration-none small text-purple fw-bold" style="color: #a78bfa;">
                     Kelola
                 </a>
             </div>
 
             <div class="d-flex flex-column gap-2" id="employeeListContainer">
-                
-                <!-- Staff 1 -->
-                <div class="employee-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar-wrapper">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Budi Santoso" class="avatar-img">
-                            <span class="status-dot-active"></span>
+                @forelse ($employees as $employee)
+                    <div class="employee-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-wrapper">
+                                <span class="avatar-initial" aria-hidden="true">{{ strtoupper(substr($employee->name, 0, 1)) }}</span>
+                                <span class="status-dot-active"></span>
+                            </div>
+                            <div>
+                                <div class="emp-name">{{ $employee->name }}</div>
+                                <div class="{{ $employee->position === 'MUA Artist' ? 'emp-role-mua' : 'emp-role-barber' }}">{{ $employee->position }}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="emp-name">Budi Santoso</div>
-                            <div class="emp-role-barber">Senior Barber</div>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <div class="emp-stats-num">28 layanan</div>
-                        <div class="emp-status-badge">Aktif</div>
-                    </div>
-                </div>
-
-                <!-- Staff 2 -->
-                <div class="employee-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar-wrapper">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Rina Andini" class="avatar-img">
-                            <span class="status-dot-active"></span>
-                        </div>
-                        <div>
-                            <div class="emp-name">Rina Andini</div>
-                            <div class="emp-role-mua">MUA Artist</div>
+                        <div class="text-end">
+                            <div class="emp-stats-num">{{ $employee->completed_service_count }} layanan selesai</div>
+                            <div class="emp-status-badge">Terdaftar</div>
                         </div>
                     </div>
-                    <div class="text-end">
-                        <div class="emp-stats-num">18 layanan</div>
-                        <div class="emp-status-badge">Aktif</div>
-                    </div>
-                </div>
-
-                <!-- Staff 3 (Desktop/Laptop extra item) -->
-                <div class="employee-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar-wrapper">
-                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80" alt="Dimas Rizky" class="avatar-img">
-                            <span class="status-dot-active"></span>
-                        </div>
-                        <div>
-                            <div class="emp-name">Dimas Rizky</div>
-                            <div class="emp-role-barber">Junior Barber</div>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <div class="emp-stats-num">14 layanan</div>
-                        <div class="emp-status-badge">Aktif</div>
-                    </div>
-                </div>
-
+                @empty
+                    <div class="text-center text-muted py-3">Belum ada karyawan terdaftar.</div>
+                @endforelse
             </div>
         </section>
 
@@ -786,92 +1024,15 @@
         </div>
     </div>
 
-    <!-- Modal Kelola Karyawan -->
-    <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-content">
-                <div class="modal-header border-bottom border-secondary border-opacity-25 px-4 pt-4 pb-3">
-                    <h5 class="modal-title font-serif text-white fs-4" id="employeeModalLabel">Tambah Karyawan Baru</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form onsubmit="handleAddEmployee(event)">
-                        <div class="mb-3">
-                            <label class="form-label small text-muted font-bold">Nama Lengkap</label>
-                            <input type="text" id="newEmpName" required class="form-control form-dark-input" placeholder="Contoh: Hendra Wijaya">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted font-bold">Peran / Posisi</label>
-                            <select id="newEmpRole" class="form-select form-dark-input">
-                                <option value="Senior Barber">Senior Barber</option>
-                                <option value="Junior Barber">Junior Barber</option>
-                                <option value="MUA Artist">MUA Artist</option>
-                                <option value="Hair Stylist">Hair Stylist</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-action-purple mt-3">
-                            <i class="fa-solid fa-plus"></i> Simpan Data Karyawan
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Laporan Pendapatan -->
-    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-content">
-                <div class="modal-header border-bottom border-secondary border-opacity-25 px-4 pt-4 pb-3">
-                    <h5 class="modal-title font-serif text-white fs-4" id="reportModalLabel">Laporan Pendapatan</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="p-3 mb-3 rounded-3" style="background-color: rgba(229, 190, 88, 0.1); border: 1px solid var(--gold-border);">
-                        <div class="small text-muted mb-1">Pendapatan Bulan Ini</div>
-                        <div class="h3 fw-extrabold text-gold mb-0">Rp 74.800.000</div>
-                    </div>
-                    <div class="d-flex flex-column gap-2 mb-3">
-                        <div class="d-flex justify-content-between text-muted small">
-                            <span>Pendapatan Barbershop</span>
-                            <span class="text-white font-bold">Rp 48.200.000</span>
-                        </div>
-                        <div class="d-flex justify-content-between text-muted small">
-                            <span>Pendapatan MUA Wisuda</span>
-                            <span class="text-white font-bold">Rp 26.600.000</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-action-gold" onclick="downloadReport()">
-                        <i class="fa-solid fa-file-arrow-down"></i> Unduh Laporan PDF
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Konfirmasi Logout -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content custom-modal-content text-center p-3">
-                <div class="modal-body">
-                    <i class="fa-solid fa-right-from-bracket text-gold fs-1 mb-3"></i>
-                    <h5 class="fw-bold text-white mb-2">Keluar dari Admin?</h5>
-                    <p class="small text-muted mb-4">Anda harus masuk kembali untuk mengelola sistem.</p>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-action-gold w-50" onclick="triggerToast('Keluar', 'Anda telah berhasil keluar.')" data-bs-dismiss="modal">Keluar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         function triggerToast(title, desc) {
-            document.getElementById('toastTitle').innerText = title;
-            document.getElementById('toastDesc').innerText = desc;
-            
+            const toastTitle = document.getElementById('toastTitle');
+            const toastDesc = document.getElementById('toastDesc');
             const toastEl = document.getElementById('actionToast');
+
+            if (toastTitle) toastTitle.innerText = title;
+            if (toastDesc) toastDesc.innerText = desc;
+
             if (toastEl && window.bootstrap && window.bootstrap.Toast) {
                 const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
                 toast.show();
@@ -880,51 +1041,6 @@
 
         function showNotification() {
             triggerToast('Notifikasi', '3 pesanan booking baru membutuhkan konfirmasi.');
-        }
-
-        function downloadReport() {
-            const reportModal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
-            if (reportModal) reportModal.hide();
-            triggerToast('Unduh Berhasil', 'Laporan pendapatan PDF sedang diunduh.');
-        }
-
-        function handleAddEmployee(e) {
-            e.preventDefault();
-            const name = document.getElementById('newEmpName').value;
-            const role = document.getElementById('newEmpRole').value;
-
-            if (!name) return;
-
-            const isMua = role.includes('MUA');
-            const roleClass = isMua ? 'emp-role-mua' : 'emp-role-barber';
-
-            const newCardHtml = `
-                <div class="employee-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar-wrapper">
-                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80" alt="${name}" class="avatar-img">
-                            <span class="status-dot-active"></span>
-                        </div>
-                        <div>
-                            <div class="emp-name">${name}</div>
-                            <div class="${roleClass}">${role}</div>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <div class="emp-stats-num">0 layanan</div>
-                        <div class="emp-status-badge">Aktif</div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('employeeListContainer').insertAdjacentHTML('afterbegin', newCardHtml);
-            
-            document.getElementById('newEmpName').value = '';
-            
-            const empModal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
-            if (empModal) empModal.hide();
-
-            triggerToast('Karyawan Ditambahkan', `${name} telah ditambahkan sebagai ${role}.`);
         }
     </script>
 </body>

@@ -243,7 +243,10 @@
                 display: none !important;
             }
         }
-    </style>
+        .text-muted {
+        color: var(--text-muted) !important;
+    }
+</style>
 </head>
 
 <body>
@@ -312,54 +315,40 @@
 
         <!-- Sub Filter -->
         <div class="filter-container">
-            <a href="#" class="pill-btn active">Semua</a>
-            <a href="#" class="pill-btn"><i class="fa-solid fa-scissors"></i> Barber</a>
-            <a href="#" class="pill-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> MUA</a>
+            <a href="javascript:void(0)" class="pill-btn active" onclick="filterCat('all', this)">Semua</a>
+            <a href="javascript:void(0)" class="pill-btn" onclick="filterCat('barber', this)"><i class="fa-solid fa-scissors"></i> Barber</a>
+            <a href="javascript:void(0)" class="pill-btn" onclick="filterCat('mua', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> MUA</a>
         </div>
 
-        <!-- LIST RIWAYAT (RESPONSIF GRID LAPTOP & HP) -->
+                <!-- LIST RIWAYAT (RESPONSIF GRID LAPTOP & HP) -->
         <div class="row">
-            <!-- Item 1 (Selesai) -->
-            <div class="col-12 col-md-6 col-lg-6">
+            @forelse($bookings as $booking)
+            <!-- Item -->
+            <div class="col-12 col-md-6 col-lg-6 booking-item" data-category="{{ $booking->category ?? 'barber' }}">
                 <div class="booking-card">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="booking-code">GC-A1B2C3D4</span>
-                        <span class="status-badge status-selesai">Selesai</span>
+                        <span class="booking-code">GL-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}</span>
+                        <span class="status-badge {{ $booking->status === 'completed' ? 'status-selesai' : 'status-dibatalkan' }}">{{ ucfirst($booking->status) }}</span>
                     </div>
-                    <div class="service-title">Fade Cut</div>
+                    <div class="service-title">{{ $booking->service_name }}</div>
                     <div class="info-row">
-                        <i class="fa-solid fa-user text-secondary"></i> Dimas Raharjo &nbsp;•&nbsp;
-                        <i class="fa-solid fa-location-dot text-danger"></i> BSD City
+                        <i class="fa-solid fa-user text-secondary"></i> {{ $booking->staff_name ?? 'Siapa Saja (Bebas)' }} &nbsp;&bull;&nbsp;
+                        <i class="fa-solid fa-location-dot text-danger"></i> Pusat
                     </div>
                     <div class="d-flex justify-content-between align-items-end mt-3 pt-2 border-top border-dark">
                         <div class="info-row mb-0">
-                            <i class="fa-regular fa-calendar-days text-primary"></i> Minggu, 8 Sep 2026 &nbsp;10:00
+                            <i class="fa-regular fa-calendar-days text-primary"></i> {{ \Carbon\Carbon::parse($booking->appointment_at)->locale('id')->isoFormat('dddd, D MMM Y HH:mm') }}
                         </div>
-                        <div class="price-tag">Rp 99.000</div>
+                        <div class="price-tag">Rp {{ number_format($booking->service_price, 0, ',', '.') }}</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Item 2 (Dibatalkan) -->
-            <div class="col-12 col-md-6 col-lg-6">
-                <div class="booking-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="booking-code">GC-E5F6G7H8</span>
-                        <span class="status-badge status-dibatalkan">Dibatalkan</span>
-                    </div>
-                    <div class="service-title">Paket Hijab + Makeup</div>
-                    <div class="info-row">
-                        <i class="fa-solid fa-user text-secondary"></i> Rina Andini &nbsp;•&nbsp;
-                        <i class="fa-solid fa-location-dot text-danger"></i> Sudirman
-                    </div>
-                    <div class="d-flex justify-content-between align-items-end mt-3 pt-2 border-top border-dark">
-                        <div class="info-row mb-0">
-                            <i class="fa-regular fa-calendar-days text-primary"></i> Sabtu, 31 Agu 2026 &nbsp;09:00
-                        </div>
-                        <div class="price-tag">Rp 495.000</div>
-                    </div>
-                </div>
+            @empty
+            <div class="col-12 text-center text-muted mt-5 mb-5">
+                <i class="fa-solid fa-clock-rotate-left fs-1 mb-3"></i>
+                <p>Belum ada riwayat booking.</p>
             </div>
+            @endforelse
         </div>
 
     </div>
@@ -384,6 +373,20 @@
         </a>
     </div>
 
+    <script>
+        function filterCat(category, element) {
+            document.querySelectorAll('.pill-btn').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.booking-item').forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -355,6 +355,20 @@
     <!-- CONTENT MAIN CONTAINER -->
     <div class="container mt-3 mt-lg-4 profile-max-width">
         
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+                <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>Gagal merubah password. Pastikan password lama benar dan password baru cocok.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <!-- Header Mobile Only -->
         <div class="mobile-only-block mb-3 text-start">
             <span class="mobile-header-subtitle">GROOMINGLABS • PROFIL</span>
@@ -368,7 +382,7 @@
             <h3 class="user-name">{{ Auth::user()->name ?? 'Pelanggan' }}</h3>
             <div class="user-email">{{ Auth::user()->email ?? 'Pelanggan' }}</div>
             <div class="badge-status-pelanggan">
-                Pelanggan Setia &nbsp;•&nbsp; 12 booking
+                Pelanggan Setia &nbsp;•&nbsp; {{ $totalBooking }} booking
             </div>
         </div>
 
@@ -376,19 +390,19 @@
         <div class="row g-2 mb-4">
             <div class="col-4">
                 <div class="stat-card total">
-                    <div class="stat-number text-gold">12</div>
+                    <div class="stat-number text-gold">{{ $totalBooking }}</div>
                     <div class="stat-label">Total Booking</div>
                 </div>
             </div>
             <div class="col-4">
                 <div class="stat-card selesai">
-                    <div class="stat-number text-success">10</div>
+                    <div class="stat-number text-success">{{ $selesai }}</div>
                     <div class="stat-label">Selesai</div>
                 </div>
             </div>
             <div class="col-4">
                 <div class="stat-card dibatalkan">
-                    <div class="stat-number text-danger">2</div>
+                    <div class="stat-number text-danger">{{ $dibatalkan }}</div>
                     <div class="stat-label">Dibatalkan</div>
                 </div>
             </div>
@@ -409,7 +423,7 @@
                 <div class="info-label">
                     <i class="fa-solid fa-phone text-danger"></i> Telepon
                 </div>
-                <div class="info-value">0812 3456 789</div>
+                <div class="info-value">{{ $user->phone ?? '-' }}</div>
             </div>
 
             <div class="info-item">
@@ -423,7 +437,7 @@
                 <div class="info-label">
                     <i class="fa-solid fa-calendar-days text-info"></i> Bergabung
                 </div>
-                <div class="info-value">Maret 2025</div>
+                <div class="info-value">{{ $user->created_at ? \Carbon\Carbon::parse($user->created_at)->locale('id')->isoFormat('MMMM Y') : '-' }}</div>
             </div>
         </div>
 
@@ -449,7 +463,7 @@
                 <i class="fa-solid fa-chevron-right text-muted" style="font-size: 0.8rem;"></i>
             </a>
 
-            <a href="#" class="menu-list-item">
+            <a href="#" class="menu-list-item" data-bs-toggle="modal" data-bs-target="#passwordModal">
                 <div class="d-flex align-items-center gap-3">
                     <div class="menu-icon-box text-gold">
                         <i class="fa-solid fa-lock"></i>
@@ -489,5 +503,84 @@
         </a>
     </div>
 
+    <!-- Modal Ganti Password -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true" data-bs-theme="dark">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="modal-header border-bottom border-secondary border-opacity-25">
+                    <h5 class="modal-title text-white" id="passwordModalLabel">Ganti Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('pelanggan.password.update') }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">Password Lama</label>
+                            <div class="input-group">
+                                <input type="password" id="current_password" name="current_password" class="form-control bg-dark text-white border-secondary" required>
+                                <button class="btn btn-outline-secondary border-secondary" type="button" tabindex="-1" onclick="togglePasswordVisibility('current_password', this)">
+                                    <i class="fa-solid fa-eye text-white-50"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">Password Baru</label>
+                            <div class="input-group">
+                                <input type="password" id="new_password" name="password" class="form-control bg-dark text-white border-secondary" required minlength="8">
+                                <button class="btn btn-outline-secondary border-secondary" type="button" tabindex="-1" onclick="togglePasswordVisibility('new_password', this)">
+                                    <i class="fa-solid fa-eye text-white-50"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">Ulangi Password Baru</label>
+                            <div class="input-group">
+                                <input type="password" id="new_password_confirmation" name="password_confirmation" class="form-control bg-dark text-white border-secondary" required minlength="8">
+                                <button class="btn btn-outline-secondary border-secondary" type="button" tabindex="-1" onclick="togglePasswordVisibility('new_password_confirmation', this)">
+                                    <i class="fa-solid fa-eye text-white-50"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top border-secondary border-opacity-25">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn text-dark fw-bold" style="background-color: var(--gold-primary);">Simpan Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+
+    @if (session('success') || $errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if ($errors->any())
+                var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+                passwordModal.show();
+            @endif
+        });
+    </script>
+    @endif
 </body>
 </html>

@@ -534,11 +534,11 @@
                         @csrf
                         <!-- Field Email -->
                         <div class="mb-3">
-                            <label for="emailInput" class="form-label-custom">EMAIL</label>
+                            <label for="emailInput" class="form-label-custom">EMAIL ATAU USERNAME</label>
                             <div class="custom-input-group">
                                 <span class="input-icon"><i class="bi bi-envelope"></i></span>
-                                <input type="email" name="email" value="{{ old('email') }}" id="emailInput"
-                                    class="form-control-custom" placeholder="example@email.com" autocomplete="email">
+                                <input type="text" name="email" value="{{ old('email') }}" id="emailInput"
+                                    class="form-control-custom" placeholder="Email atau username" autocomplete="username">
                             </div>
                         </div>
 
@@ -690,6 +690,21 @@
                 toggle.textContent = current === 'dark' ? '🌙' : '☀️';
             });
         })();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const passwordInput = document.getElementById('passwordInput');
+
+            if (togglePasswordBtn && passwordInput) {
+                togglePasswordBtn.addEventListener('click', function () {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    
+                    this.classList.toggle('bi-eye', !isPassword);
+                    this.classList.toggle('bi-eye-slash', isPassword);
+                });
+            }
+        });
     </script>
 </body>
 

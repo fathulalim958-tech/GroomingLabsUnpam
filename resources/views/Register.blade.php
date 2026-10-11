@@ -281,13 +281,13 @@
                     @enderror
                 </div>
 
-                <!-- PASSWORD -->
+                                <!-- PASSWORD -->
                 <div class="mb-3">
                     <label for="passwordInput" class="form-label-custom">PASSWORD</label>
                     <div class="custom-input-group">
                         <input type="password" name="password" id="passwordInput" class="form-control-custom"
                             placeholder="Min. 8 karakter" required>
-                        <button type="button" class="input-icon-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                        <button type="button" class="input-icon-btn" onclick="togglePasswordVisibility('passwordInput', 'togglePasswordIcon')" aria-label="Toggle password visibility">
                             <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
                         </button>
                     </div>
@@ -296,11 +296,22 @@
                     @enderror
                 </div>
 
+                <!-- ULANGI PASSWORD -->
+                <div class="mb-3">
+                    <label for="passwordConfirmInput" class="form-label-custom">ULANGI PASSWORD</label>
+                    <div class="custom-input-group">
+                        <input type="password" name="password_confirmation" id="passwordConfirmInput" class="form-control-custom"
+                            placeholder="Ketik ulang password" required>
+                        <button type="button" class="input-icon-btn" onclick="togglePasswordVisibility('passwordConfirmInput', 'toggleConfirmIcon')" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye-slash" id="toggleConfirmIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- CHECKBOX SYARAT & KETENTUAN -->
                 <div class="mb-4">
                     <div class="form-check text-start d-flex gap-2 align-items-start ps-0">
-                        <input class="form-check-input custom-checkbox ms-0" type="checkbox" name="terms" value="1"
-                            id="termsCheck" required>
+                        <input class="form-check-input custom-checkbox ms-0" type="checkbox" name="terms" value="1" id="termsCheck" required>
                         <label class="form-check-label terms-text" for="termsCheck">
                             Saya menyetujui <a href="#">Syarat &amp; Ketentuan</a> serta <a href="#">Kebijakan Privasi</a> GlowCut
                         </label>
@@ -322,9 +333,9 @@
 
     <script>
         // Toggle password visibility function
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('passwordInput');
-            const toggleIcon = document.getElementById('togglePasswordIcon');
+                function togglePasswordVisibility(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
 
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';

@@ -593,49 +593,11 @@
     </div>
 
     <!-- SECTION 7: FIXED BOTTOM STICKY CTA BUTTON -->
-    <div class="fixed-bottom-bar">
-        <button type="button" class="btn-booking-sticky" data-bs-toggle="modal" data-bs-target="#bookingModal">
+        <div class="fixed-bottom-bar">
+        <a href="{{ route('pelanggan.booking.input', ['category' => 'barber']) }}" class="btn-booking-sticky text-decoration-none" style="display:flex; justify-content:center; align-items:center;">
             <span>Booking Sekarang</span>
             <i class="bi bi-arrow-right fs-5"></i>
-        </button>
-    </div>
-
-    <!-- BOOKING MODAL -->
-    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content modal-content-dark">
-                <div class="modal-header modal-header-dark">
-                    <h5 class="modal-title font-serif fw-bold text-warning" id="bookingModalLabel">
-                        <i class="bi bi-calendar-check me-2"></i>Reservasi Jadwal
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="bookingForm" onsubmit="handleFormSubmit(event)">
-                        <div class="mb-3">
-                            <label for="namaInput" class="form-label text-secondary small fw-bold">NAMA LENGKAP</label>
-                            <input type="text" class="form-control form-control-dark" id="namaInput" placeholder="Masukkan nama kamu" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="serviceSelect" class="form-label text-secondary small fw-bold">PILIH LAYANAN</label>
-                            <select class="form-select form-control-dark" id="serviceSelect">
-                                <option value="Haircut Classic">Haircut Classic (Rp 75k)</option>
-                                <option value="Fade Cut">Fade Cut (Rp 90k)</option>
-                                <option value="Hair Coloring">Hair Coloring (Rp 250k)</option>
-                                <option value="Paket Wisuda Pria">Paket Wisuda Pria (Rp 200k)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tanggalInput" class="form-label text-secondary small fw-bold">TANGGAL & WAKTU</label>
-                            <input type="datetime-local" class="form-control form-control-dark" id="tanggalInput" required>
-                        </div>
-                        <button type="submit" class="btn btn-booking-sticky mt-4">
-                            Konfirmasi Booking
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        </a>
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->

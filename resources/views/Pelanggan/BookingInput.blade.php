@@ -14,6 +14,7 @@
 
     <style>
         :root {
+            color-scheme: dark;
             --bg-dark: #0b0b0e;
             --bg-card: #141419;
             --bg-input: #1a1a22;
@@ -26,10 +27,14 @@
 
         body {
             background-color: var(--bg-dark);
-            color: #ffffff;
+            color: #ffffff !important;
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
             padding: 20px 0;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
         }
 
         .font-serif {
@@ -85,7 +90,7 @@
         .header-title {
             font-size: 2rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #ffffff !important;
             margin-top: 20px;
             margin-bottom: 6px;
         }
@@ -123,7 +128,7 @@
 
         /* Service Cards Selectable */
         .service-option {
-            background-color: var(--bg-input);
+            background-color: var(--bg-input) !important;
             border: 1px solid var(--border-dark);
             border-radius: 14px;
             padding: 16px;
@@ -148,7 +153,7 @@
 
         /* Barber Select Cards */
         .barber-card {
-            background-color: var(--bg-input);
+            background-color: var(--bg-input) !important;
             border: 1px solid var(--border-dark);
             border-radius: 14px;
             padding: 14px;
@@ -183,9 +188,9 @@
 
         /* Form Control Custom Styling */
         .form-control-custom {
-            background-color: var(--bg-input);
+            background-color: var(--bg-input) !important;
             border: 1px solid var(--border-dark);
-            color: #ffffff;
+            color: #ffffff !important;
             border-radius: 12px;
             padding: 12px 16px;
             font-size: 0.95rem;
@@ -193,22 +198,23 @@
         }
 
         .form-control-custom:focus {
-            background-color: var(--bg-input);
+            background-color: var(--bg-input) !important;
             border-color: var(--gold-primary);
-            color: #ffffff;
+            color: #ffffff !important;
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
             outline: none;
         }
 
         .form-control-custom::placeholder {
-            color: var(--text-muted);
+            color: #aeb4be !important;
+            opacity: 1 !important;
         }
 
         /* Time Slots Selection */
         .time-slot {
-            background-color: var(--bg-input);
+            background-color: var(--bg-input) !important;
             border: 1px solid var(--border-dark);
-            color: #ffffff;
+            color: #ffffff !important;
             border-radius: 10px;
             padding: 10px 0;
             text-align: center;
@@ -270,11 +276,21 @@
                 <a href="javascript:history.back()" class="btn-back">
                     <i class="bi bi-arrow-left fs-5"></i> Kembali ke Kategori
                 </a>
-                <h1 class="header-title font-serif">Booking Barbershop</h1>
-                <p class="text-muted">Pilih layanan, barber favorit, dan tentukan jadwal kamu.</p>
+                <h1 class="header-title font-serif">Booking {{ $category === 'mua' ? 'MUA Wisuda' : 'Barbershop' }}</h1>
+                <p class="text-muted">Pilih layanan, {{ $category === 'mua' ? 'MUA Artist' : 'barber' }} favorit, dan tentukan jadwal kamu.</p>
             </header>
 
-            <form id="bookingForm" onsubmit="event.preventDefault(); alert('Pesanan Berhasil Dibuat!');">
+            <form id="bookingForm" method="POST" action="{{ route('pelanggan.booking.store') }}">
+                @csrf
+                <input type="hidden" name="category" value="{{ $category }}">
+                @php
+                    $firstServiceName = key($services);
+                    $firstServicePrice = current($services);
+                @endphp
+                <input type="hidden" name="service_name" id="input_service_name" value="{{ $firstServiceName }}">
+                <input type="hidden" name="service_price" id="input_service_price" value="{{ $firstServicePrice }}">
+                <input type="hidden" name="staff_name" id="input_staff_name" value="{{ $employees->first()->name ?? 'Siapa Saja (Bebas)' }}">
+                <input type="hidden" name="appointment_time" id="input_appointment_time" value="13:00">
                 <div class="row g-4">
                     
                     <!-- LEFT COLUMN: FORM INPUTS -->
@@ -286,87 +302,44 @@
                                 <i class="bi bi-scissors fs-4"></i> 1. Pilih Layanan
                             </div>
                             <div class="row g-3">
+                                @foreach($services as $name => $price)
                                 <div class="col-12 col-md-6">
-                                    <div class="service-option active" onclick="selectService(this, 'Gentleman Cut', 65000)">
+                                    <div class="service-option {{ $loop->first ? 'active' : '' }}" onclick="selectService(this, '{{ $name }}', {{ $price }})">
                                         <div>
-                                            <h6 class="mb-1 text-white fw-semibold">Gentleman Cut</h6>
-                                            <small class="text-muted d-block">Potong rambut, Cuci, Styling & Tonic</small>
+                                            <h6 class="mb-1 text-white fw-semibold">{{ $name }}</h6>
+                                            <small class="text-muted d-block">Pilihan layanan {{ strtoupper($category) }}.</small>
                                         </div>
                                         <div class="text-end ms-2">
-                                            <span class="fw-bold text-warning">Rp 65.000</span>
+                                            <span class="fw-bold text-warning">Rp {{ number_format($price, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="service-option" onclick="selectService(this, 'Hair Cut & Shave', 90000)">
-                                        <div>
-                                            <h6 class="mb-1 text-white fw-semibold">Hair Cut & Shave</h6>
-                                            <small class="text-muted d-block">Potong, Cuci, Cukur Kumis/Jenggot</small>
-                                        </div>
-                                        <div class="text-end ms-2">
-                                            <span class="fw-bold text-warning">Rp 90.000</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="service-option" onclick="selectService(this, 'Hair Color Treatment', 150000)">
-                                        <div>
-                                            <h6 class="mb-1 text-white fw-semibold">Hair Coloring</h6>
-                                            <small class="text-muted d-block">Pewarnaan dasar / Bleaching + Color</small>
-                                        </div>
-                                        <div class="text-end ms-2">
-                                            <span class="fw-bold text-warning">Rp 150.000</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="service-option" onclick="selectService(this, 'Glow Hair Spa', 85000)">
-                                        <div>
-                                            <h6 class="mb-1 text-white fw-semibold">Glow Hair Spa</h6>
-                                            <small class="text-muted d-block">Creambath, Pijat Kepala & Hot Towel</small>
-                                        </div>
-                                        <div class="text-end ms-2">
-                                            <span class="fw-bold text-warning">Rp 85.000</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
 
-                        <!-- 2. PILIH BARBER -->
+                        <!-- 2. PILIH STAFF -->
                         <div class="section-box">
                             <div class="section-title">
-                                <i class="bi bi-person-badge fs-4"></i> 2. Pilih Barber / Kapster
+                                <i class="bi bi-person-badge fs-4"></i> 2. Pilih {{ $category === 'mua' ? 'MUA Artist' : 'Hair Stylist' }}
                             </div>
                             <div class="row g-3">
+                                @foreach($employees as $staff)
                                 <div class="col-6 col-sm-3">
-                                    <div class="barber-card active" onclick="selectBarber(this, 'Budi - Sr. Barber')">
-                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Barber">
-                                        <h6 class="mb-0 text-white fs-6">Budi</h6>
-                                        <small class="text-muted">Senior Barber</small>
+                                    <div class="barber-card {{ $loop->first ? 'active' : '' }}" onclick="selectBarber(this, '{{ $staff->name }} - {{ $staff->position }}')">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($staff->name) }}&background=random" alt="Staff">
+                                        <h6 class="mb-0 text-white fs-6">{{ explode(' ', trim($staff->name))[0] }}</h6>
+                                        <small class="text-muted">{{ $staff->position }}</small>
                                     </div>
                                 </div>
+                                @endforeach
                                 <div class="col-6 col-sm-3">
-                                    <div class="barber-card" onclick="selectBarber(this, 'Alex - Fade Specialist')">
-                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop" alt="Barber">
-                                        <h6 class="mb-0 text-white fs-6">Alex</h6>
-                                        <small class="text-muted">Fade Specialist</small>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-sm-3">
-                                    <div class="barber-card" onclick="selectBarber(this, 'Rian - Stylist')">
-                                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" alt="Barber">
-                                        <h6 class="mb-0 text-white fs-6">Rian</h6>
-                                        <small class="text-muted">Stylist</small>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-sm-3">
-                                    <div class="barber-card" onclick="selectBarber(this, 'Siapa Saja (Bebas)')">
+                                    <div class="barber-card {{ $employees->isEmpty() ? 'active' : '' }}" onclick="selectBarber(this, 'Siapa Saja (Bebas)')">
                                         <div class="d-flex align-items-center justify-content-center mx-auto mb-2 rounded-circle bg-dark" style="width:65px; height:65px; border: 2px solid var(--border-dark);">
                                             <i class="bi bi-shuffle text-warning fs-3"></i>
                                         </div>
                                         <h6 class="mb-0 text-white fs-6">Bebas</h6>
-                                        <small class="text-muted">Barber Tersedia</small>
+                                        <small class="text-muted">Staff Tersedia</small>
                                     </div>
                                 </div>
                             </div>
@@ -380,7 +353,7 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-5">
                                     <label class="form-label text-muted small fw-medium">Tanggal Kedatangan</label>
-                                    <input type="date" class="form-control form-control-custom" id="bookingDate" value="2026-09-28">
+                                    <input type="date" name="appointment_date" class="form-control form-control-custom" id="bookingDate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
                                 </div>
                                 <div class="col-12 col-md-7">
                                     <label class="form-label text-muted small fw-medium">Pilih Jam Operasional</label>
@@ -404,15 +377,15 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <label class="form-label text-muted small fw-medium">Nama Lengkap</label>
-                                    <input type="text" class="form-control form-control-custom" placeholder="Masukkan nama kamu" required>
+                                    <input type="text" name="customer_name" class="form-control form-control-custom" placeholder="Masukkan nama kamu" required>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="form-label text-muted small fw-medium">Nomor WhatsApp</label>
-                                    <input type="tel" class="form-control form-control-custom" placeholder="08xxxxxxxxxx" required>
+                                    <input type="tel" name="phone" class="form-control form-control-custom" placeholder="08xxxxxxxxxx" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label text-muted small fw-medium">Catatan Khusus (Opsional)</label>
-                                    <textarea class="form-control form-control-custom" rows="2" placeholder="Contoh: Minta gaya potongan undercut pendek"></textarea>
+                                    <textarea name="notes" class="form-control form-control-custom" rows="2" placeholder="{{ $category === 'mua' ? 'Contoh: Makeup natural untuk acara wisuda siang hari' : 'Contoh: Minta gaya potongan undercut pendek' }}"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -427,12 +400,12 @@
 
                             <div class="mb-3">
                                 <small class="text-muted d-block mb-1">Layanan Dipilih:</small>
-                                <span class="fw-semibold text-white d-block" id="summaryService">Gentleman Cut</span>
+                                <span class="fw-semibold text-white d-block" id="summaryService">{{ $firstServiceName ?? 'Pilih Layanan' }}</span>
                             </div>
 
                             <div class="mb-3">
-                                <small class="text-muted d-block mb-1">Barber:</small>
-                                <span class="fw-semibold text-white d-block" id="summaryBarber">Budi - Sr. Barber</span>
+                                <small class="text-muted d-block mb-1">{{ $category === 'mua' ? 'MUA Artist' : 'Hair Stylist' }}:</small>
+                                <span class="fw-semibold text-white d-block" id="summaryBarber">{{ $employees->isNotEmpty() ? $employees->first()->name . ' - ' . $employees->first()->position : 'Siapa Saja (Bebas)' }}</span>
                             </div>
 
                             <div class="mb-3">
@@ -444,7 +417,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-muted">Harga Layanan</span>
-                                <span class="text-white fw-medium" id="summaryPrice">Rp 65.000</span>
+                                <span class="text-white fw-medium" id="summaryPrice">Rp {{ number_format($firstServicePrice, 0, ',', '.') }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-muted">Biaya Layanan/App</span>
@@ -455,7 +428,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <span class="fw-semibold text-white">Total Bayar</span>
-                                <span class="fs-4 fw-bold text-warning" id="summaryTotal">Rp 67.000</span>
+                                <span class="fs-4 fw-bold text-warning" id="summaryTotal">Rp {{ number_format($firstServicePrice + 2000, 0, ',', '.') }}</span>
                             </div>
 
                             <button type="submit" class="btn btn-gold">
@@ -472,7 +445,7 @@
 
     <!-- Interactive Script untuk Update Ringkasan -->
     <script>
-        let currentPrice = 65000;
+        let currentPrice = {{ $firstServicePrice }};
 
         function selectService(element, serviceName, price) {
             document.querySelectorAll('.service-option').forEach(el => el.classList.remove('active'));
@@ -482,18 +455,26 @@
             document.getElementById('summaryService').innerText = serviceName;
             document.getElementById('summaryPrice').innerText = 'Rp ' + price.toLocaleString('id-ID');
             document.getElementById('summaryTotal').innerText = 'Rp ' + (price + 2000).toLocaleString('id-ID');
+
+            document.getElementById('input_service_name').value = serviceName;
+            document.getElementById('input_service_price').value = price;
         }
 
         function selectBarber(element, barberName) {
             document.querySelectorAll('.barber-card').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             document.getElementById('summaryBarber').innerText = barberName;
+
+            let plainName = barberName.split(' - ')[0]; // Extract just the name if it has ' - Role'
+            document.getElementById('input_staff_name').value = plainName;
         }
 
         function selectTime(element, timeStr) {
             document.querySelectorAll('.time-slot').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             document.getElementById('summaryTime').innerText = timeStr + ' WIB';
+
+            document.getElementById('input_appointment_time').value = timeStr;
         }
     </script>
 </body>

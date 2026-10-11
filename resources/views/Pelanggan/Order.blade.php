@@ -236,7 +236,10 @@
                 display: none !important;
             }
         }
-    </style>
+        .text-muted {
+        color: var(--text-muted) !important;
+    }
+</style>
 </head>
 
 <body>
@@ -293,6 +296,13 @@
 
     <!-- CONTENT MAIN CONTAINER -->
     <div class="container mt-2 mt-lg-4">
+        
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+                <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <!-- Header Mobile Only -->
         <div class="mobile-header mobile-only-block">
@@ -305,54 +315,45 @@
 
         <!-- Sub Filter -->
         <div class="filter-container">
-            <a href="#" class="pill-btn active">Semua</a>
-            <a href="#" class="pill-btn"><i class="fa-solid fa-scissors"></i> Barber</a>
-            <a href="#" class="pill-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> MUA</a>
+            <a href="javascript:void(0)" class="pill-btn active" onclick="filterCat('all', this)">Semua</a>
+            <a href="javascript:void(0)" class="pill-btn" onclick="filterCat('barber', this)"><i class="fa-solid fa-scissors"></i> Barber</a>
+            <a href="javascript:void(0)" class="pill-btn" onclick="filterCat('mua', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> MUA</a>
         </div>
 
         <!-- LIST BOOKING (RESPONSIF GRID LAPTOP & HP) -->
         <div class="row">
-            <!-- Item 1 -->
-            <div class="col-12 col-md-6 col-lg-6">
+            @forelse($bookings as $booking)
+            <!-- Item -->
+            <div class="col-12 col-md-6 col-lg-6 booking-item" data-category="{{ $booking->category ?? 'barber' }}">
                 <div class="booking-card">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="booking-code">GC-X9K3PM2A</span>
-                        <span class="status-badge status-mendatang">Mendatang</span>
+                        <span class="booking-code">GL-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}</span>
+                        <span class="status-badge status-mendatang">{{ ucfirst($booking->status) }}</span>
                     </div>
-                    <div class="service-title">Haircut Classic</div>
+                    <div class="service-title">{{ $booking->service_name }}</div>
                     <div class="info-row">
-                        <i class="fa-solid fa-user text-secondary"></i> Budi Santoso &nbsp;•&nbsp;
-                        <i class="fa-solid fa-location-dot text-danger"></i> Sudirman
+                        <i class="fa-solid fa-user text-secondary"></i> {{ $booking->staff_name ?? 'Siapa Saja (Bebas)' }} &nbsp;•&nbsp;
+                        <i class="fa-solid fa-location-dot text-danger"></i> Pusat
                     </div>
                     <div class="d-flex justify-content-between align-items-end mt-3 pt-2 border-top border-dark">
                         <div class="info-row mb-0">
-                            <i class="fa-regular fa-calendar-days text-primary"></i> Senin, 16 Sep 2026 &nbsp;14:00
+                            <i class="fa-regular fa-calendar-days text-primary"></i> {{ \Carbon\Carbon::parse($booking->appointment_at)->locale('id')->isoFormat('dddd, D MMM Y HH:mm') }}
                         </div>
-                        <div class="price-tag">Rp 82.500</div>
+                        <div class="price-tag">Rp {{ number_format($booking->service_price, 0, ',', '.') }}</div>
                     </div>
+                    @if(in_array($booking->status, ['pending', 'confirmed']))
+                                        <div class="mt-3 pt-2 border-top border-dark text-end">
+                        <button type="button" class="btn btn-sm btn-outline-danger" style="border-radius: 8px; font-weight: 600; font-size: 0.75rem;" onclick="showCancelModal('{{ $booking->id }}')"><i class="fa-solid fa-xmark me-1"></i>Batalkan Pesanan</button>
+                    </div>
+                    @endif
                 </div>
             </div>
-
-            <!-- Item 2 -->
-            <div class="col-12 col-md-6 col-lg-6">
-                <div class="booking-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="booking-code">GC-MUA7WISUDA</span>
-                        <span class="status-badge status-mendatang">Mendatang</span>
-                    </div>
-                    <div class="service-title">Makeup Natural Wisuda</div>
-                    <div class="info-row">
-                        <i class="fa-solid fa-user text-secondary"></i> Rina Andini &nbsp;•&nbsp;
-                        <i class="fa-solid fa-location-dot text-danger"></i> Kemang
-                    </div>
-                    <div class="d-flex justify-content-between align-items-end mt-3 pt-2 border-top border-dark">
-                        <div class="info-row mb-0">
-                            <i class="fa-regular fa-calendar-days text-primary"></i> Sabtu, 20 Sep 2026 &nbsp;08:00
-                        </div>
-                        <div class="price-tag">Rp 385.000</div>
-                    </div>
-                </div>
+            @empty
+            <div class="col-12 text-center text-muted mt-5 mb-5">
+                <i class="fa-regular fa-calendar-xmark fs-1 mb-3"></i>
+                <p>Belum ada jadwal pemesanan. Yuk booking sekarang!</p>
             </div>
+            @endforelse
         </div>
 
     </div>
@@ -377,6 +378,55 @@
         </a>
     </div>
 
+    <script>
+        function filterCat(category, element) {
+            document.querySelectorAll('.pill-btn').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.booking-item').forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="modal-header border-bottom border-secondary border-opacity-25">
+                    <h5 class="modal-title text-white">Batalkan Pesanan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white-50">
+                    Apakah Anda yakin ingin membatalkan pesanan ini? Aksi ini tidak dapat dikembalikan.
+                </div>
+                <div class="modal-footer border-top border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tidak, Kembali</button>
+                    <form id="cancelForm" method="POST" action="">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-danger">Ya, Batalkan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showCancelModal(bookingId) {
+            const form = document.getElementById('cancelForm');
+            // Assuming the route is /dashboard/pelanggan/booking/{booking}/cancel
+            form.action = `/dashboard/pelanggan/booking/${bookingId}/cancel`;
+            const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            modal.show();
+        }
+    </script>
 </body>
 
 </html>

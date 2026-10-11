@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class SesiController extends Controller
 {
@@ -30,7 +29,7 @@ class SesiController extends Controller
         }
 
         // Jika BELUM login, tampilkan form login
-        return view('login');
+        return view('Login');
     }
 
     /**
@@ -39,15 +38,16 @@ class SesiController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required'],
         ], [
             'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $loginField = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if (Auth::attempt([$loginField => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
 
             $roleRedirects = [
@@ -63,6 +63,7 @@ class SesiController extends Controller
             }
 
             Auth::logout();
+
             return back()->withErrors(['email' => 'Akses peran tidak valid.']);
         }
 
@@ -70,7 +71,6 @@ class SesiController extends Controller
             ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.'])
             ->withInput($request->only('email'));
     }
-
 
     // Memproses logout pengguna.
     public function logout(Request $request): RedirectResponse
@@ -89,27 +89,27 @@ class SesiController extends Controller
         return view('Register');
     }
 
-
     // Memproses Pendaftaran Akun Baru
     // Memproses Pendaftaran Akun Baru
     public function createAccount(Request $request)
     {
         // 1. Validasi Input dari Form
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'phone'    => 'required|string|max:20',
-            'email'    => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8',
-            'terms'    => 'accepted',
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'terms' => 'accepted',
         ], [
-            'name.required'     => 'Nama lengkap wajib diisi.',
-            'phone.required'    => 'Nomor telepon wajib diisi.',
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'email.unique'      => 'Email sudah terdaftar, silakan gunakan email lain.',
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'phone.required' => 'Nomor telepon wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
             'password.required' => 'Password wajib diisi.',
-            'password.min'      => 'Password minimal harus 8 karakter.',
-            'terms.accepted'    => 'Anda harus menyetujui Syarat & Ketentuan.',
+            'password.min' => 'Password minimal harus 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'terms.accepted' => 'Anda harus menyetujui Syarat & Ketentuan.',
         ]);
 
         // 2. Format Nomor Telepon
@@ -117,26 +117,23 @@ class SesiController extends Controller
         $rawPhone = preg_replace('/[^0-9]/', '', $request->phone);
 
         if (str_starts_with($rawPhone, '62')) {
-            $phoneFormatted = '+' . $rawPhone;
+            $phoneFormatted = '+'.$rawPhone;
         } elseif (str_starts_with($rawPhone, '0')) {
-            $phoneFormatted = '+62' . substr($rawPhone, 1);
+            $phoneFormatted = '+62'.substr($rawPhone, 1);
         } else {
-            $phoneFormatted = '+62' . $rawPhone;
+            $phoneFormatted = '+62'.$rawPhone;
         }
 
         // 3. Simpan User Baru ke Database
         $user = User::create([
-            'name'     => $request->name,
-            'phone'    => $phoneFormatted, // <-- GUNAKAN $phoneFormatted DI SINI (sebelumnya $request->phone)
-            'email'    => $request->email,
+            'name' => $request->name,
+            'phone' => $phoneFormatted, // <-- GUNAKAN $phoneFormatted DI SINI (sebelumnya $request->phone)
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'pelanggan',
+            'role' => 'pelanggan',
         ]);
 
-        // 4. Langsung Login setelah berhasil mendaftar
-        Auth::login($user);
-
-        // 5. Redirect ke Halaman Dashboard dengan Pesan Sukses
-        return redirect()->to('/dashboard/pelanggan')->with('success', 'Akun berhasil dibuat! Selamat datang di GlowCut.');
+        // 4. Redirect ke Halaman Login dengan Pesan Sukses
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login untuk melanjutkan.');
     }
 }

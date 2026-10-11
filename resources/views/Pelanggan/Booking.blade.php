@@ -329,7 +329,7 @@
 
                 <!-- CARD 2: MUA WISUDA -->
                 <div class="col-12 col-md-6">
-                    <a href="javascript:void(0)" class="category-card card-mua">
+                    <a href="/dashboard/pelanggan/booking/input?category=mua" class="category-card card-mua">
                         <i class="bi bi-person-fill card-mua-icon"></i>
                         <span class="card-badge badge-mua">MUA WISUDA</span>
                         <div class="position-relative z-1">

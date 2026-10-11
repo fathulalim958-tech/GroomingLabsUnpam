@@ -51,4 +51,39 @@ class RoleAccessTest extends TestCase
             ->get('/dashboard/admin')
             ->assertForbidden();
     }
+
+    public function test_admin_can_access_separate_admin_feature_pages(): void
+    {
+        $admin = User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin-feature@example.com',
+            'role' => 'admin',
+            'password' => bcrypt('password'),
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/dashboard/admin/kelola-karyawan')
+            ->assertOk()
+            ->assertSee('Kelola Karyawan');
+
+        $this->actingAs($admin)
+            ->get('/dashboard/admin/laporan-pendapatan')
+            ->assertOk()
+            ->assertSee('Laporan Pendapatan');
+    }
+
+    public function test_kasir_can_access_separate_walkin_page(): void
+    {
+        $kasir = User::factory()->create([
+            'name' => 'Kasir',
+            'email' => 'kasir-feature@example.com',
+            'role' => 'kasir',
+            'password' => bcrypt('password'),
+        ]);
+
+        $this->actingAs($kasir)
+            ->get('/dashboard/kasir/booking-walkin')
+            ->assertOk()
+            ->assertSee('Catat Walk-in');
+    }
 }

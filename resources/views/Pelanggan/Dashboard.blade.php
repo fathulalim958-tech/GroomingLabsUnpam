@@ -488,10 +488,10 @@
 
         <section class="mb-5">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold text-white mb-0">Paket Terpopuler</h5>
-                <a href="#" onclick="resetFilter(); return false;"
+                <h5 class="fw-bold text-white mb-0" id="packageSectionTitle">Paket Terpopuler</h5>
+                <a href="#" onclick="filterCategory('popular'); return false;"
                     class="text-gold small text-decoration-none fw-semibold">
-                    Lihat semua <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.65rem;"></i>
+                    Kembali ke awal <i class="fa-solid fa-rotate-left ms-1" style="font-size: 0.65rem;"></i>
                 </a>
             </div>
 
@@ -499,7 +499,7 @@
 
                 <!-- Package Item 1 -->
                 <div
-                    class="package-item barbershop card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item barbershop popular card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=150&auto=format&fit=crop&q=80"
@@ -531,7 +531,7 @@
 
                 <!-- Package Item 2 -->
                 <div
-                    class="package-item barbershop card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item barbershop d-none card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=150&auto=format&fit=crop&q=80"
@@ -560,7 +560,7 @@
                 </div>
                 <!-- Package Item 3 -->
                 <div
-                    class="package-item barbershop card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item barbershop d-none card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=400&auto=format&fit=crop"
@@ -590,7 +590,7 @@
 
                 <!-- Package Item 4 -->
                 <div
-                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item mua popular card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
@@ -622,7 +622,7 @@
                 
                 <!-- Package Item 5 -->
                 <div
-                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item mua d-none card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
@@ -652,7 +652,7 @@
 
                 <!-- Package Item 6 -->
                 <div
-                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item mua d-none card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
@@ -682,7 +682,7 @@
 
                 <!-- Package Item 7 -->
                 <div
-                    class="package-item mua card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
+                    class="package-item mua d-none card bg-card-custom p-3 rounded-4 border border-secondary border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=150&auto=format&fit=crop&q=80"
@@ -871,19 +871,15 @@
             const catBarber = document.getElementById('cat-barbershop');
             const catMua = document.getElementById('cat-mua');
 
-            if (catBarber) catBarber.style.borderColor = category === 'barbershop' ? 'var(--gold-primary)' :
-                'var(--border-color)';
+            if (catBarber) catBarber.style.borderColor = category === 'barbershop' ? 'var(--gold-primary)' : 'var(--border-color)';
             if (catMua) catMua.style.borderColor = category === 'mua' ? 'var(--gold-primary)' : 'var(--border-color)';
-        }
 
-        function resetFilter() {
-            const items = document.querySelectorAll('.package-item');
-            items.forEach(item => item.classList.remove('d-none'));
-            const catBarber = document.getElementById('cat-barbershop');
-            const catMua = document.getElementById('cat-mua');
-
-            if (catBarber) catBarber.style.borderColor = 'var(--border-color)';
-            if (catMua) catMua.style.borderColor = 'var(--border-color)';
+            const title = document.getElementById('packageSectionTitle');
+            if (title) {
+                if (category === 'barbershop') title.textContent = 'Paket Barbershop';
+                else if (category === 'mua') title.textContent = 'Paket MUA Wisuda';
+                else if (category === 'popular') title.textContent = 'Paket Terpopuler';
+            }
         }
     </script>
 </body>

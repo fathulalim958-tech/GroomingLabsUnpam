@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5.3 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         :root {
@@ -56,6 +56,15 @@
             .app-container {
                 max-width: 720px;
                 padding: 1.75rem 1.5rem;
+            }
+
+            .booking-card[role="button"] {
+                cursor: pointer;
+            }
+
+            .booking-card[role="button"]:focus-visible {
+                outline: 2px solid var(--gold-primary);
+                outline-offset: 3px;
             }
         }
 
@@ -560,61 +569,44 @@
 
     <div class="app-container">
         <!-- Top Navigation / Header -->
-        <header class="d-flex justify-content-between align-items-center mb-1">
-            <div>
-                <div class="header-sub">GLOWCUT &nbsp;•&nbsp; KASIR</div>
-                <h1 class="header-title font-serif">Dashboard Kasir</h1>
-                <div class="header-date">Kamis, 24 September 2026</div>
-            </div>
-            <div class="d-flex gap-2">
-                <a href="#" class="btn-circle-icon" title="Riwayat Transaksi">
-                    <i class="fa-regular fa-clock"></i>
-                </a>
-                <a href="/logout" class="btn-circle-icon" title="Keluar">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                </a>
-            </div>
-        </header>
+        @include('Kasir.partials.page-header', [
+            'title' => 'Dashboard Kasir',
+            'date' => \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y'),
+            'backRoute' => null,
+            'userName' => \Illuminate\Support\Facades\Auth::user()->name ?? 'Kasir',
+            'userRole' => isset($loggedInEmployee) ? $loggedInEmployee->position : (\Illuminate\Support\Facades\Auth::user()->role === 'kasir' ? 'Kasir' : \Illuminate\Support\Facades\Auth::user()->role)
+        ])
 
         <!-- Daily Summary Cards -->
         <section class="stats-card">
             <div class="row text-center g-0">
-                <div class="col-4 border-end border-secondary border-opacity-25">
-                    <div class="stats-label">BOOKING</div>
-                    <div class="stats-value">Rp 204k</div>
-                    <div class="stats-sub">2 selesai</div>
-                </div>
-                <div class="col-4 border-end border-secondary border-opacity-25">
-                    <div class="stats-label">WALK-IN</div>
-                    <div class="stats-value">Rp 215k</div>
-                    <div class="stats-sub">3 transaksi</div>
-                </div>
-                <div class="col-4">
-                    <div class="stats-label">TOTAL</div>
-                    <div class="stats-value">Rp 419k</div>
-                    <div class="stats-sub">Hari ini</div>
-                </div>
+                @include('Kasir.partials.summary-card', [
+                    'label' => 'BOOKING',
+                    'value' => 'Rp ' . number_format($onlineRevenue / 1000, 0, ',', '.') . 'k',
+                    'caption' => $onlineCompletedCount . ' selesai'
+                ])
+                @include('Kasir.partials.summary-card', [
+                    'label' => 'WALK-IN',
+                    'value' => 'Rp ' . number_format($walkInRevenue / 1000, 0, ',', '.') . 'k',
+                    'caption' => $walkInCompletedCount . ' transaksi'
+                ])
+                @include('Kasir.partials.summary-card', [
+                    'label' => 'TOTAL',
+                    'value' => 'Rp ' . number_format($totalRevenue / 1000, 0, ',', '.') . 'k',
+                    'caption' => 'Hari ini'
+                ])
             </div>
         </section>
 
         <section class="row g-2 align-items-center mb-3">
             <div class="col-12 col-md-4 col-lg-3 order-1">
-                <button class="btn btn-gold-action d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#walkInModal">
+                <a href="{{ route('kasir.booking.walkin') }}" class="btn btn-gold-action d-flex align-items-center justify-content-center gap-2 text-decoration-none">
                     <i class="fa-solid fa-plus fs-6"></i>
                     <span>Catat Walk-in</span>
-                </button>
+                </a>
             </div>
             <div class="col-12 col-md-4 col-lg-3 order-2">
-                <div class="category-switcher">
-                    <button class="cat-btn active" onclick="switchCategory('barber', this)">
-                        <span>✂ Barber</span>
-                        <span class="cat-badge">4</span>
-                    </button>
-                    <button class="cat-btn" onclick="switchCategory('mua', this)">
-                        <span>💄 MUA</span>
-                        <span class="cat-badge">2</span>
-                    </button>
-                </div>
+                @include('Kasir.partials.category-switcher')
             </div>
             <div class="col-12 col-md-4 col-lg-6 order-3">
                 <div class="search-box">
@@ -624,278 +616,161 @@
             </div>
         </section>
 
-        <!-- Status Filter Pills -->
-        <section class="filter-pills-container mb-3">
-            <button class="pill-btn active" onclick="filterStatus('all', this)">
-                <span>Semua</span>
-                <span class="pill-badge">4</span>
-            </button>
-            <button class="pill-btn" onclick="filterStatus('menunggu', this)">
-                <span>Menunggu</span>
-                <span class="pill-badge">2</span>
-            </button>
-            <button class="pill-btn" onclick="filterStatus('proses', this)">
-                <span>Proses</span>
-                <span class="pill-badge">0</span>
-            </button>
-            <button class="pill-btn" onclick="filterStatus('selesai', this)">
-                <span>Selesai</span>
-                <span class="pill-badge">2</span>
-            </button>
-        </section>
+        @include('Kasir.partials.filter-pills')
 
         <!-- Orders Queue List / Grid -->
         <main id="bookingList">
-            
-            <!-- Card 1 -->
-            <div class="booking-card barber-item status-menunggu">
-                <div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="cust-name">Ahmad Rizky</div>
-                            <div class="booking-code">GC-X9K3PM2A</div>
-                        </div>
-                        <span class="badge-status badge-status-menunggu">
-                            <span class="dot"></span> Menunggu
-                        </span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-2.5">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-scissors text-gold"></i>
-                            <span>Haircut Classic</span>
-                        </div>
-                        <div class="card-time">10:00</div>
-                    </div>
-                </div>
 
-                <div>
-                    <div class="divider-line"></div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-user text-muted"></i>
-                            <span class="text-white-50">Budi S.</span>
-                        </div>
-                        <div class="card-price">Rp 82.500</div>
-                    </div>
-                </div>
-            </div>
+            @foreach ($walkInBookings as $booking)
+                @include('Kasir.partials.booking-card', [
+                    'type' => $booking->category,
+                    'status' => match ($booking->status) {
+                        'confirmed', 'in_progress' => 'proses',
+                        'completed' => 'selesai',
+                        default => 'menunggu',
+                    },
+                    'customerName' => $booking->customer_name ?? 'Pelanggan online',
+                    'bookingCode' => ($booking->cashier_id ? 'WI-' : 'BK-') . $booking->id,
+                    'icon' => ($booking->category ?? 'barber') === 'mua' ? 'fa-wand-magic-sparkles' : 'fa-scissors',
+                    'service' => $booking->service_name ?? 'Layanan booking',
+                    'time' => $booking->appointment_at?->format('H:i') ?? '-',
+                    'staff' => $booking->staff_name ?? 'Belum ditentukan',
+                    'price' => $booking->service_price === null ? '-' : 'Rp ' . number_format($booking->service_price, 0, ',', '.'),
+                    'completeUrl' => route('kasir.booking.complete', $booking),
+                ])
+            @endforeach
 
-            <!-- Card 2 -->
-            <div class="booking-card barber-item status-menunggu">
-                <div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="cust-name">Kevin Pratama</div>
-                            <div class="booking-code">GC-B2C3D4E5</div>
-                        </div>
-                        <span class="badge-status badge-status-menunggu">
-                            <span class="dot"></span> Menunggu
-                        </span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-2.5">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-scissors text-gold"></i>
-                            <span>Fade Cut</span>
-                        </div>
-                        <div class="card-time">13:00</div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="divider-line"></div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-user text-muted"></i>
-                            <span class="text-white-50">Dimas R.</span>
-                        </div>
-                        <div class="card-price">Rp 99.000</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="booking-card barber-item status-selesai">
-                <div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="cust-name">Bagas W.</div>
-                            <div class="booking-code">GC-J0K1L2M3</div>
-                        </div>
-                        <span class="badge-status badge-status-selesai">
-                            <span class="dot"></span> Selesai
-                        </span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-2.5">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-scissors text-gold"></i>
-                            <span>Haircut & Beard Trim</span>
-                        </div>
-                        <div class="card-time">09:00</div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="divider-line"></div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-user text-muted"></i>
-                            <span class="text-white-50">Budi S.</span>
-                        </div>
-                        <div class="card-price">Rp 120.000</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4 (MUA Example) -->
-            <div class="booking-card mua-item status-selesai d-none">
-                <div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="cust-name">Siti Nurhaliza</div>
-                            <div class="booking-code">GC-MUA9811</div>
-                        </div>
-                        <span class="badge-status badge-status-selesai">
-                            <span class="dot"></span> Selesai
-                        </span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-2.5">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-wand-magic-sparkles text-danger"></i>
-                            <span>Makeup Natural Wisuda</span>
-                        </div>
-                        <div class="card-time">08:00</div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="divider-line"></div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="card-detail-item">
-                            <i class="fa-solid fa-user text-muted"></i>
-                            <span class="text-white-50">Anisa MUA</span>
-                        </div>
-                        <div class="card-price">Rp 350.000</div>
-                    </div>
-                </div>
-            </div>
+            @if ($walkInBookings->isEmpty())
+                <p class="text-center text-muted py-4" style="grid-column: 1 / -1;">Belum ada booking hari ini.</p>
+            @endif
 
         </main>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
-        <div id="walkInToast" class="toast align-items-center text-bg-success border-0 rounded-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-circle-check fs-5"></i>
-                    <div>
-                        <strong class="d-block">Berhasil!</strong>
-                        <span class="small">Pelanggan walk-in telah ditambahkan.</span>
-                    </div>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Catat Pelanggan Walk-in -->
-    <div class="modal fade" id="walkInModal" tabindex="-1" aria-labelledby="walkInModalLabel" aria-hidden="true">
+    <div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-labelledby="bookingDetailTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background-color: #141418; border: 1px solid var(--card-border); border-radius: 1.25rem;">
-                <div class="modal-header border-bottom border-secondary border-opacity-25 px-4 pt-4 pb-3">
-                    <h5 class="modal-title font-serif text-white fs-4" id="walkInModalLabel">Catat Walk-in</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content" style="background:#141418;border:1px solid var(--card-border);border-radius:1rem;color:#fff">
+                <div class="modal-header border-secondary">
+                    <div>
+                        <div class="header-sub">DETAIL BOOKING</div>
+                        <h2 class="modal-title fs-5" id="bookingDetailTitle"></h2>
+                        <div class="small text-muted" id="bookingDetailCode"></div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <form id="walkInForm" onsubmit="addWalkInCustomer(event)">
-                        <div class="mb-3">
-                            <label class="form-label small text-muted font-bold">Nama Pelanggan</label>
-                            <input type="text" required class="form-control search-input" style="padding-left: 1rem;" placeholder="Masukkan nama pelanggan">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted font-bold">Kategori Layanan</label>
-                            <select class="form-select search-input" style="padding-left: 1rem;">
-                                <option value="barber">Barbershop</option>
-                                <option value="mua">MUA Wisuda</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted font-bold">Pilih Layanan</label>
-                            <select class="form-select search-input" style="padding-left: 1rem;">
-                                <option value="Haircut Classic - 82500">Haircut Classic - Rp 82.500</option>
-                                <option value="Fade Cut - 99000">Fade Cut - Rp 99.000</option>
-                                <option value="Haircut & Beard Trim - 120000">Haircut & Beard Trim - Rp 120.000</option>
-                                <option value="Makeup Wisuda - 350000">Makeup Wisuda - Rp 350.000</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-muted font-bold">Kapster / Staff</label>
-                            <input type="text" required class="form-control search-input" style="padding-left: 1rem;" placeholder="Nama kapster/MUA">
-                        </div>
-                        <button type="submit" class="btn btn-gold-action mt-2">Simpan & Masukkan Antrean</button>
+                <div class="modal-body">
+                    <dl class="row mb-0">
+                        <dt class="col-4 text-muted">Layanan</dt><dd class="col-8" id="bookingDetailService"></dd>
+                        <dt class="col-4 text-muted">Waktu</dt><dd class="col-8" id="bookingDetailTime"></dd>
+                        <dt class="col-4 text-muted">Staff</dt><dd class="col-8" id="bookingDetailStaff"></dd>
+                        <dt class="col-4 text-muted">Harga</dt><dd class="col-8" id="bookingDetailPrice"></dd>
+                        <dt class="col-4 text-muted">Status</dt><dd class="col-8" id="bookingDetailStatus"></dd>
+                    </dl>
+                    <form id="completeBookingForm" method="POST" class="mt-3">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-gold-action">Selesaikan Booking</button>
                     </form>
+                    <div id="bookingAlreadyComplete" class="alert alert-success d-none mt-3 mb-0">Booking ini sudah selesai.</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Filter & Interactive Logic -->
     <script>
         let currentCategory = 'barber';
         let currentStatus = 'all';
 
-        function switchCategory(cat, element) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+        function switchCategory(category, button) {
+            currentCategory = category;
+            document.querySelectorAll('.cat-btn').forEach((item) => {
+                item.classList.toggle('active', item === button);
+            });
             filterItems();
         }
 
-        function filterStatus(status, element) {
+        function filterStatus(status, button) {
             currentStatus = status;
-            document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+            document.querySelectorAll('.pill-btn').forEach((item) => {
+                item.classList.toggle('active', item === button);
+            });
             filterItems();
         }
 
         function filterItems() {
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const searchInput = document.getElementById('searchInput');
+            const query = (searchInput ? searchInput.value : '').toLowerCase();
             const cards = document.querySelectorAll('.booking-card');
 
-            cards.forEach(card => {
-                const matchesCategory = card.classList.contains(`${currentCategory}-item`);
-                const matchesStatus = (currentStatus === 'all') || card.classList.contains(`status-${currentStatus}`);
-                const cardText = card.innerText.toLowerCase();
-                const matchesSearch = cardText.includes(searchQuery);
+            cards.forEach((card) => {
+                const matchesCategory = currentCategory === 'all' || card.dataset.category === currentCategory;
+                const matchesStatus = currentStatus === 'all' || card.dataset.status === currentStatus;
+                const matchesQuery = !query || card.textContent.toLowerCase().includes(query);
 
-                if (matchesCategory && matchesStatus && matchesSearch) {
-                    card.classList.remove('d-none');
-                } else {
-                    card.classList.add('d-none');
-                }
+                card.classList.toggle('d-none', !(matchesCategory && matchesStatus && matchesQuery));
             });
         }
 
-        function addWalkInCustomer(e) {
-            e.preventDefault();
+        function showBookingDetails(card) {
+            document.getElementById('bookingDetailTitle').textContent = card.dataset.customer;
+            document.getElementById('bookingDetailCode').textContent = card.dataset.code;
+            document.getElementById('bookingDetailService').textContent = card.dataset.service;
+            document.getElementById('bookingDetailTime').textContent = card.dataset.time;
+            document.getElementById('bookingDetailStaff').textContent = card.dataset.staff;
+            document.getElementById('bookingDetailPrice').textContent = card.dataset.price;
+            document.getElementById('bookingDetailStatus').textContent = card.dataset.status;
+            document.getElementById('completeBookingForm').action = card.dataset.completeUrl;
+
+            const status = card.dataset.status;
+            const category = card.dataset.category;
+            const isComplete = status === 'selesai';
             
-            // Hide modal
-            const modalEl = document.getElementById('walkInModal');
-            if (modalEl && window.bootstrap && window.bootstrap.Modal) {
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
+            const btn = document.querySelector('#completeBookingForm button[type="submit"]');
+            if (status === 'menunggu') {
+                btn.textContent = 'Proses Booking';
+            } else {
+                btn.textContent = 'Selesaikan Booking';
             }
 
-            // Show Toast notification instead of alert()
-            const toastEl = document.getElementById('walkInToast');
-            if (toastEl && window.bootstrap && window.bootstrap.Toast) {
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
+            document.getElementById('completeBookingForm').classList.toggle('d-none', isComplete);
+            document.getElementById('bookingAlreadyComplete').classList.toggle('d-none', !isComplete);
+            
+            // ROLE LOCK LOGIC
+            const userPosition = "{{ $loggedInEmployee->position ?? '' }}";
+            let canProcess = true;
+            let warningText = '';
+            
+            if (userPosition === 'Hair Stylist' && category === 'mua') {
+                canProcess = false;
+                warningText = 'Hair Stylist tidak bisa memproses booking MUA.';
+            } else if (userPosition === 'MUA Artist' && category === 'barber') {
+                canProcess = false;
+                warningText = 'MUA Artist tidak bisa memproses booking Barber.';
             }
+            
+            let warningEl = document.getElementById('roleLockWarning');
+            if (!warningEl) {
+                warningEl = document.createElement('div');
+                warningEl.id = 'roleLockWarning';
+                warningEl.className = 'alert alert-danger mt-3 mb-0';
+                document.getElementById('completeBookingForm').parentElement.appendChild(warningEl);
+            }
+            
+            if (!canProcess && !isComplete) {
+                btn.disabled = true;
+                btn.classList.add('d-none');
+                warningEl.textContent = warningText;
+                warningEl.classList.remove('d-none');
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('d-none');
+                warningEl.classList.add('d-none');
+            }
+
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('bookingDetailModal')).show();
         }
+
+        filterItems();
     </script>
 </body>
 </html>
