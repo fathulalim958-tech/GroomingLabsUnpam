@@ -1,0 +1,87 @@
+<x-admin-layout title="Tambah Layanan - Grooming Lab & MUA">
+    <div class="max-w-xl mx-auto py-4 space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-black text-white">Tambah Layanan Baru</h1>
+                <p class="text-xs text-slate-400 mt-1">Tambahkan menu perawatan Barbershop atau MUA</p>
+            </div>
+            <a href="{{ route('admin.services.index') }}" class="text-xs text-slate-400 hover:text-white transition">
+                &larr; Kembali
+            </a>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+            <form method="POST" action="{{ route('admin.services.store') }}" class="space-y-4">
+                @csrf
+
+                <div>
+                    <label for="name" class="block text-xs font-semibold text-slate-300 mb-1">Nama Layanan *</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required
+                        class="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Contoh: Gentlemen Fade Cut" />
+                    @error('name')
+                        <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="category" class="block text-xs font-semibold text-slate-300 mb-1">Kategori Layanan *</label>
+                    <select id="category" name="category" required
+                        class="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="barbershop" {{ old('category') === 'barbershop' ? 'selected' : '' }}>Barbershop</option>
+                        <option value="mua" {{ old('category') === 'mua' ? 'selected' : '' }}>MUA Studio</option>
+                    </select>
+                    @error('category')
+                        <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="description" class="block text-xs font-semibold text-slate-300 mb-1">Deskripsi Layanan</label>
+                    <textarea id="description" name="description" rows="3"
+                        class="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Jelaskan detail perawatan dan fasilitas yang didapatkan...">{{ old('description') }}</textarea>
+                    @error('description')
+                        <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="price" class="block text-xs font-semibold text-slate-300 mb-1">Harga Layanan (Rp) *</label>
+                        <input id="price" type="number" name="price" value="{{ old('price') }}" required min="0" step="1000"
+                            class="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            placeholder="35000" />
+                        @error('price')
+                            <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="duration_minutes" class="block text-xs font-semibold text-slate-300 mb-1">Estimasi Durasi (Menit) *</label>
+                        <input id="duration_minutes" type="number" name="duration_minutes" value="{{ old('duration_minutes', 30) }}" required min="5" max="480"
+                            class="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        @error('duration_minutes')
+                            <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_active" value="1" checked
+                            class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-emerald-500">
+                        <span class="text-xs text-slate-300">Layanan Aktif (Dapat dipesan pelanggan)</span>
+                    </label>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-2">
+                    <a href="{{ route('admin.services.index') }}" class="px-4 py-2.5 text-xs text-slate-400 hover:text-white rounded-xl">Batal</a>
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition">
+                        Simpan Layanan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-admin-layout>
