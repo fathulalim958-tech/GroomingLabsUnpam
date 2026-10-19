@@ -46,3 +46,4 @@ class OperatingHourController extends Controller
             ->with('success', 'Jadwal & jam operasional berhasil diperbarui.');
     }
 }
+

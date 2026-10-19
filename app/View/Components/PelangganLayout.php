@@ -19,3 +19,4 @@ class PelangganLayout extends Component
         return view('layouts.pelanggan');
     }
 }
+

@@ -135,3 +135,4 @@ class ReportController extends Controller
         return view('admin.reports.print', compact('bookings', 'totalRevenue', 'startDate', 'endDate', 'category'));
     }
 }
+

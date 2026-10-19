@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\OperatingHourController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\CategoryContentController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 // FR-AUTH-01: Landing page redirects to login
@@ -21,9 +23,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Category Explanation Page (Public & Customer - DOES NOT force login)
+Route::get('/kategori/{category}', [CategoryController::class, 'show'])->name('categories.show');
+
 // Role-based dashboard redirect
 Route::get('/dashboard', function () {
-    $user = auth()->user();
+    $user = request()->user();
     if ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
     } elseif ($user->role === 'kasir') {
@@ -111,6 +116,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.export-pdf');
     Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export-excel');
+
+    // Manage Category Explanation Contents
+    Route::resource('category-contents', CategoryContentController::class)->only(['index', 'edit', 'update']);
 });
 
 require __DIR__.'/auth.php';

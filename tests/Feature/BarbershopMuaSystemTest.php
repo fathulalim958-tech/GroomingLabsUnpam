@@ -225,4 +225,74 @@ class BarbershopMuaSystemTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'text/csv; charset=utf-8');
     }
+
+    /**
+     * Test Category Explanation Page: DOES NOT redirect to login, displays content & services.
+     */
+    public function test_category_explanation_page_is_accessible_without_login_redirect(): void
+    {
+        // 1. Unauthenticated guest can access barbershop explanation page without login redirect
+        $response = $this->get('/kategori/barbershop');
+        $response->assertStatus(200);
+        $response->assertSee('Grooming Lab Barbershop');
+
+        // 2. Unauthenticated guest can access mua explanation page without login redirect
+        $muaResponse = $this->get('/kategori/mua');
+        $muaResponse->assertStatus(200);
+        $muaResponse->assertSee('MUA Studio');
+
+        // 3. Logged in customer can access and see booking CTA
+        $customer = User::create([
+            'name' => 'Budi Customer',
+            'email' => 'budicust@test.com',
+            'phone' => '081299998888',
+            'password' => bcrypt('password'),
+            'role' => 'pelanggan',
+        ]);
+
+        $custResponse = $this->actingAs($customer)->get('/kategori/barbershop');
+        $custResponse->assertStatus(200);
+        $custResponse->assertSee('Booking Sekarang');
+    }
+
+    /**
+     * Test Admin can manage and update Category Contents.
+     */
+    public function test_admin_can_update_category_content(): void
+    {
+        $admin = User::create([
+            'name' => 'Admin Content',
+            'email' => 'admincontent@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $content = \App\Models\CategoryContent::create([
+            'category' => 'barbershop',
+            'title' => 'Original Barbershop Title',
+            'tagline' => 'Original Tagline',
+            'description' => 'Original Description',
+            'facilities' => "Facility 1\nFacility 2",
+            'terms' => "Term 1\nTerm 2",
+            'is_active' => true,
+        ]);
+
+        // Admin updates the category content
+        $response = $this->actingAs($admin)->put("/admin/category-contents/{$content->id}", [
+            'title' => 'Updated Barbershop VIP',
+            'tagline' => 'New Premium Experience',
+            'description' => 'Updated new description about barbershop services.',
+            'facilities' => "VIP Lounge\nEspresso Bar\nFree Wi-Fi",
+            'terms' => "Please arrive 15 minutes early.",
+            'is_active' => '1',
+        ]);
+
+        $response->assertRedirect('/admin/category-contents');
+
+        $content->refresh();
+        $this->assertEquals('Updated Barbershop VIP', $content->title);
+        $this->assertEquals('New Premium Experience', $content->tagline);
+        $this->assertCount(3, $content->facilities_list);
+    }
 }
+

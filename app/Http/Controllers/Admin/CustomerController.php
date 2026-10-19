@@ -97,3 +97,4 @@ class CustomerController extends Controller
         return back()->with('success', "Password pelanggan berhasil di-reset ke: {$newPassword}");
     }
 }
+

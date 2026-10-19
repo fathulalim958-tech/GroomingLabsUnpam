@@ -280,3 +280,56 @@ GLtes/
 
 ## 📄 Lisensi
 Aplikasi ini dikembangkan sebagai solusi reservasi dan antrian modern untuk Barbershop & Make-Up Artist Studio di bawah lisensi open-source [MIT](https://opensource.org/licenses/MIT).
+
+   PASS  Tests\Feature\Auth\... (Authentication, Registration, Password, Profile)
+  ---------------------------------------------------------------------------------
+  Tests:    31 passed (89 assertions)
+  Duration: 2.77s
+```
+
+---
+
+## 📁 Struktur Direktori Utama
+
+```text
+GLtes/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/             # Controller Admin (Dashboard, Kasir, Layanan, Staf, Jam, Laporan)
+│   │   │   ├── Kasir/             # Controller Kasir (Dashboard, QueueController, Walk-In)
+│   │   │   ├── Pelanggan/         # Controller Pelanggan (Home, Booking, Order, Riwayat)
+│   │   │   └── ProfileController.php
+│   │   └── Middleware/
+│   │       └── CheckRole.php      # Middleware otorisasi multi-role
+│   ├── Models/
+│   │   ├── Booking.php            # Model booking + generator kode & nomor antrian
+│   │   ├── BookingItem.php        # Model item layanan terpilih
+│   │   ├── OperatingHour.php      # Model jam operasional & hari libur
+│   │   ├── Service.php            # Model katalog layanan Barbershop & MUA
+│   │   ├── Staff.php              # Model kapster & penata rias
+│   │   └── User.php               # Model pengguna dengan role helper
+│   └── View/Components/           # Blade layout components (Pelanggan, Kasir, Admin)
+├── database/
+│   ├── migrations/                # Migration users, services, staffs, hours, bookings
+│   └── seeders/DatabaseSeeder.php # Seeder akun demo, 10 layanan, jam kerja, 4 staf
+├── resources/
+│   ├── css/app.css                # Tailwind CSS
+│   └── views/
+│       ├── admin/                 # Blade views modul Admin
+│       ├── kasir/                 # Blade views modul Kasir & Walk-In
+│       ├── pelanggan/             # Blade views modul Pelanggan (Mobile-First)
+│       └── layouts/               # Master layouts per role
+├── routes/
+│   ├── web.php                    # Rute ber-prefix pelanggan, kasir, admin
+│   └── auth.php                   # Rute autentikasi
+└── tests/
+    └── Feature/
+        └── BarbershopMuaSystemTest.php # Automated feature tests PRD
+```
+
+---
+
+## 📄 Lisensi
+Aplikasi ini dikembangkan sebagai solusi reservasi dan antrian modern untuk Barbershop & Make-Up Artist Studio di bawah lisensi open-source [MIT](https://opensource.org/licenses/MIT).
+

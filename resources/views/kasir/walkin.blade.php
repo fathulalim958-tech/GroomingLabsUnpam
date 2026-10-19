@@ -184,3 +184,4 @@
     </script>
     @endpush
 </x-kasir-layout>
+

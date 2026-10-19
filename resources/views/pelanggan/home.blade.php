@@ -54,9 +54,9 @@
             <div class="absolute -right-8 -bottom-8 w-60 h-60 bg-amber-500/10 rounded-full blur-2xl"></div>
         </div>
 
-        <!-- Category Shortcut Cards -->
+        <!-- Category Shortcut Cards (Menjelaskan Layanan Masing-Masing Kategori) -->
         <div class="grid grid-cols-2 gap-4">
-            <a href="{{ route('pelanggan.booking.create', 'barbershop') }}"
+            <a href="{{ route('categories.show', 'barbershop') }}"
                class="group p-4 bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 rounded-2xl transition shadow-lg">
                 <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,12 +65,12 @@
                 </div>
                 <h3 class="font-bold text-white text-base">Barbershop</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Potong rambut, shaving, pomade, & treatment pria.</p>
-                <div class="mt-3 flex items-center gap-1 text-xs font-semibold text-amber-400">
-                    <span>Pilih Layanan</span> &rarr;
+                <div class="mt-3 flex items-center gap-1 text-xs font-semibold text-amber-400 group-hover:translate-x-0.5 transition">
+                    <span>Lihat Detail Layanan</span> &rarr;
                 </div>
             </a>
 
-            <a href="{{ route('pelanggan.booking.create', 'mua') }}"
+            <a href="{{ route('categories.show', 'mua') }}"
                class="group p-4 bg-slate-900/90 border border-slate-800 hover:border-pink-500/50 rounded-2xl transition shadow-lg">
                 <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,8 +79,8 @@
                 </div>
                 <h3 class="font-bold text-white text-base">MUA Studio</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Party, graduation, bridal & daily natural makeup.</p>
-                <div class="mt-3 flex items-center gap-1 text-xs font-semibold text-pink-400">
-                    <span>Pilih Layanan</span> &rarr;
+                <div class="mt-3 flex items-center gap-1 text-xs font-semibold text-pink-400 group-hover:translate-x-0.5 transition">
+                    <span>Lihat Detail Layanan</span> &rarr;
                 </div>
             </a>
         </div>
@@ -156,3 +156,4 @@
         </div>
     </div>
 </x-pelanggan-layout>
+

@@ -95,3 +95,4 @@
     @stack('scripts')
 </body>
 </html>
+

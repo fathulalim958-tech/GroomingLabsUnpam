@@ -19,3 +19,4 @@ class KasirLayout extends Component
         return view('layouts.kasir');
     }
 }
+

@@ -188,5 +188,26 @@ class DatabaseSeeder extends Seeder
             'phone'     => '08121111004',
             'is_active' => true,
         ]);
+
+        // ── Category Contents (Explanation & Information) ────────
+        \App\Models\CategoryContent::create([
+            'category'      => 'barbershop',
+            'title'         => 'Grooming Lab Barbershop',
+            'tagline'       => 'Perawatan Rambut & Grooming Pria Maskulin Modern',
+            'description'   => "Grooming Lab Barbershop menghadirkan pengalaman potong rambut pria bintang lima dengan sentuhan kapster profesional berpengalaman. Kami memadukan teknik gunting presisi, fade bertingkat, hot towel treatment, dan styling pomade berkualitas tinggi untuk memastikan penampilan maskulin terbaik Anda setiap saat.\n\nSetiap sesi layanan dirancang untuk kenyamanan maksimal dengan ruang ber-AC dingin, kursi barbershop ergonomis, serta fasilitas relaksasi pijat kepala dan bahu.",
+            'facilities'    => "Kapster Profesional & Berpengalaman\nKursi Barber Ergonomis & Nyaman\nHot Towel Treatment & Pijat Relaksasi\nProduk Styling Pomade & Shaving Impor Bebas Alkohol\nRuangan Full AC & Free Wi-Fi Berkecepatan Tinggi\nGratis Minuman Kopi & Mineral Water",
+            'terms'         => "Disarankan datang 10 menit sebelum slot jam reservasi Anda.\nJika nomor antrian Anda terlewat, nomor antrian tidak hangus namun status akan diubah sementara menjadi Dilewati.\nHarap sampaikan referensi model rambut atau preferensi gaya sebelum kapster memulai pemotongan.",
+            'is_active'     => true,
+        ]);
+
+        \App\Models\CategoryContent::create([
+            'category'      => 'mua',
+            'title'         => 'Grooming Lab MUA Studio',
+            'tagline'       => 'Tata Rias Cantik, Flawless, & Elegan untuk Hari Spesial',
+            'description'   => "Grooming Lab MUA Studio adalah studio tata rias profesional yang siap menyempurnakan penampilan Anda di setiap momen berharga. Mulai dari riasan wisuda yang fresh dan tahan seharian, pesta formal yang glamor, pre-wedding outdoor yang awet, hingga riasan pengantin (Bridal) yang memukau.\n\nTim MUA bersertifikat kami hanya menggunakan produk kosmetik premium original (high-end brands) yang ramah untuk semua jenis kulit, termasuk kulit sensitif dan acne-prone.",
+            'facilities'    => "Makeup Artist (MUA) Profesional Bersertifikat\nKosmetik Premium 100% Original & Hipoalergenik\nPrivate Makeup Room dengan Pencahayaan Ring Light Standar Studio\nKonsultasi Tone Kulit & Gaya Riasan Sebelum Dimulai\nFree Touch-Up Kit Sederhana untuk Acara Penting\nRuangan Rias Nyaman & Full AC",
+            'terms'         => "Harap hadir dengan wajah bersih bebas makeup tebal.\nDisarankan membawa foto referensi riasan atau pakaian yang akan dikenakan.\nBeri tahu MUA mengenai alergi atau sensitivitas kulit tertentu sebelum aplikasi produk.",
+            'is_active'     => true,
+        ]);
     }
 }
