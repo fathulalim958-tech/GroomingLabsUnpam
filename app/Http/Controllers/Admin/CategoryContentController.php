@@ -48,3 +48,4 @@ class CategoryContentController extends Controller
             ->with('success', "Konten halaman kategori {$categoryContent->title} berhasil diperbarui.");
     }
 }
+

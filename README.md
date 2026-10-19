@@ -2,17 +2,20 @@
 
 Aplikasi web terintegrasi untuk reservasi jadwal dan manajemen nomor antrian *real-time* layanan perawatan rambut pria (**Barbershop**) dan tata rias (**Make-Up Artist / MUA**). 
 
-Aplikasi ini menggabungkan modul pemesanan mandiri oleh pelanggan (*mobile-friendly*), modul operasional meja depan (*front-desk cashier*), dan modul manajemen data master & laporan oleh administrator.
+Aplikasi ini menggabungkan modul landing page katalog publik, modul pemesanan mandiri oleh pelanggan (*mobile-friendly*), modul operasional meja depan (*front-desk cashier*), dan modul manajemen data master & laporan oleh administrator dengan dukungan penuh **Mode Gelap (Dark Mode)** dan **Mode Terang (Light Mode)**.
 
 ---
 
 ## 📑 Daftar Isi
 - [Ikhtisar & Teknologi](#-ikhtisar--teknologi)
+- [Fitur Unggulan](#-fitur-unggulan)
+  - [🌙 Mode Gelap & Terang (Dark / Light Mode)](#-mode-gelap--terang-dark--light-mode)
+  - [✨ Halaman Info Kategori Layanan (CMS Konten Dinamis)](#-halaman-info-kategori-layanan-cms-konten-dinamis)
 - [Akun Demo & Akses Cepat](#-akun-demo--akses-cepat)
 - [Struktur Database & Model Data](#-struktur-database--model-data)
 - [Siklus Status Antrian (State Machine)](#-siklus-status-antrian-state-machine)
 - [Spesifikasi Fungsional Per Role](#-spesifikasi-fungsional-per-role)
-  - [1. Modul Autentikasi (Semua Pengguna)](#1-modul-autentikasi-semua-pengguna)
+  - [1. Modul Autentikasi & Halaman Informasi Publik](#1-modul-autentikasi--halaman-informasi-publik)
   - [2. Modul Pelanggan (Customer Mobile-First)](#2-modul-pelanggan-customer-mobile-first)
   - [3. Modul Kasir (Front-Desk Queue Control)](#3-modul-kasir-front-desk-queue-control)
   - [4. Modul Admin (Back-Office & Reporting)](#4-modul-admin-back-office--reporting)
@@ -25,11 +28,29 @@ Aplikasi ini menggabungkan modul pemesanan mandiri oleh pelanggan (*mobile-frien
 ## 🚀 Ikhtisar & Teknologi
 
 - **Backend Framework:** Laravel 12 (PHP 8.2+)
-- **Frontend Stack:** Tailwind CSS + Alpine.js + Laravel Blade Components
+- **Frontend Stack:** Tailwind CSS (dengan `darkMode: 'class'`) + Alpine.js + Laravel Blade Components
 - **Asset Bundler:** Vite
-- **Database:** SQLite (default development) / MySQL Ready
+- **Database:** SQLite / MySQL Ready
 - **Real-Time Synchronization:** Polling interval 5–7 detik untuk sinkronisasi tiket antrian pelanggan dan meja kasir
-- **Desain UI:** Terinspirasi dari estetika modern *Grooming Lab* bernuansa dark luxury dengan aksen amber/gold untuk Barbershop dan pink/rose untuk MUA.
+- **Desain UI Dual-Theme:** 
+  - *Dark Mode:* Nuansa mewah (*luxury dark*) dengan latar slate gelap dan aksen amber/gold untuk Barbershop serta rose/pink untuk MUA.
+  - *Light Mode:* Tampilan bersih, profesional, dengan latar putih/slate lembut dan kontras teks tajam (*high-contrast*).
+
+---
+
+## 🌟 Fitur Unggulan
+
+### 🌙 Mode Gelap & Terang (Dark / Light Mode)
+- **Komponen Toggle:** Tombol beralih tema (`<x-theme-toggle />`) tersedia di semua layout (Guest, Pelanggan, Kasir, Admin, dan Halaman Info Publik).
+- **Penyimpanan Preferensi:** Pilihan tema pengguna disimpan di `localStorage.theme` sehingga preferensi tetap aktif di semua sesi.
+- **Anti-FOUC (Flash of Unstyled Content):** Skrip inline di `<head>` mendeteksi preferensi tema sebelum render halaman, mencegah kedipan warna putih/gelap.
+- **Kontras Tinggi:** Teks, label, border, badge, formulir input, dan tabel dirancang khusus agar tetap sangat terbaca di mode terang maupun mode gelap.
+
+### ✨ Halaman Info Kategori Layanan (CMS Konten Dinamis)
+- Pelanggan dan publik dapat melihat detail mendalam tentang masing-masing kategori layanan sebelum melakukan login/booking melalui rute:
+  - `/layanan/barbershop` (Informasi lengkap fasilitas, paket pria, dan aturan Barbershop)
+  - `/layanan/mua` (Informasi tata rias wisuda, pesta, bridal, fasilitas studio, dan konsultasi)
+- **Kontrol Penuh Admin:** Judul hero, deskripsi, daftar fasilitas, aturan/kebijakan, dan banner promosi dapat diubah sewaktu-waktu oleh Admin melalui menu **Konten Kategori** (`/admin/category-contents`).
 
 ---
 
@@ -39,7 +60,7 @@ Setelah database di-seed (`php artisan db:seed`), tersedia 3 akun default untuk 
 
 | Peran (Role) | Email | Password | Halaman Awal | Hak Akses Utama |
 | :--- | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@barbershop.com` | `password` | `/admin/dashboard` | Akses penuh: Kasir, Pelanggan, Layanan, Jam Kerja, Staf, Laporan Transaksi |
+| **Admin** | `admin@barbershop.com` | `password` | `/admin/dashboard` | Akses penuh: Kasir, Pelanggan, Layanan, Jam Kerja, Staf, Konten Kategori, Laporan |
 | **Kasir** | `kasir@barbershop.com` | `password` | `/kasir/dashboard` | Kontrol antrian harian (Panggil, Lewati, Selesai), Input Walk-In Order |
 | **Pelanggan** | `customer@example.com` | `password` | `/pelanggan/home` | Katalog layanan, booking tanggal & jam, tiket antrian aktif, riwayat |
 
@@ -48,6 +69,11 @@ Setelah database di-seed (`php artisan db:seed`), tersedia 3 akun default untuk 
 ## 🗄️ Struktur Database & Model Data
 
 ```
+┌──────────────────────┐
+│  category_contents   │  (CMS Konten Dinamis Info Kategori)
+│(category, hero, etc.)│
+└──────────────────────┘
+
 ┌──────────────┐       1:N       ┌──────────────┐
 │    users     ├────────────────►│   bookings   │
 │ (role, phone)│                 │(queue_number)│
@@ -65,8 +91,9 @@ Setelah database di-seed (`php artisan db:seed`), tersedia 3 akun default untuk 
 2. **`services`**: `id`, `category` (`barbershop`, `mua`), `name`, `description`, `price`, `duration_minutes`, `image`, `is_active`, `timestamps`.
 3. **`staffs`**: `id`, `name`, `role` (`kapster`, `mua`), `phone`, `is_active`, `timestamps`.
 4. **`operating_hours`**: `id`, `day_of_week` (0=Minggu, 1=Senin, ..., 6=Sabtu), `open_time`, `close_time`, `is_closed`, `max_bookings_per_slot`, `timestamps`.
-5. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261019-XXXX`), `user_id`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (e.g. `B-001`, `M-001`), `notes`, `total_price`, `status`, `timestamps`.
-6. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
+5. **`category_contents`**: `id`, `category` (`barbershop`, `mua`), `title`, `subtitle`, `description`, `facilities` (JSON), `rules` (JSON), `banner_url`, `timestamps`.
+6. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261019-XXXX`), `user_id`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (e.g. `B-001`, `M-001`), `notes`, `total_price`, `status`, `timestamps`.
+7. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
 
 ---
 
@@ -89,20 +116,22 @@ Sistem menerapkan aturan transisi status antrian yang ketat agar integritas pema
 
 ## 🎯 Spesifikasi Fungsional Per Role
 
-### 1. Modul Autentikasi (Semua Pengguna)
-- **FR-AUTH-01 (Login Page):** Akses `/` langsung diarahkan ke halaman login. Sistem mendeteksi role (`admin`, `kasir`, `pelanggan`) dan melakukan redirect ke dashboard masing-masing.
+### 1. Modul Autentikasi & Halaman Informasi Publik
+- **FR-AUTH-01 (Login Page):** Akses `/` langsung diarahkan ke halaman login yang dilengkapi tombol login cepat dan switcher mode gelap/terang. Sistem mendeteksi role (`admin`, `kasir`, `pelanggan`) dan mengalihkan ke dashboard terkait.
+- **Halaman Info Kategori Publik:** Tautan di halaman login & registrasi menuju `/layanan/barbershop` dan `/layanan/mua` yang menjelaskan profil layanan, katalog harga, daftar fasilitas, dan tombol langsung reservasi.
 - **FR-AUTH-02 (Register Page):** Pendaftaran mandiri pelanggan dengan input Nama Lengkap, Nomor Telepon/WhatsApp, Email, dan Password. Otomatis dialihkan ke `/pelanggan/home`.
-- **FR-AUTH-03 (Lupa Password & Logout):** Fitur reset kata sandi melalui tautan email dan tombol keluar sesi yang aman.
+- **FR-AUTH-03 (Lupa Password & Logout):** Fitur reset kata sandi melalui email dan tombol keluar sesi yang aman.
 
 ---
 
 ### 2. Modul Pelanggan (Customer Mobile-First)
-Antarmuka pelanggan dioptimalkan untuk perangkat mobile (*smartphone*) dengan bilah navigasi bawah (*Bottom Navigation Bar*):
+Antarmuka pelanggan dioptimalkan untuk kenyamanan di perangkat mobile (*smartphone*) dengan bilah navigasi bawah (*Bottom Navigation Bar*):
 
 - **Menu Home:**
   - **FR-CUST-01 (Katalog Layanan):** Banner fasilitas & promo, daftar layanan unggulan Barbershop & MUA (nama, gambar, harga Rp, estimasi menit, deskripsi).
-  - **FR-CUST-02 (Tombol CTA):** Tombol **"Booking Sekarang"** yang kontras dan mudah diakses.
-  - **Active Ticket Notice:** Jika pelanggan telah memiliki antrian aktif hari ini, muncul notifikasi status antrian di bagian paling atas.
+  - Tautan langsung ke halaman info detail kategori (`/layanan/barbershop` & `/layanan/mua`).
+  - **FR-CUST-02 (Tombol CTA):** Tombol **"Booking Sekarang"** yang kontras dan mencolok.
+  - **Active Ticket Notice:** Jika pelanggan telah memiliki antrian aktif hari ini, muncul notifikasi status antrian di bagian teratas.
 - **Alur Reservasi (Booking Flow):**
   - **FR-CUST-03 (Pilih Kategori):** Pemilihan visual kategori utama: **Layanan Barbershop** vs **Layanan MUA Studio**.
   - **FR-CUST-04 (Formulir Booking):**
@@ -113,7 +142,7 @@ Antarmuka pelanggan dioptimalkan untuk perangkat mobile (*smartphone*) dengan bi
     - Ringkasan biaya dan tombol konfirmasi pesanan.
   - **FR-CUST-05 (Generate Nomor Antrian):** Pembuatan otomatis kode booking unik (`BK-YYYYMMDD-XXXX`) dan nomor antrian (`B-001`, `M-001`).
 - **Menu Order (FR-CUST-06 - Pantau Antrian Real-Time):**
-  - Nomor antrian pelanggan berukuran besar.
+  - Nomor antrian pelanggan berukuran besar dan jelas.
   - **Current Serving Queue:** Menampilkan nomor antrian yang sedang berada di kursi Barbershop dan studio MUA.
   - Sinkronisasi otomatis (*auto-polling*) setiap 5 detik tanpa refresh manual.
   - Tombol batalkan pesanan jika masih berstatus `waiting` atau `skipped`.
@@ -147,6 +176,7 @@ Dirancang untuk kecepatan operasional staf front-desk pada layar tablet maupun d
 Dashboard komprehensif bagi pemilik salon/barbershop:
 
 - **Dashboard Ringkasan:** Kartu metrik total pelanggan, layanan aktif, booking hari ini, pendapatan hari ini, pendapatan bulan ini, dan 10 riwayat booking terkini.
+- **Konten Kategori (CMS Info Layanan):** Mengedit judul, subjudul, deskripsi, fasilitas, aturan/kebijakan, dan banner untuk halaman publik Barbershop dan MUA.
 - **FR-ADM-01 (Kelola Data Kasir):** Tambah, lihat, edit, hapus akun kasir, serta toggle status akun aktif/nonaktif.
 - **FR-ADM-02 (Kelola Data Pelanggan):** Pencarian pelanggan (nama, email, no. HP), melihat detail & seluruh histori transaksi pelanggan, toggle blokir akun, dan opsi reset password ke default.
 - **FR-ADM-03 (Kelola Katalog Layanan):** CRUD katalog Barbershop dan MUA (Nama, Kategori, Foto/URL, Deskripsi, Harga, Estimasi Durasi menit, dan Status Aktif).
@@ -156,7 +186,7 @@ Dashboard komprehensif bagi pemilik salon/barbershop:
   - Filter periode tanggal (Mulai s/d Selesai) dan kategori (Semua, Barbershop, MUA).
   - Rekapitulasi total pendapatan kotor, pendapatan Barbershop, dan pendapatan MUA.
   - **Ekspor CSV / Excel:** Format berkas Excel dengan UTF-8 BOM agar rapi saat dibuka di Microsoft Excel.
-  - **Ekspor Cetak / PDF:** Tampilan struk rekapitulasi resmi yang siap dicetak atau disimpan sebagai PDF.
+  - **Ekspor Cetak / PDF:** Tampilan struk rekapitulasi resmi dengan styling cetak siap print atau unduh PDF.
 
 ---
 
@@ -213,6 +243,8 @@ Aplikasi telah dilengkapi unit & feature tests menyeluruh yang mencakup:
 - Siklus hidup antrian kasir (*Waiting &rarr; Skipped &rarr; In Progress &rarr; Completed*)
 - Pembuatan walk-in order kasir
 - Ekspor laporan CSV admin
+- Halaman informasi kategori publik (`/layanan/{category}`)
+- Pengelolaan CMS Konten Kategori oleh Admin
 
 Jalankan seluruh pengujian dengan perintah:
 ```bash
@@ -228,11 +260,13 @@ php artisan test
   ✓ cashier queue lifecycle
   ✓ cashier can create walkin order
   ✓ admin can export reports csv
+  ✓ public category information page is accessible and displays content
+  ✓ admin can update category content
 
    PASS  Tests\Feature\Auth\... (Authentication, Registration, Password, Profile)
   ---------------------------------------------------------------------------------
-  Tests:    31 passed (89 assertions)
-  Duration: 2.77s
+  Tests:    33 passed (100 assertions)
+  Duration: 2.91s
 ```
 
 ---
@@ -244,92 +278,43 @@ GLtes/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Admin/             # Controller Admin (Dashboard, Kasir, Layanan, Staf, Jam, Laporan)
-│   │   │   ├── Kasir/             # Controller Kasir (Dashboard, QueueController, Walk-In)
-│   │   │   ├── Pelanggan/         # Controller Pelanggan (Home, Booking, Order, Riwayat)
+│   │   │   ├── Admin/                  # Controller Admin (Dashboard, Kasir, Layanan, Staf, Jam, Laporan, CategoryContent)
+│   │   │   ├── Kasir/                  # Controller Kasir (Dashboard, QueueController, Walk-In)
+│   │   │   ├── Pelanggan/              # Controller Pelanggan (Home, Booking, Order, Riwayat)
+│   │   │   ├── CategoryPageController.php # Controller Halaman Info Publik Kategori
 │   │   │   └── ProfileController.php
 │   │   └── Middleware/
-│   │       └── CheckRole.php      # Middleware otorisasi multi-role
+│   │       └── CheckRole.php           # Middleware otorisasi multi-role
 │   ├── Models/
-│   │   ├── Booking.php            # Model booking + generator kode & nomor antrian
-│   │   ├── BookingItem.php        # Model item layanan terpilih
-│   │   ├── OperatingHour.php      # Model jam operasional & hari libur
-│   │   ├── Service.php            # Model katalog layanan Barbershop & MUA
-│   │   ├── Staff.php              # Model kapster & penata rias
-│   │   └── User.php               # Model pengguna dengan role helper
-│   └── View/Components/           # Blade layout components (Pelanggan, Kasir, Admin)
+│   │   ├── Booking.php                 # Model booking + generator kode & nomor antrian
+│   │   ├── BookingItem.php             # Model item layanan terpilih
+│   │   ├── CategoryContent.php         # Model konten CMS halaman kategori
+│   │   ├── OperatingHour.php           # Model jam operasional & hari libur
+│   │   ├── Service.php                 # Model katalog layanan Barbershop & MUA
+│   │   ├── Staff.php                   # Model kapster & penata rias
+│   │   └── User.php                    # Model pengguna dengan role helper
+│   └── View/Components/                # Blade components (ThemeToggle, Layouts)
 ├── database/
-│   ├── migrations/                # Migration users, services, staffs, hours, bookings
-│   └── seeders/DatabaseSeeder.php # Seeder akun demo, 10 layanan, jam kerja, 4 staf
+│   ├── migrations/                     # Migration users, services, staffs, hours, bookings, category_contents
+│   └── seeders/DatabaseSeeder.php      # Seeder akun demo, 10 layanan, jam kerja, 4 staf, 2 category contents
 ├── resources/
-│   ├── css/app.css                # Tailwind CSS
+│   ├── css/app.css                     # Tailwind CSS v3 dengan darkMode class
 │   └── views/
-│       ├── admin/                 # Blade views modul Admin
-│       ├── kasir/                 # Blade views modul Kasir & Walk-In
-│       ├── pelanggan/             # Blade views modul Pelanggan (Mobile-First)
-│       └── layouts/               # Master layouts per role
+│       ├── admin/                      # Blade views modul Admin + Category Contents
+│       ├── kasir/                      # Blade views modul Kasir & Walk-In
+│       ├── pelanggan/                  # Blade views modul Pelanggan (Mobile-First)
+│       ├── categories/                 # Blade views Info Kategori Layanan Publik
+│       ├── components/theme-toggle.blade.php # Tombol pengalih Dark/Light mode
+│       └── layouts/                    # Master layouts per role (Guest, Pelanggan, Kasir, Admin)
 ├── routes/
-│   ├── web.php                    # Rute ber-prefix pelanggan, kasir, admin
-│   └── auth.php                   # Rute autentikasi
+│   ├── web.php                         # Rute ber-prefix pelanggan, kasir, admin, layanan
+│   └── auth.php                        # Rute autentikasi Breeze
 └── tests/
     └── Feature/
-        └── BarbershopMuaSystemTest.php # Automated feature tests PRD
+        └── BarbershopMuaSystemTest.php # Automated feature tests PRD & fitur kustom
 ```
 
 ---
 
 ## 📄 Lisensi
 Aplikasi ini dikembangkan sebagai solusi reservasi dan antrian modern untuk Barbershop & Make-Up Artist Studio di bawah lisensi open-source [MIT](https://opensource.org/licenses/MIT).
-
-   PASS  Tests\Feature\Auth\... (Authentication, Registration, Password, Profile)
-  ---------------------------------------------------------------------------------
-  Tests:    31 passed (89 assertions)
-  Duration: 2.77s
-```
-
----
-
-## 📁 Struktur Direktori Utama
-
-```text
-GLtes/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── Admin/             # Controller Admin (Dashboard, Kasir, Layanan, Staf, Jam, Laporan)
-│   │   │   ├── Kasir/             # Controller Kasir (Dashboard, QueueController, Walk-In)
-│   │   │   ├── Pelanggan/         # Controller Pelanggan (Home, Booking, Order, Riwayat)
-│   │   │   └── ProfileController.php
-│   │   └── Middleware/
-│   │       └── CheckRole.php      # Middleware otorisasi multi-role
-│   ├── Models/
-│   │   ├── Booking.php            # Model booking + generator kode & nomor antrian
-│   │   ├── BookingItem.php        # Model item layanan terpilih
-│   │   ├── OperatingHour.php      # Model jam operasional & hari libur
-│   │   ├── Service.php            # Model katalog layanan Barbershop & MUA
-│   │   ├── Staff.php              # Model kapster & penata rias
-│   │   └── User.php               # Model pengguna dengan role helper
-│   └── View/Components/           # Blade layout components (Pelanggan, Kasir, Admin)
-├── database/
-│   ├── migrations/                # Migration users, services, staffs, hours, bookings
-│   └── seeders/DatabaseSeeder.php # Seeder akun demo, 10 layanan, jam kerja, 4 staf
-├── resources/
-│   ├── css/app.css                # Tailwind CSS
-│   └── views/
-│       ├── admin/                 # Blade views modul Admin
-│       ├── kasir/                 # Blade views modul Kasir & Walk-In
-│       ├── pelanggan/             # Blade views modul Pelanggan (Mobile-First)
-│       └── layouts/               # Master layouts per role
-├── routes/
-│   ├── web.php                    # Rute ber-prefix pelanggan, kasir, admin
-│   └── auth.php                   # Rute autentikasi
-└── tests/
-    └── Feature/
-        └── BarbershopMuaSystemTest.php # Automated feature tests PRD
-```
-
----
-
-## 📄 Lisensi
-Aplikasi ini dikembangkan sebagai solusi reservasi dan antrian modern untuk Barbershop & Make-Up Artist Studio di bawah lisensi open-source [MIT](https://opensource.org/licenses/MIT).
-
