@@ -1,55 +1,124 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SesiController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Pelanggan\HomeController;
+use App\Http\Controllers\Pelanggan\BookingController;
+use App\Http\Controllers\Pelanggan\OrderController;
+use App\Http\Controllers\Pelanggan\HistoryController;
+use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
+use App\Http\Controllers\Kasir\QueueController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\CashierController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\OperatingHourController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\CategoryContentController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/Register', [SesiController::class, 'Register'])->name('Register');
-Route::post('/Register', [SesiController::class, 'createAccount'])->name('Register.post');
-
-// Guest Routes
-Route::middleware(['guest'])->group(function () {
-    Route::get('/', [SesiController::class, 'index'])->name('login');
-    Route::post('/', [SesiController::class, 'login']);
+// FR-AUTH-01: Landing page redirects to login
+Route::get('/', function () {
+    return redirect()->route('login');
 });
 
-// Authenticated Routes
-Route::middleware(['auth'])->group(function () {
-    // Group khusus Pelanggan
-    Route::middleware(['userAkses:pelanggan'])->prefix('dashboard/pelanggan')->group(function () {
-        Route::get('/', [DashboardController::class, 'pelanggan']);
-        Route::get('/Barbershop', [DashboardController::class, 'Barbershop']);
-        Route::get('/MUA', [DashboardController::class, 'MUA']);
-        Route::get('/booking', [DashboardController::class, 'booking']);
-        Route::get('/riwayat', [DashboardController::class, 'riwayat']);
-        Route::get('/order', [DashboardController::class, 'order'])->name('pelanggan.order');
-        Route::get('/profile', [DashboardController::class, 'profile'])->name('pelanggan.profile');
-        Route::put('/profile/password', [DashboardController::class, 'updatePassword'])->name('pelanggan.password.update');
-        Route::get('/booking/input', [DashboardController::class, 'bookingInput'])->name('pelanggan.booking.input');
-        Route::post('/booking/store', [DashboardController::class, 'storeBooking'])->name('pelanggan.booking.store');
-        Route::patch('/booking/{booking}/cancel', [DashboardController::class, 'cancelBooking'])->name('pelanggan.booking.cancel');
-    });
+// Category Explanation Page (Public & Customer - DOES NOT force login)
+Route::get('/kategori/{category}', [CategoryController::class, 'show'])->name('categories.show');
+
+// Role-based dashboard redirect
+Route::get('/dashboard', function () {
+    $user = request()->user();
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'kasir') {
+        return redirect()->route('kasir.dashboard');
+    }
+    return redirect()->route('pelanggan.home');
+})->middleware(['auth'])->name('dashboard');
+
+// Common profile routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Group khusus Kasir
-Route::middleware(['userAkses:kasir'])->group(function () {
-    Route::get('/dashboard/kasir', [DashboardController::class, 'kasir'])->name('kasir.dashboard');
-    Route::get('/dashboard/kasir/booking-walkin', [DashboardController::class, 'bookingWalkin'])->name('kasir.booking.walkin');
-    Route::post('/dashboard/kasir/booking-walkin', [DashboardController::class, 'storeWalkin'])->name('kasir.booking.walkin.store');
-    Route::patch('/dashboard/kasir/bookings/{booking}/complete', [DashboardController::class, 'completeBooking'])->name('kasir.booking.complete');
+// ============================================================
+// PELANGGAN (Customer) Routes
+// ============================================================
+Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    // Booking Flow
+    Route::get('/booking', [BookingController::class, 'selectCategory'])->name('booking.category');
+    Route::get('/booking/{category}', [BookingController::class, 'create'])->name('booking.create');
+    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+
+    // Active Order / Queue Tracking
+    Route::get('/order', [OrderController::class, 'index'])->name('order.index');
+    Route::get('/order/check-queue', [OrderController::class, 'checkQueue'])->name('order.check-queue');
+    Route::post('/order/{booking}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+
+    // History
+    Route::get('/riwayat', [HistoryController::class, 'index'])->name('history.index');
+
+    // Profile
+    Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profil', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Group khusus Admin
-Route::middleware(['userAkses:admin'])->group(function () {
-    Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
-    Route::get('/dashboard/admin/kelola-karyawan', [AdminController::class, 'employees'])->name('admin.karyawan');
-    Route::post('/dashboard/admin/kelola-karyawan', [AdminController::class, 'storeEmployee'])->name('admin.karyawan.store');
-    Route::put('/dashboard/admin/kelola-karyawan/{employee}', [AdminController::class, 'updateEmployee'])->name('admin.karyawan.update');
-    Route::delete('/dashboard/admin/kelola-karyawan/{employee}', [AdminController::class, 'destroyEmployee'])->name('admin.karyawan.destroy');
-    Route::get('/dashboard/admin/laporan-pendapatan', [DashboardController::class, 'laporanPendapatan'])->name('admin.laporan');
-    Route::get('/dashboard/admin/laporan-pendapatan/export', [DashboardController::class, 'exportLaporanPendapatan'])->name('admin.laporan.export');
+// ============================================================
+// KASIR (Cashier) Routes
+// ============================================================
+Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->group(function () {
+    Route::get('/dashboard', [KasirDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/orders', [KasirDashboardController::class, 'getOrders'])->name('dashboard.orders');
+
+    // Queue Control
+    Route::post('/queue/{booking}/process', [QueueController::class, 'process'])->name('queue.process');
+    Route::post('/queue/{booking}/skip', [QueueController::class, 'skip'])->name('queue.skip');
+    Route::post('/queue/{booking}/complete', [QueueController::class, 'complete'])->name('queue.complete');
+    Route::post('/queue/{booking}/cancel', [QueueController::class, 'cancel'])->name('queue.cancel');
+
+    // Walk-in Order
+    Route::get('/walk-in', [KasirDashboardController::class, 'walkInForm'])->name('walkin.create');
+    Route::post('/walk-in', [KasirDashboardController::class, 'walkInStore'])->name('walkin.store');
 });
 
-// Logout
-Route::get('/logout', [SesiController::class, 'logout'])->name('logout');
+// ============================================================
+// ADMIN Routes
+// ============================================================
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // CRUD Kasir (Cashiers)
+    Route::resource('cashiers', CashierController::class);
+    Route::post('/cashiers/{cashier}/toggle-active', [CashierController::class, 'toggleActive'])->name('cashiers.toggle-active');
+
+    // CRUD Customers
+    Route::resource('customers', CustomerController::class)->only(['index', 'show', 'destroy']);
+    Route::post('/customers/{customer}/toggle-block', [CustomerController::class, 'toggleBlock'])->name('customers.toggle-block');
+    Route::post('/customers/{customer}/reset-password', [CustomerController::class, 'resetPassword'])->name('customers.reset-password');
+
+    // CRUD Services
+    Route::resource('services', ServiceController::class);
+
+    // CRUD Staff (Kapster & MUA)
+    Route::resource('staffs', StaffController::class);
+
+    // Operating Hours
+    Route::get('/operating-hours', [OperatingHourController::class, 'index'])->name('operating-hours.index');
+    Route::put('/operating-hours', [OperatingHourController::class, 'update'])->name('operating-hours.update');
+
+    // Reports
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.export-pdf');
+    Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export-excel');
+
+    // Manage Category Explanation Contents
+    Route::resource('category-contents', CategoryContentController::class)->only(['index', 'edit', 'update']);
+});
+
+require __DIR__.'/auth.php';
