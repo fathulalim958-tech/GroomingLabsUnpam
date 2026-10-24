@@ -27,6 +27,11 @@ class User extends Authenticatable
         'role',
         'avatar',
         'is_active',
+        'is_member',
+        'member_discount',
+        'member_discount_type',
+        'member_discount_quota',
+        'member_discount_remaining',
     ];
 
     /**
@@ -50,7 +55,47 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'is_member' => 'boolean',
+            'member_discount' => 'float',
+            'member_discount_quota' => 'integer',
+            'member_discount_remaining' => 'integer',
         ];
+    }
+
+    /**
+     * Check if user has active member discount quota.
+     */
+    public function hasActiveMemberDiscount(): bool
+    {
+        return $this->is_member && $this->member_discount_remaining > 0 && $this->member_discount > 0;
+    }
+
+    /**
+     * Calculate discount for a given price.
+     */
+    public function calculateDiscount(float $originalPrice): float
+    {
+        if (! $this->hasActiveMemberDiscount()) {
+            return 0;
+        }
+
+        if ($this->member_discount_type === 'percent') {
+            return min($originalPrice, round(($originalPrice * $this->member_discount) / 100));
+        }
+
+        return min($originalPrice, (float) $this->member_discount);
+    }
+
+    /**
+     * Get formatted member discount label.
+     */
+    public function getMemberDiscountLabelAttribute(): string
+    {
+        if ($this->member_discount_type === 'percent') {
+            return intval($this->member_discount) . '%';
+        }
+
+        return 'Rp ' . number_format($this->member_discount, 0, ',', '.');
     }
 
     /*

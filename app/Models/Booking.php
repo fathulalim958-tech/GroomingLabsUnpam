@@ -22,6 +22,8 @@ class Booking extends Model
     protected $fillable = [
         'booking_code',
         'user_id',
+        'customer_name',
+        'customer_phone',
         'cashier_id',
         'staff_id',
         'service_category',
@@ -30,6 +32,7 @@ class Booking extends Model
         'queue_number',
         'notes',
         'total_price',
+        'discount_amount',
         'status',
     ];
 
@@ -43,6 +46,7 @@ class Booking extends Model
         return [
             'booking_date' => 'date',
             'total_price' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
         ];
     }
 
@@ -53,6 +57,7 @@ class Booking extends Model
      */
     public const STATUS_LABELS = [
         'waiting' => 'Menunggu',
+        'called' => 'Dipanggil',
         'in_progress' => 'Sedang Dilayani',
         'skipped' => 'Dilewati',
         'completed' => 'Selesai',
@@ -65,12 +70,45 @@ class Booking extends Model
      * @var array<string, string>
      */
     public const STATUS_COLORS = [
-        'waiting' => 'bg-yellow-100 text-yellow-800',
-        'in_progress' => 'bg-blue-100 text-blue-800',
-        'skipped' => 'bg-orange-100 text-orange-800',
-        'completed' => 'bg-green-100 text-green-800',
-        'cancelled' => 'bg-red-100 text-red-800',
+        'waiting'     => 'bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 whitespace-nowrap inline-block',
+        'called'      => 'bg-indigo-100 text-indigo-900 border border-indigo-300 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/40 whitespace-nowrap inline-block',
+        'in_progress' => 'bg-sky-100 text-sky-900 border border-sky-300 dark:bg-sky-500/25 dark:text-sky-300 dark:border-sky-500/40 font-black whitespace-nowrap inline-block',
+        'skipped'     => 'bg-purple-100 text-purple-900 border border-purple-300 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/40 whitespace-nowrap inline-block',
+        'completed'   => 'bg-emerald-100 text-emerald-900 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 whitespace-nowrap inline-block',
+        'cancelled'   => 'bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 whitespace-nowrap inline-block',
     ];
+
+    /**
+     * Get customer display name (fallback to registered user name or Walk-in).
+     */
+    public function getCustomerNameAttribute(): string
+    {
+        return $this->attributes['customer_name'] ?? $this->user?->name ?? 'Walk-in';
+    }
+
+    /**
+     * Get customer phone (fallback to registered user phone).
+     */
+    public function getCustomerPhoneAttribute(): ?string
+    {
+        return $this->attributes['customer_phone'] ?? $this->user?->phone;
+    }
+
+    /**
+     * Get formatted booking time without seconds (HH:MM).
+     */
+    public function getFormattedBookingTimeAttribute(): string
+    {
+        return substr($this->booking_time ?? '', 0, 5);
+    }
+
+    /**
+     * Determine if this is an offline / walk-in order.
+     */
+    public function getIsWalkInAttribute(): bool
+    {
+        return $this->user_id === null || $this->cashier_id !== null;
+    }
 
     /*
     |--------------------------------------------------------------------------

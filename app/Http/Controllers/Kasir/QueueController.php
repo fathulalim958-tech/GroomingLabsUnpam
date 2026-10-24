@@ -9,22 +9,40 @@ use Illuminate\Http\Request;
 class QueueController extends Controller
 {
     /**
-     * Set booking status to In Progress (Proses).
+     * Call a customer (Dipanggil) - Notifies customer to approach service chair/desk.
+     */
+    public function call(Booking $booking)
+    {
+        if (!in_array($booking->status, ['waiting', 'called', 'skipped'])) {
+            return back()->withErrors(['error' => 'Hanya antrian yang Menunggu atau Dilewati yang dapat dipanggil.']);
+        }
+
+        $booking->update([
+            'status' => 'called',
+            'cashier_id' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Nomor antrian ' . $booking->queue_number . ' (' . $booking->customer_name . ') berhasil dipanggil! Pemberitahuan telah dikirimkan ke pelanggan.');
+    }
+
+    /**
+     * Serve a customer (Layani) - Set booking status to In Progress (Sedang Dilayani).
      */
     public function process(Booking $booking)
     {
-        if (!in_array($booking->status, ['waiting', 'skipped'])) {
-            return back()->withErrors(['error' => 'Booking tidak dapat diproses.']);
+        if (!in_array($booking->status, ['waiting', 'called', 'skipped'])) {
+            return back()->withErrors(['error' => 'Booking tidak dapat dilayani.']);
         }
 
-        // Check if there's already an in-progress booking for this category
+        // Cek apakah akun kasir yang sedang login ini sudah melayani antrian aktif (setiap akun kasir hanya bisa melayani 1 antrian)
         $inProgress = Booking::today()
-            ->where('service_category', $booking->service_category)
+            ->where('cashier_id', auth()->id())
             ->where('status', 'in_progress')
+            ->where('id', '!=', $booking->id)
             ->first();
 
         if ($inProgress) {
-            return back()->withErrors(['error' => 'Masih ada antrian yang sedang diproses (' . $inProgress->queue_number . '). Selesaikan terlebih dahulu.']);
+            return back()->withErrors(['error' => 'Akun kasir Anda masih melayani antrian (' . $inProgress->queue_number . ' - ' . $inProgress->customer_name . '). Selesaikan antrian tersebut terlebih dahulu sebelum melayani antrian baru.']);
         }
 
         $booking->update([
@@ -32,7 +50,7 @@ class QueueController extends Controller
             'cashier_id' => auth()->id(),
         ]);
 
-        return back()->with('success', 'Antrian ' . $booking->queue_number . ' sedang diproses.');
+        return back()->with('success', 'Nomor antrian ' . $booking->queue_number . ' (' . $booking->customer_name . ') sedang dilayani.');
     }
 
     /**
@@ -58,6 +76,12 @@ class QueueController extends Controller
             return back()->withErrors(['error' => 'Hanya booking yang sedang diproses yang dapat diselesaikan.']);
         }
 
+        // Cek jika antrian ini sedang diproses oleh akun kasir lain
+        if ($booking->cashier_id && $booking->cashier_id !== auth()->id()) {
+            $otherCashierName = $booking->cashier ? $booking->cashier->name : 'kasir lain';
+            return back()->withErrors(['error' => "Antrian ini sedang diproses oleh {$otherCashierName}. Hanya kasir yang melayani yang dapat menyelesaikan antrian ini."]);
+        }
+
         $booking->update([
             'status' => 'completed',
             'cashier_id' => auth()->id(),
@@ -71,7 +95,7 @@ class QueueController extends Controller
      */
     public function cancel(Booking $booking)
     {
-        if (!in_array($booking->status, ['waiting', 'skipped'])) {
+        if (!in_array($booking->status, ['waiting', 'called', 'skipped'])) {
             return back()->withErrors(['error' => 'Booking tidak dapat dibatalkan.']);
         }
 

@@ -72,8 +72,8 @@
                                 <td class="py-3 px-4 text-xs text-slate-600 dark:text-slate-300">{{ $b->items->map(fn($i) => $i->service->name)->join(', ') }}</td>
                                 <td class="py-3 px-4 text-xs text-slate-600 dark:text-slate-400">{{ $b->booking_date->format('d/m/Y') }} &bull; {{ $b->booking_time }}</td>
                                 <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">Rp {{ number_format($b->total_price, 0, ',', '.') }}</td>
-                                <td class="py-3 px-4">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $b->status_color }}">
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap inline-block {{ $b->status_color }}">
                                         {{ $b->status_label }}
                                     </span>
                                 </td>

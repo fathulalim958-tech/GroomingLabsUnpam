@@ -25,7 +25,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-slate-900 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-24 md:pb-8 antialiased selection:bg-amber-500 selection:text-white transition-colors duration-200">
+<body x-data="{ showLogoutModal: false }" class="font-sans text-slate-900 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-24 md:pb-8 antialiased selection:bg-amber-500 selection:text-white transition-colors duration-200">
     <!-- Top Navbar -->
     <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -44,15 +44,14 @@
                 <x-theme-toggle />
 
                 <span class="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">Hai, <strong class="text-slate-800 dark:text-slate-200">{{ auth()->user()->name }}</strong></span>
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="text-xs text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-red-300 dark:hover:border-red-900/50 bg-slate-100 dark:bg-slate-900 transition flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span class="hidden sm:inline">Keluar</span>
-                    </button>
-                </form>
+                <button type="button"
+                        @click="showLogoutModal = true"
+                        class="text-xs text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-red-300 dark:hover:border-red-900/50 bg-slate-100 dark:bg-slate-900 transition flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span class="hidden sm:inline">Keluar</span>
+                </button>
             </div>
         </div>
     </header>
@@ -124,6 +123,51 @@
             </a>
         </div>
     </nav>
+    <!-- Pop-up Konfirmasi Logout Pelanggan -->
+    <div x-show="showLogoutModal"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4"
+         style="display: none;">
+        
+        <div @click.away="showLogoutModal = false"
+             class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
+            
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center shadow-inner">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+            </div>
+
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Konfirmasi Keluar</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Apakah Anda yakin ingin keluar dari akun Grooming Lab?
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button type="button"
+                        @click="showLogoutModal = false"
+                        class="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl border border-slate-300 dark:border-slate-700 transition">
+                    Batal
+                </button>
+
+                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    @csrf
+                    <button type="submit"
+                            class="w-full py-2.5 px-4 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/20 transition">
+                        Ya, Keluar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @stack('scripts')
 </body>
 </html>

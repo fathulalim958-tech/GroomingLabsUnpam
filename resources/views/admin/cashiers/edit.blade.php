@@ -34,9 +34,10 @@
                 </div>
 
                 <div>
-                    <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor WhatsApp / HP *</label>
+                    <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor WhatsApp / HP * <span class="text-[10px] text-slate-400 font-normal">(Hanya angka)</span></label>
                     <input id="phone" type="tel" name="phone" value="{{ old('phone', $cashier->phone) }}" required
-                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono" />
                     @error('phone')
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                     @enderror

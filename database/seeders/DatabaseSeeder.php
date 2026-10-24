@@ -140,9 +140,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // ── Operating Hours (0 = Sunday, 1 = Monday, ..., 6 = Saturday) ──────
-        // Monday (1) to Saturday (6)
+        // Barbershop Operating Hours
         for ($day = 1; $day <= 6; $day++) {
             OperatingHour::create([
+                'category'              => 'barbershop',
                 'day_of_week'           => $day,
                 'open_time'             => '09:00',
                 'close_time'            => '21:00',
@@ -150,14 +151,33 @@ class DatabaseSeeder extends Seeder
                 'max_bookings_per_slot' => 5,
             ]);
         }
-
-        // Sunday (0) - Closed
         OperatingHour::create([
+            'category'              => 'barbershop',
             'day_of_week'           => 0,
             'open_time'             => '09:00',
             'close_time'            => '18:00',
             'is_closed'             => true,
             'max_bookings_per_slot' => 5,
+        ]);
+
+        // MUA Operating Hours (tends to have fewer slots per hour than barbershop)
+        for ($day = 1; $day <= 6; $day++) {
+            OperatingHour::create([
+                'category'              => 'mua',
+                'day_of_week'           => $day,
+                'open_time'             => '09:00',
+                'close_time'            => '21:00',
+                'is_closed'             => false,
+                'max_bookings_per_slot' => 2,
+            ]);
+        }
+        OperatingHour::create([
+            'category'              => 'mua',
+            'day_of_week'           => 0,
+            'open_time'             => '09:00',
+            'close_time'            => '18:00',
+            'is_closed'             => true,
+            'max_bookings_per_slot' => 2,
         ]);
 
         // ── Staff ──────────────────────────────────────────────

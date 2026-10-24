@@ -15,7 +15,9 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
+        // Only registered users who have created an account are shown in Data Pelanggan
         $query = User::where('role', 'pelanggan')
+            ->where('email', 'not like', '%@walkin.local')
             ->withCount('bookings')
             ->orderBy('created_at', 'desc');
 
@@ -95,6 +97,54 @@ class CustomerController extends Controller
         $customer->save();
 
         return back()->with('success', "Password pelanggan berhasil di-reset ke: {$newPassword}");
+    }
+
+    /**
+     * Update customer membership and discount settings.
+     */
+    public function updateMembership(Request $request, User $customer)
+    {
+        if ($customer->role !== 'pelanggan') {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'is_member'                  => 'required|boolean',
+            'member_discount'           => 'required_if:is_member,1|numeric|min:0',
+            'member_discount_type'      => 'required_if:is_member,1|in:percent,fixed',
+            'member_discount_quota'     => 'required_if:is_member,1|integer|min:0',
+            'member_discount_remaining' => 'nullable|integer|min:0',
+        ], [
+            'member_discount.required_if' => 'Besaran diskon wajib diisi jika mendaftarkan member.',
+            'member_discount_quota.required_if' => 'Jumlah kuota pemakaian diskon wajib diisi.',
+        ]);
+
+        if ($validated['is_member']) {
+            $quota = (int) $validated['member_discount_quota'];
+            $remaining = $request->filled('member_discount_remaining')
+                ? (int) $validated['member_discount_remaining']
+                : $quota;
+
+            $customer->update([
+                'is_member'                  => true,
+                'member_discount'           => $validated['member_discount'],
+                'member_discount_type'      => $validated['member_discount_type'],
+                'member_discount_quota'     => $quota,
+                'member_discount_remaining' => $remaining,
+            ]);
+
+            return back()->with('success', "Status keanggotaan member {$customer->name} berhasil disimpan.");
+        }
+
+        $customer->update([
+            'is_member'                  => false,
+            'member_discount'           => 0,
+            'member_discount_type'      => 'percent',
+            'member_discount_quota'     => 0,
+            'member_discount_remaining' => 0,
+        ]);
+
+        return back()->with('success', "Status member {$customer->name} telah dinonaktifkan.");
     }
 }
 

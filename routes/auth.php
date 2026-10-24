@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordResetCodeController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -22,12 +23,29 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    // Password Reset with Email Verification Code (OTP)
+    Route::get('forgot-password', [PasswordResetCodeController::class, 'create'])
         ->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+    Route::post('forgot-password', [PasswordResetCodeController::class, 'sendCode'])
         ->name('password.email');
 
+    Route::get('forgot-password/verify', [PasswordResetCodeController::class, 'showVerifyForm'])
+        ->name('password.verify.form');
+
+    Route::post('forgot-password/verify', [PasswordResetCodeController::class, 'verifyCode'])
+        ->name('password.verify');
+
+    Route::post('forgot-password/resend', [PasswordResetCodeController::class, 'resendCode'])
+        ->name('password.resend');
+
+    Route::get('forgot-password/reset', [PasswordResetCodeController::class, 'showResetForm'])
+        ->name('password.reset.form');
+
+    Route::post('forgot-password/reset', [PasswordResetCodeController::class, 'resetPassword'])
+        ->name('password.reset.store');
+
+    // Fallback legacy link support
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 

@@ -15,6 +15,7 @@ class OperatingHour extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'category',
         'day_of_week',
         'open_time',
         'close_time',
@@ -50,6 +51,22 @@ class OperatingHour extends Model
         5 => 'Jumat',
         6 => 'Sabtu',
     ];
+
+    /**
+     * Scope query to specific category.
+     */
+    public function scopeByCategory($query, string $category)
+    {
+        return $query->where('category', $category);
+    }
+
+    /**
+     * Get category display label.
+     */
+    public function getCategoryLabel(): string
+    {
+        return $this->category === 'mua' ? 'MUA Studio' : 'Barbershop';
+    }
 
     /**
      * Get the Indonesian day name for this operating hour record.

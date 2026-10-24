@@ -25,9 +25,11 @@
 
         <!-- Phone / WhatsApp -->
         <div>
-            <label for="phone" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nomor Telepon / WhatsApp</label>
+            <label for="phone" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nomor Telepon / WhatsApp <span class="text-xs text-slate-400 font-normal">(Hanya angka)</span></label>
             <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" required autocomplete="tel"
-                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                inputmode="numeric" pattern="[0-9]*"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition font-mono"
                 placeholder="Contoh: 081234567890" />
         </div>
 

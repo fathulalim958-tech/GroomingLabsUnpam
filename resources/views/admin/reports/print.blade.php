@@ -120,7 +120,7 @@
                     <td>{{ $b->booking_date->format('d/m/Y') }} {{ $b->booking_time }}</td>
                     <td style="font-weight: bold;">{{ $b->queue_number }}</td>
                     <td style="font-family: monospace;">{{ $b->booking_code }}</td>
-                    <td>{{ $b->user->name ?? 'Walk-in' }}</td>
+                    <td>{{ $b->customer_name }}</td>
                     <td>{{ ucfirst($b->service_category) }}</td>
                     <td>{{ $b->items->map(fn($i) => $i->service->name)->join(', ') }}</td>
                     <td>{{ $b->cashier->name ?? '-' }}</td>

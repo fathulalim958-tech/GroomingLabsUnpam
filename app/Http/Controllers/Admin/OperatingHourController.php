@@ -11,11 +11,26 @@ class OperatingHourController extends Controller
     /**
      * Display operating hours settings.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $operatingHours = OperatingHour::orderBy('day_of_week')->get();
+        $category = $request->get('category', 'barbershop');
+        if (!in_array($category, ['barbershop', 'mua'])) {
+            $category = 'barbershop';
+        }
 
-        return view('admin.operating-hours.index', compact('operatingHours'));
+        $operatingHours = OperatingHour::where('category', $category)
+            ->orderBy('day_of_week')
+            ->get();
+
+        // If for any reason operating hours for this category don't exist yet, generate them
+        if ($operatingHours->isEmpty()) {
+            $this->seedCategoryHours($category);
+            $operatingHours = OperatingHour::where('category', $category)
+                ->orderBy('day_of_week')
+                ->get();
+        }
+
+        return view('admin.operating-hours.index', compact('operatingHours', 'category'));
     }
 
     /**
@@ -23,7 +38,13 @@ class OperatingHourController extends Controller
      */
     public function update(Request $request)
     {
+        $category = $request->input('category', 'barbershop');
+        if (!in_array($category, ['barbershop', 'mua'])) {
+            $category = 'barbershop';
+        }
+
         $validated = $request->validate([
+            'category'                      => 'nullable|string|in:barbershop,mua',
             'hours'                         => 'required|array',
             'hours.*.id'                    => 'required|exists:operating_hours,id',
             'hours.*.open_time'             => 'required',
@@ -42,8 +63,37 @@ class OperatingHourController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.operating-hours.index')
-            ->with('success', 'Jadwal & jam operasional berhasil diperbarui.');
+        $categoryName = $category === 'mua' ? 'MUA Studio' : 'Barbershop';
+
+        return redirect()->route('admin.operating-hours.index', ['category' => $category])
+            ->with('success', "Jadwal & jam operasional {$categoryName} berhasil diperbarui.");
+    }
+
+    /**
+     * Helper to seed hours for a category if missing.
+     */
+    private function seedCategoryHours(string $category): void
+    {
+        $defaultQuota = $category === 'barbershop' ? 5 : 2;
+
+        for ($day = 1; $day <= 6; $day++) {
+            OperatingHour::create([
+                'category'              => $category,
+                'day_of_week'           => $day,
+                'open_time'             => '09:00',
+                'close_time'            => '21:00',
+                'is_closed'             => false,
+                'max_bookings_per_slot' => $defaultQuota,
+            ]);
+        }
+
+        OperatingHour::create([
+            'category'              => $category,
+            'day_of_week'           => 0,
+            'open_time'             => '09:00',
+            'close_time'            => '18:00',
+            'is_closed'             => true,
+            'max_bookings_per_slot' => $defaultQuota,
+        ]);
     }
 }
-

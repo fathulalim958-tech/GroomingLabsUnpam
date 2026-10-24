@@ -97,7 +97,7 @@
                         @forelse ($recentBookings as $b)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                                 <td class="py-3 px-4 font-mono font-bold text-amber-600 dark:text-amber-400">{{ $b->queue_number }}</td>
-                                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">{{ $b->user->name }}</td>
+                                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">{{ $b->customer_name }}</td>
                                 <td class="py-3 px-4">
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $b->service_category === 'barbershop' ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400' : 'bg-pink-500/10 text-pink-700 dark:text-pink-400' }}">
                                         {{ ucfirst($b->service_category) }}
@@ -106,8 +106,8 @@
                                 <td class="py-3 px-4 text-xs text-slate-600 dark:text-slate-300">{{ $b->items->map(fn($i) => $i->service->name)->join(', ') }}</td>
                                 <td class="py-3 px-4 text-xs text-slate-600 dark:text-slate-400">{{ $b->booking_date->format('d/m/Y') }} &bull; {{ $b->booking_time }}</td>
                                 <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">Rp {{ number_format($b->total_price, 0, ',', '.') }}</td>
-                                <td class="py-3 px-4">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $b->status_color }}">
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap inline-block {{ $b->status_color }}">
                                         {{ $b->status_label }}
                                     </span>
                                 </td>

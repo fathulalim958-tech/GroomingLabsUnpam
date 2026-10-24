@@ -40,8 +40,10 @@ class StaffController extends Controller
         $validated = $request->validate([
             'name'      => 'required|string|max:255',
             'role'      => 'required|in:kapster,mua',
-            'phone'     => 'nullable|string|max:20',
+            'phone'     => ['nullable', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
             'is_active' => 'boolean',
+        ], [
+            'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
@@ -68,8 +70,10 @@ class StaffController extends Controller
         $validated = $request->validate([
             'name'      => 'required|string|max:255',
             'role'      => 'required|in:kapster,mua',
-            'phone'     => 'nullable|string|max:20',
+            'phone'     => ['nullable', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
             'is_active' => 'boolean',
+        ], [
+            'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
         ]);
 
         $validated['is_active'] = $request->has('is_active');

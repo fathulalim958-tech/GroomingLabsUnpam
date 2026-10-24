@@ -17,6 +17,26 @@
             </div>
         @endif
 
+        @if ($user->is_member)
+            <!-- Member VIP Card -->
+            <div class="bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/20 border border-amber-500/40 rounded-3xl p-5 shadow-sm flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 font-black text-xl flex items-center justify-center shadow-md shadow-amber-500/30">
+                        ⭐
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-black text-slate-900 dark:text-white">Keanggotaan Member Aktif</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950">VIP MEMBER</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                            Potongan Diskon: <strong class="text-amber-600 dark:text-amber-400 font-mono">{{ $user->member_discount_label }}</strong> &bull; Sisa Kuota: <strong class="font-mono {{ $user->member_discount_remaining > 0 ? 'text-emerald-500 font-bold' : 'text-rose-500 font-bold' }}">{{ $user->member_discount_remaining }}x</strong> penggunaan
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Profile Information Form (FR-CUST-09) -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm dark:shadow-xl">
             <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Informasi Pribadi</h2>
@@ -36,9 +56,9 @@
                 </div>
 
                 <div>
-                    <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Telepon / WhatsApp</label>
-                    <input id="phone" name="phone" type="tel" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                           value="{{ old('phone', $user->phone) }}" required autocomplete="tel" />
+                    <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Telepon / WhatsApp <span class="text-[10px] text-slate-400 font-normal">(Hanya angka)</span></label>
+                    <input id="phone" name="phone" type="tel" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"
+                           value="{{ old('phone', $user->phone) }}" required autocomplete="tel" placeholder="Contoh: 081234567890" />
                     @error('phone')
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                     @enderror
@@ -104,12 +124,9 @@
 
         <!-- Logout Section -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 text-center shadow-sm">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="w-full py-3 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-xs rounded-xl border border-red-300 dark:border-red-500/30 transition">
-                    Keluar dari Akun
-                </button>
-            </form>
+            <button type="button" @click="showLogoutModal = true" class="w-full py-3 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-xs rounded-xl border border-red-300 dark:border-red-500/30 transition">
+                Keluar dari Akun
+            </button>
         </div>
     </div>
 </x-pelanggan-layout>

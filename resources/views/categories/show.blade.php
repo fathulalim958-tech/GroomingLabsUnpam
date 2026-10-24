@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -127,7 +127,9 @@
                         </a>
                     @endauth
 
-                    <a href="#daftar-layanan" class="px-4 py-3 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 transition shadow-sm">
+                    <a href="#daftar-layanan"
+                       onclick="const el = document.getElementById('daftar-layanan'); if (el) { el.scrollIntoView({ behavior: 'smooth' }); history.pushState(null, null, '#daftar-layanan'); return false; }"
+                       class="px-4 py-3 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 transition shadow-sm inline-flex items-center gap-1.5 cursor-pointer">
                         Lihat Menu Layanan &darr;
                     </a>
                 </div>
@@ -180,7 +182,7 @@
         @endif
 
         <!-- Services Catalog Section (Daftar Menu Layanan) -->
-        <div id="daftar-layanan" class="space-y-4">
+        <div id="daftar-layanan" class="scroll-mt-20 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">

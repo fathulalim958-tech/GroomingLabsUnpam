@@ -1,10 +1,39 @@
 <x-pelanggan-layout title="Home - Grooming Lab & MUA">
     <div class="space-y-6 pb-6">
-        <!-- Active Booking Banner (if any) -->
-        @if ($activeBooking)
+        <!-- Active Booking Banners (if any) -->
+        @if (isset($activeBookings) && $activeBookings->isNotEmpty())
+            <div class="space-y-3">
+                @foreach ($activeBookings as $b)
+                    <div class="bg-gradient-to-r {{ $b->service_category === 'barbershop' ? 'from-amber-500/10 via-amber-500/5 to-white dark:from-amber-900/60 dark:via-amber-800/40 dark:to-slate-900 border-amber-500/40' : 'from-pink-500/10 via-pink-500/5 to-white dark:from-pink-900/60 dark:via-pink-800/40 dark:to-slate-900 border-pink-500/40' }} border rounded-2xl p-4 flex items-center justify-between shadow-sm dark:shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="min-w-[60px] h-11 px-2 rounded-xl {{ $b->service_category === 'barbershop' ? 'bg-amber-500/20 border-amber-500/30 text-amber-600 dark:text-amber-400' : 'bg-pink-500/20 border-pink-500/30 text-pink-600 dark:text-pink-400' }} border flex-shrink-0 flex items-center justify-center font-black font-mono text-sm tracking-tight whitespace-nowrap leading-none shadow-sm">
+                                {{ $b->queue_number }}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-xs uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">Antrian Aktif Anda</span>
+                                    <span class="px-2 py-0.5 text-[10px] rounded-full font-bold uppercase {{ $b->service_category === 'barbershop' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20' : 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20' }}">
+                                        {{ ucfirst($b->service_category) }}
+                                    </span>
+                                    <span class="px-2 py-0.5 text-[10px] rounded-full font-semibold {{ $b->status_color }}">
+                                        {{ $b->status_label }}
+                                    </span>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">
+                                    {{ $b->booking_date->isToday() ? 'Hari Ini' : $b->booking_date->translatedFormat('d M Y') }} &bull; {{ $b->booking_time }} WIB
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('pelanggan.order.index', ['category' => $b->service_category]) }}" class="px-3 py-1.5 {{ $b->service_category === 'barbershop' ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-pink-500 hover:bg-pink-400 text-white' }} text-xs font-bold rounded-lg transition shadow">
+                            Lihat Tiket &rarr;
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @elseif (isset($activeBooking) && $activeBooking)
             <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-white dark:from-amber-900/60 dark:via-amber-800/40 dark:to-slate-900 border border-amber-500/40 rounded-2xl p-4 flex items-center justify-between shadow-sm dark:shadow-lg">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400 font-extrabold text-base">
+                    <div class="min-w-[60px] h-11 px-2 rounded-xl bg-amber-500/20 border border-amber-500/30 flex-shrink-0 flex items-center justify-center text-amber-600 dark:text-amber-400 font-black font-mono text-sm tracking-tight whitespace-nowrap leading-none shadow-sm">
                         {{ $activeBooking->queue_number }}
                     </div>
                     <div>
@@ -15,11 +44,11 @@
                             </span>
                         </div>
                         <p class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">
-                            {{ ucfirst($activeBooking->service_category) }} - {{ $activeBooking->booking_time }} WIB
+                            {{ ucfirst($activeBooking->service_category) }} &bull; {{ $activeBooking->booking_date->isToday() ? 'Hari Ini' : $activeBooking->booking_date->translatedFormat('d M Y') }} &bull; {{ $activeBooking->booking_time }} WIB
                         </p>
                     </div>
                 </div>
-                <a href="{{ route('pelanggan.order.index') }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-lg transition shadow">
+                <a href="{{ route('pelanggan.order.index', ['category' => $activeBooking->service_category]) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-lg transition shadow">
                     Lihat Tiket &rarr;
                 </a>
             </div>

@@ -25,8 +25,10 @@ class CashierController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
         ]);
 
         User::create([
@@ -55,8 +57,10 @@ class CashierController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $cashier->id,
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
         ]);
 
         $cashier->update([

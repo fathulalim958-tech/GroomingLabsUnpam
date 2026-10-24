@@ -7,6 +7,10 @@ use App\Http\Controllers\Pelanggan\OrderController;
 use App\Http\Controllers\Pelanggan\HistoryController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 use App\Http\Controllers\Kasir\QueueController;
+use App\Http\Controllers\Kasir\OrderController as KasirOrderController;
+use App\Http\Controllers\Kasir\CustomerController as KasirCustomerController;
+use App\Http\Controllers\Kasir\StaffController as KasirStaffController;
+use App\Http\Controllers\Kasir\ReportController as KasirReportController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CashierController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -77,10 +81,26 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/dashboard/orders', [KasirDashboardController::class, 'getOrders'])->name('dashboard.orders');
 
     // Queue Control
+    Route::post('/queue/{booking}/call', [QueueController::class, 'call'])->name('queue.call');
     Route::post('/queue/{booking}/process', [QueueController::class, 'process'])->name('queue.process');
     Route::post('/queue/{booking}/skip', [QueueController::class, 'skip'])->name('queue.skip');
     Route::post('/queue/{booking}/complete', [QueueController::class, 'complete'])->name('queue.complete');
     Route::post('/queue/{booking}/cancel', [QueueController::class, 'cancel'])->name('queue.cancel');
+
+    // Order Menu (Mendatang & Bulanan)
+    Route::get('/orders', [KasirOrderController::class, 'index'])->name('orders.index');
+
+    // Informasi Pekerja / Kapster Kasir (Read-only)
+    Route::get('/staffs', [KasirStaffController::class, 'index'])->name('staffs.index');
+
+    // Kelola Pelanggan Kasir
+    Route::get('/customers', [KasirCustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers/{customer}', [KasirCustomerController::class, 'show'])->name('customers.show');
+
+    // Laporan Pelayanan (Harian & Mingguan)
+    Route::get('/reports', [KasirReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export-excel', [KasirReportController::class, 'exportExcel'])->name('reports.export-excel');
+    Route::get('/reports/export-pdf', [KasirReportController::class, 'exportPdf'])->name('reports.export-pdf');
 
     // Walk-in Order
     Route::get('/walk-in', [KasirDashboardController::class, 'walkInForm'])->name('walkin.create');
@@ -101,6 +121,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('customers', CustomerController::class)->only(['index', 'show', 'destroy']);
     Route::post('/customers/{customer}/toggle-block', [CustomerController::class, 'toggleBlock'])->name('customers.toggle-block');
     Route::post('/customers/{customer}/reset-password', [CustomerController::class, 'resetPassword'])->name('customers.reset-password');
+    Route::post('/customers/{customer}/membership', [CustomerController::class, 'updateMembership'])->name('customers.membership');
 
     // CRUD Services
     Route::resource('services', ServiceController::class);
