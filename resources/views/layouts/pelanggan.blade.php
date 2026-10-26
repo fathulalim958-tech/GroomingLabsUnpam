@@ -7,7 +7,7 @@
 
     <title>{{ $title ?? 'Grooming Lab & MUA Studio' }}</title>
 
-    <!-- Anti-FOUC Theme Switcher Script -->
+    <!-- Anti-FOUC Theme Switcher Script (GlowCut Dark Default) -->
     <script>
         if (localStorage.theme === 'light') {
             document.documentElement.classList.remove('dark');
@@ -29,13 +29,13 @@
     <!-- Top Navbar -->
     <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="{{ route('pelanggan.home') }}" class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center text-slate-950 font-black text-sm shadow">
+            <a href="{{ route('pelanggan.home') }}" class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-slate-950 font-black text-sm shadow-md shadow-amber-500/25">
                     GL
                 </div>
                 <div class="flex flex-col">
                     <span class="font-bold text-sm tracking-wide text-slate-900 dark:text-white uppercase">GROOMING LAB</span>
-                    <span class="text-[9px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold">& MUA</span>
+                    <span class="text-[9px] uppercase tracking-wider text-amber-500 dark:text-amber-400 font-bold">& MUA STUDIO</span>
                 </div>
             </a>
 

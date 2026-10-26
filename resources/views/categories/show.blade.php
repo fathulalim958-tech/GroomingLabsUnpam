@@ -7,7 +7,7 @@
 
     <title>{{ $content->title }} - Grooming Lab</title>
 
-    <!-- Anti-FOUC Theme Switcher Script -->
+    <!-- Anti-FOUC Theme Switcher Script (GlowCut Dark Default) -->
     <script>
         if (localStorage.theme === 'light') {
             document.documentElement.classList.remove('dark');

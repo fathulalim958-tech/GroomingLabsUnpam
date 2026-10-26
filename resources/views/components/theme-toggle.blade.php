@@ -1,5 +1,5 @@
 <div x-data="{
-    darkMode: localStorage.theme === 'light' ? false : true,
+    darkMode: localStorage.theme !== 'light',
     toggle() {
         this.darkMode = !this.darkMode;
         if (this.darkMode) {
@@ -16,7 +16,7 @@
     <button @click="toggle()"
             type="button"
             :title="darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'"
-            class="p-2 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500/40 bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:border-slate-700 dark:text-amber-400 shadow-sm"
+            class="p-2 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500/40 bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-amber-400 shadow-sm"
             aria-label="Toggle Theme">
         <!-- Sun icon (shown in Dark mode -> click to turn Light) -->
         <svg x-show="darkMode" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
@@ -29,4 +29,3 @@
         </svg>
     </button>
 </div>
-

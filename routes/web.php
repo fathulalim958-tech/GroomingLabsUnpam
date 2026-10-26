@@ -1,25 +1,25 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Pelanggan\HomeController;
-use App\Http\Controllers\Pelanggan\BookingController;
-use App\Http\Controllers\Pelanggan\OrderController;
-use App\Http\Controllers\Pelanggan\HistoryController;
-use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
-use App\Http\Controllers\Kasir\QueueController;
-use App\Http\Controllers\Kasir\OrderController as KasirOrderController;
-use App\Http\Controllers\Kasir\CustomerController as KasirCustomerController;
-use App\Http\Controllers\Kasir\StaffController as KasirStaffController;
-use App\Http\Controllers\Kasir\ReportController as KasirReportController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CashierController;
+use App\Http\Controllers\Admin\CategoryContentController;
 use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\ServiceController;
-use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OperatingHourController;
 use App\Http\Controllers\Admin\ReportController;
-use App\Http\Controllers\Admin\CategoryContentController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Kasir\CustomerController as KasirCustomerController;
+use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
+use App\Http\Controllers\Kasir\OrderController as KasirOrderController;
+use App\Http\Controllers\Kasir\QueueController;
+use App\Http\Controllers\Kasir\ReportController as KasirReportController;
+use App\Http\Controllers\Kasir\StaffController as KasirStaffController;
+use App\Http\Controllers\Pelanggan\BookingController;
+use App\Http\Controllers\Pelanggan\HistoryController;
+use App\Http\Controllers\Pelanggan\HomeController;
+use App\Http\Controllers\Pelanggan\OrderController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // FR-AUTH-01: Landing page redirects to login
@@ -38,6 +38,7 @@ Route::get('/dashboard', function () {
     } elseif ($user->role === 'kasir') {
         return redirect()->route('kasir.dashboard');
     }
+
     return redirect()->route('pelanggan.home');
 })->middleware(['auth'])->name('dashboard');
 
@@ -96,6 +97,8 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     // Kelola Pelanggan Kasir
     Route::get('/customers', [KasirCustomerController::class, 'index'])->name('customers.index');
     Route::get('/customers/{customer}', [KasirCustomerController::class, 'show'])->name('customers.show');
+    Route::post('/customers/{customer}/toggle-block', [KasirCustomerController::class, 'toggleBlock'])->name('customers.toggle-block');
+    Route::post('/customers/{customer}/reset-password', [KasirCustomerController::class, 'resetPassword'])->name('customers.reset-password');
 
     // Laporan Pelayanan (Harian & Mingguan)
     Route::get('/reports', [KasirReportController::class, 'index'])->name('reports.index');

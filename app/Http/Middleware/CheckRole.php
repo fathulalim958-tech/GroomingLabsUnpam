@@ -12,16 +12,21 @@ class CheckRole
      * Handle an incoming request.
      *
      * Verify the authenticated user has one of the allowed roles.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string  ...$roles
-     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!$request->user() || !in_array($request->user()->role, $roles)) {
+        if (! $request->user() || ! in_array($request->user()->role, $roles)) {
             abort(403, 'Unauthorized access.');
+        }
+
+        if (! $request->user()->is_active) {
+            auth()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.',
+            ]);
         }
 
         return $next($request);

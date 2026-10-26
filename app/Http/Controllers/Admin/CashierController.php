@@ -12,6 +12,7 @@ class CashierController extends Controller
     public function index()
     {
         $cashiers = User::where('role', 'kasir')->orderBy('name')->paginate(15);
+
         return view('admin.cashiers.index', compact('cashiers'));
     }
 
@@ -56,20 +57,27 @@ class CashierController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $cashier->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$cashier->id,
             'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
+            'is_active' => ['nullable', 'boolean'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ], [
             'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
         ]);
 
-        $cashier->update([
+        $updateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-        ]);
+        ];
 
-        if (!empty($validated['password'])) {
+        if ($request->has('is_active')) {
+            $updateData['is_active'] = $request->boolean('is_active');
+        }
+
+        $cashier->update($updateData);
+
+        if (! empty($validated['password'])) {
             $cashier->update(['password' => bcrypt($validated['password'])]);
         }
 
@@ -79,14 +87,15 @@ class CashierController extends Controller
     public function destroy(User $cashier)
     {
         $cashier->delete();
+
         return redirect()->route('admin.cashiers.index')->with('success', 'Kasir berhasil dihapus.');
     }
 
     public function toggleActive(User $cashier)
     {
-        $cashier->update(['is_active' => !$cashier->is_active]);
+        $cashier->update(['is_active' => ! $cashier->is_active]);
         $status = $cashier->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
         return back()->with('success', "Akun kasir berhasil {$status}.");
     }
 }
-

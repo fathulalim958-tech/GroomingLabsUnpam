@@ -7,7 +7,7 @@
 
     <title>{{ $title ?? 'Kasir Front-Desk - Grooming Lab & MUA' }}</title>
 
-    <!-- Anti-FOUC Theme Switcher Script -->
+    <!-- Anti-FOUC Theme Switcher Script (GlowCut Dark Default) -->
     <script>
         if (localStorage.theme === 'light') {
             document.documentElement.classList.remove('dark');
@@ -31,16 +31,16 @@
         <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <a href="{{ route('kasir.dashboard') }}" class="flex items-center gap-2 min-w-0">
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-md shadow-blue-500/30 flex-shrink-0">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 flex-shrink-0">
                         GL
                     </div>
                     <div class="min-w-0">
                         <span class="font-black text-xs sm:text-sm tracking-wide text-slate-900 dark:text-white uppercase block leading-tight truncate">GROOMING LAB</span>
-                        <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-blue-600 dark:text-blue-400 font-bold block truncate">KASIR & ANTRIAN</span>
+                        <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-amber-500 dark:text-amber-400 font-bold block truncate">KASIR & ANTRIAN</span>
                     </div>
                 </a>
 
-                <span class="hidden lg:inline-block px-2.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-600 dark:text-blue-300 text-xs font-semibold">
+                <span class="hidden lg:inline-block px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-semibold">
                     Front-Desk Mode
                 </span>
             </div>

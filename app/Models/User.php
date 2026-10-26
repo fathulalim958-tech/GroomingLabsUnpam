@@ -6,8 +6,10 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable
 {
@@ -32,6 +34,15 @@ class User extends Authenticatable
         'member_discount_type',
         'member_discount_quota',
         'member_discount_remaining',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_active' => true,
     ];
 
     /**
@@ -92,10 +103,61 @@ class User extends Authenticatable
     public function getMemberDiscountLabelAttribute(): string
     {
         if ($this->member_discount_type === 'percent') {
-            return intval($this->member_discount) . '%';
+            return intval($this->member_discount).'%';
         }
 
-        return 'Rp ' . number_format($this->member_discount, 0, ',', '.');
+        return 'Rp '.number_format($this->member_discount, 0, ',', '.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Booted Model Events
+    |--------------------------------------------------------------------------
+    */
+
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            if ($user->role === 'pelanggan' && Schema::hasTable('customers')) {
+                Customer::firstOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'phone' => $user->phone,
+                        'is_member' => $user->is_member ?? false,
+                        'member_discount' => $user->member_discount ?? 0,
+                        'member_discount_type' => $user->member_discount_type ?? 'percent',
+                        'member_discount_quota' => $user->member_discount_quota ?? 0,
+                        'member_discount_remaining' => $user->member_discount_remaining ?? 0,
+                    ]
+                );
+            }
+        });
+
+        static::updated(function (User $user) {
+            if ($user->role === 'pelanggan' && Schema::hasTable('customers')) {
+                Customer::updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'phone' => $user->phone,
+                        'is_member' => $user->is_member ?? false,
+                        'member_discount' => $user->member_discount ?? 0,
+                        'member_discount_type' => $user->member_discount_type ?? 'percent',
+                        'member_discount_quota' => $user->member_discount_quota ?? 0,
+                        'member_discount_remaining' => $user->member_discount_remaining ?? 0,
+                    ]
+                );
+            }
+        });
+
+        static::deleted(function (User $user) {
+            if ($user->role === 'pelanggan' && Schema::hasTable('customers')) {
+                Customer::where('user_id', $user->id)->delete();
+            }
+        });
     }
 
     /*
@@ -103,6 +165,14 @@ class User extends Authenticatable
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Get the customer profile for this user.
+     */
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class, 'user_id');
+    }
 
     /**
      * Get bookings made by this user (as customer).
@@ -162,9 +232,9 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) {
-            return asset('storage/' . $this->avatar);
+            return asset('storage/'.$this->avatar);
         }
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff';
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=random&color=fff';
     }
 }

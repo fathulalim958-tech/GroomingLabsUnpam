@@ -3,11 +3,16 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
+use App\Models\BookingItem;
+use App\Models\CategoryContent;
 use App\Models\OperatingHour;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
 
 class BarbershopMuaSystemTest extends TestCase
@@ -214,7 +219,7 @@ class BarbershopMuaSystemTest extends TestCase
         $this->assertNull($booking->user_id);
         $this->assertEquals('Siti Walkin', $booking->customer_name);
         $this->assertEquals('089911223344', $booking->customer_phone);
-        $this->assertEquals(\Carbon\Carbon::now('Asia/Jakarta')->toDateString(), $booking->booking_date->toDateString());
+        $this->assertEquals(Carbon::now('Asia/Jakarta')->toDateString(), $booking->booking_date->toDateString());
         $this->assertNotEmpty($booking->booking_time);
         $this->assertMatchesRegularExpression('/^\d{2}:\d{2}(:\d{2})?$/', $booking->booking_time);
         $this->assertMatchesRegularExpression('/^\d{2}:\d{2}$/', $booking->formatted_booking_time);
@@ -300,7 +305,7 @@ class BarbershopMuaSystemTest extends TestCase
             'role' => 'admin',
         ]);
 
-        $content = \App\Models\CategoryContent::create([
+        $content = CategoryContent::create([
             'category' => 'barbershop',
             'title' => 'Original Barbershop Title',
             'tagline' => 'Original Tagline',
@@ -316,7 +321,7 @@ class BarbershopMuaSystemTest extends TestCase
             'tagline' => 'New Premium Experience',
             'description' => 'Updated new description about barbershop services.',
             'facilities' => "VIP Lounge\nEspresso Bar\nFree Wi-Fi",
-            'terms' => "Please arrive 15 minutes early.",
+            'terms' => 'Please arrive 15 minutes early.',
             'is_active' => '1',
         ]);
 
@@ -362,7 +367,7 @@ class BarbershopMuaSystemTest extends TestCase
                     'open_time' => '10:00',
                     'close_time' => '20:00',
                     'max_bookings_per_slot' => 1,
-                ]
+                ],
             ],
         ]);
         $response->assertRedirect('/admin/operating-hours?category=mua');
@@ -486,7 +491,7 @@ class BarbershopMuaSystemTest extends TestCase
             'is_active' => true,
         ]);
 
-        $staff = \App\Models\Staff::create([
+        $staff = Staff::create([
             'name' => 'adam',
             'role' => 'kapster',
             'phone' => '0812345678',
@@ -505,7 +510,7 @@ class BarbershopMuaSystemTest extends TestCase
             'total_price' => 25000,
             'status' => 'completed',
         ]);
-        \App\Models\BookingItem::create([
+        BookingItem::create([
             'booking_id' => $b1->id,
             'service_id' => $service1->id,
             'price' => 25000,
@@ -522,7 +527,7 @@ class BarbershopMuaSystemTest extends TestCase
             'total_price' => 250000,
             'status' => 'cancelled',
         ]);
-        \App\Models\BookingItem::create([
+        BookingItem::create([
             'booking_id' => $b2->id,
             'service_id' => $service2->id,
             'price' => 250000,
@@ -540,7 +545,7 @@ class BarbershopMuaSystemTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test_excel_');
         file_put_contents($tempFile, $content);
 
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($tempFile);
+        $spreadsheet = IOFactory::load($tempFile);
         $sheet = $spreadsheet->getActiveSheet();
 
         $this->assertEquals('Worksheet', $sheet->getTitle());
@@ -765,7 +770,7 @@ class BarbershopMuaSystemTest extends TestCase
         $resUpcoming->assertSee($futureDate->translatedFormat('d M Y'));
 
         // 3. Cashier filters by specific date in Order menu -> sees the booking!
-        $resDate = $this->actingAs($cashier)->get('/kasir/orders?date=' . $futureDate->format('Y-m-d'));
+        $resDate = $this->actingAs($cashier)->get('/kasir/orders?date='.$futureDate->format('Y-m-d'));
         $resDate->assertStatus(200);
         $resDate->assertSee('M-001');
         $resDate->assertSee('Pelanggan MUA Future');
@@ -1180,7 +1185,7 @@ class BarbershopMuaSystemTest extends TestCase
             'is_active' => true,
         ]);
 
-        $today = \Carbon\Carbon::today('Asia/Jakarta');
+        $today = Carbon::today('Asia/Jakarta');
 
         $b1 = Booking::create([
             'booking_code' => 'BK-MK-1',
@@ -1296,7 +1301,7 @@ class BarbershopMuaSystemTest extends TestCase
             'role' => 'kasir',
         ]);
 
-        $today = \Carbon\Carbon::today('Asia/Jakarta');
+        $today = Carbon::today('Asia/Jakarta');
 
         $booking = Booking::create([
             'booking_code' => 'BK-DIFF-1',
@@ -1351,8 +1356,8 @@ class BarbershopMuaSystemTest extends TestCase
             'is_active' => true,
         ]);
 
-        \App\Models\OperatingHour::updateOrCreate(
-            ['category' => 'barbershop', 'day_of_week' => \Carbon\Carbon::tomorrow()->dayOfWeek],
+        OperatingHour::updateOrCreate(
+            ['category' => 'barbershop', 'day_of_week' => Carbon::tomorrow()->dayOfWeek],
             ['open_time' => '09:00', 'close_time' => '21:00', 'is_closed' => false]
         );
 
@@ -1377,7 +1382,7 @@ class BarbershopMuaSystemTest extends TestCase
         $resBooking = $this->actingAs($customer)->post(route('pelanggan.booking.store'), [
             'category' => 'barbershop',
             'services' => [$service->id],
-            'booking_date' => \Carbon\Carbon::tomorrow()->toDateString(),
+            'booking_date' => Carbon::tomorrow()->toDateString(),
             'booking_time' => '10:00:00',
         ]);
         $resBooking->assertRedirect(route('pelanggan.order.index'));
@@ -1390,5 +1395,93 @@ class BarbershopMuaSystemTest extends TestCase
         $customer->refresh();
         $this->assertEquals(2, $customer->member_discount_remaining);
     }
-}
 
+    public function test_cashier_and_admin_can_toggle_block_and_reset_customer_password_with_custom_input(): void
+    {
+        $cashier = User::factory()->create(['role' => 'kasir']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $customer = User::factory()->create([
+            'role' => 'pelanggan',
+            'is_active' => true,
+            'password' => bcrypt('initial-pass-123'),
+        ]);
+
+        // 1. Kasir can block customer
+        $resKasirBlock = $this->actingAs($cashier)->post(route('kasir.customers.toggle-block', $customer));
+        $resKasirBlock->assertSessionHas('block_status_updated');
+        $customer->refresh();
+        $this->assertFalse($customer->is_active);
+
+        // 2. Kasir can unblock customer
+        $resKasirUnblock = $this->actingAs($cashier)->post(route('kasir.customers.toggle-block', $customer));
+        $resKasirUnblock->assertSessionHas('block_status_updated');
+        $customer->refresh();
+        $this->assertTrue($customer->is_active);
+
+        // 3. Kasir resets password with custom input
+        $resKasirReset = $this->actingAs($cashier)->post(route('kasir.customers.reset-password', $customer), [
+            'password' => 'KasirNewPass#2026',
+            'password_confirmation' => 'KasirNewPass#2026',
+        ]);
+        $resKasirReset->assertSessionHas('password_reset_success');
+        $customer->refresh();
+        $this->assertTrue(Hash::check('KasirNewPass#2026', $customer->password));
+
+        // 4. Kasir reset password fails on confirmation mismatch
+        $resKasirFail = $this->actingAs($cashier)->post(route('kasir.customers.reset-password', $customer), [
+            'password' => 'ValidPass123',
+            'password_confirmation' => 'Mismatch123',
+        ]);
+        $resKasirFail->assertSessionHasErrors('password');
+
+        // 5. Admin can block customer
+        $resAdminBlock = $this->actingAs($admin)->post(route('admin.customers.toggle-block', $customer));
+        $resAdminBlock->assertSessionHas('block_status_updated');
+        $customer->refresh();
+        $this->assertFalse($customer->is_active);
+
+        // 6. Admin resets password with custom input
+        $resAdminReset = $this->actingAs($admin)->post(route('admin.customers.reset-password', $customer), [
+            'password' => 'AdminNewPass#2026',
+            'password_confirmation' => 'AdminNewPass#2026',
+        ]);
+        $resAdminReset->assertSessionHas('password_reset_success');
+        $customer->refresh();
+        $this->assertTrue(Hash::check('AdminNewPass#2026', $customer->password));
+    }
+
+    public function test_admin_can_update_cashier_active_status_in_edit_and_delete_cashier(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $cashier = User::factory()->create([
+            'role' => 'kasir',
+            'is_active' => true,
+            'name' => 'Kasir Lama',
+            'email' => 'kasirlama@test.com',
+            'phone' => '08123456789',
+        ]);
+
+        // 1. Admin can view cashier index (doesn't fail)
+        $resIndex = $this->actingAs($admin)->get(route('admin.cashiers.index'));
+        $resIndex->assertOk();
+        $resIndex->assertSee('Kasir Lama');
+
+        // 2. Admin can edit cashier and set is_active to 0
+        $resUpdate = $this->actingAs($admin)->put(route('admin.cashiers.update', $cashier), [
+            'name' => 'Kasir Diedit',
+            'email' => 'kasiredit@test.com',
+            'phone' => '081299998888',
+            'is_active' => 0,
+        ]);
+        $resUpdate->assertRedirect(route('admin.cashiers.index'));
+        $cashier->refresh();
+        $this->assertEquals('Kasir Diedit', $cashier->name);
+        $this->assertEquals('kasiredit@test.com', $cashier->email);
+        $this->assertFalse($cashier->is_active);
+
+        // 3. Admin can delete cashier
+        $resDelete = $this->actingAs($admin)->delete(route('admin.cashiers.destroy', $cashier));
+        $resDelete->assertRedirect(route('admin.cashiers.index'));
+        $this->assertDatabaseMissing('users', ['id' => $cashier->id]);
+    }
+}

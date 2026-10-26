@@ -2,14 +2,154 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    html {
-        color-scheme: light dark;
-    }
-    html.dark {
-        color-scheme: dark;
-    }
-    html.light {
-        color-scheme: light;
-    }
+:root {
+    --glowcut-bg: #0B0B0B;
+    --glowcut-surface: #111111;
+    --glowcut-card: #171717;
+    --glowcut-input: #141414;
+    --glowcut-border: #343434;
+    --glowcut-gold: #D4AF5A;
+    --glowcut-gold-light: #F0D58A;
+    --glowcut-gold-hover: #C59E47;
+    --glowcut-text: #F5F0E6;
+    --glowcut-text-muted: #A7A7A7;
+}
+
+html {
+    color-scheme: dark light;
+}
+
+html.dark {
+    color-scheme: dark;
+    background-color: #0B0B0B;
+    color: #F5F0E6;
+}
+
+html.dark body {
+    background-color: #0B0B0B;
+    color: #F5F0E6;
+}
+
+html.light {
+    color-scheme: light;
+}
+
+/* GlowCut Input Defaults in Dark Mode */
+html.dark input[type="text"],
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark input[type="tel"],
+html.dark input[type="number"],
+html.dark input[type="search"],
+html.dark input[type="date"],
+html.dark input[type="time"],
+html.dark select,
+html.dark textarea {
+    background-color: #141414 !important;
+    border-color: #343434 !important;
+    color: #F5F0E6 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #737373 !important;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+    border-color: #D4AF5A !important;
+    --tw-ring-color: #D4AF5A !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(212, 175, 90, 0.25) !important;
+}
+
+/* Custom Selection Color */
+::selection {
+    background-color: #D4AF5A;
+    color: #0B0B0B;
+}
+
+/* Admin Sidebar Active Navigation - GlowCut Gold Accent */
+aside .bg-emerald-500 {
+    background-color: #D4AF5A !important;
+    color: #0B0B0B !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px 0 rgba(212, 175, 90, 0.25) !important;
+}
+
+aside .bg-emerald-500 svg {
+    color: #0B0B0B !important;
+}
+
+/* Kasir Primary Action Buttons (e.g., + Order Walk-In) - GlowCut Gold */
+a.bg-blue-600,
+button.bg-blue-600 {
+    background-color: #D4AF5A !important;
+    color: #0B0B0B !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px 0 rgba(212, 175, 90, 0.2) !important;
+}
+
+a.bg-blue-600:hover,
+button.bg-blue-600:hover {
+    background-color: #C59E47 !important;
+    color: #0B0B0B !important;
+}
+
+/* Primary CTA Buttons across Auth & Booking */
+button.bg-gradient-to-r.from-amber-500.to-yellow-500,
+a.bg-gradient-to-r.from-amber-500.to-yellow-500,
+button.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400,
+a.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400 {
+    background-image: linear-gradient(135deg, #D4AF5A 0%, #F0D58A 100%) !important;
+    color: #0B0B0B !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 16px 0 rgba(212, 175, 90, 0.28) !important;
+}
+
+button.bg-gradient-to-r.from-amber-500.to-yellow-500:hover,
+a.bg-gradient-to-r.from-amber-500.to-yellow-500:hover,
+button.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400:hover,
+a.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400:hover {
+    background-image: linear-gradient(135deg, #C59E47 0%, #D4AF5A 100%) !important;
+    color: #0B0B0B !important;
+}
+
+/* Kasir / Admin Logo Pill */
+.bg-blue-600.w-8.h-8,
+.bg-blue-600.w-9.h-9 {
+    background-color: #D4AF5A !important;
+    color: #0B0B0B !important;
+}
+
+/* Subtle Dark Card Border refinement */
+html.dark .border-slate-800,
+html.dark .border-slate-700,
+html.dark .border-slate-750 {
+    border-color: #343434 !important;
+}
+
+/* Subtle Dark Table Row Hover */
+html.dark tbody tr:hover {
+    background-color: #1A1A1A !important;
+}
+
+/* GlowCut subtle scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+    background: #0B0B0B;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #343434;
+    border-radius: 9999px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #D4AF5A;
 }

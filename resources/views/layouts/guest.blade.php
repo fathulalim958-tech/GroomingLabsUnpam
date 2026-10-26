@@ -7,7 +7,7 @@
 
         <title>{{ config('app.name', 'Grooming Lab & MUA') }}</title>
 
-        <!-- Anti-FOUC Theme Switcher Script -->
+        <!-- Anti-FOUC Theme Switcher Script (GlowCut Dark Default) -->
         <script>
             if (localStorage.theme === 'light') {
                 document.documentElement.classList.remove('dark');
@@ -25,7 +25,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-slate-900 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen flex flex-col justify-center items-center py-8 px-4 selection:bg-amber-500 selection:text-white relative overflow-x-hidden transition-colors duration-200">
+    <body class="font-sans text-slate-900 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen flex flex-col justify-center items-center py-8 px-4 selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden transition-colors duration-200">
         <!-- Theme Toggle Button -->
         <div class="fixed top-4 right-4 z-50">
             <x-theme-toggle />
@@ -33,7 +33,7 @@
 
         <!-- Background decorative ambient circles -->
         <div class="fixed top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
-        <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+        <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
         <div class="w-full max-w-md">
             <div class="flex justify-center mb-6">
@@ -42,7 +42,7 @@
                 </a>
             </div>
 
-            <div class="w-full bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 backdrop-blur-xl shadow-xl dark:shadow-2xl rounded-2xl p-6 sm:p-8 text-slate-900 dark:text-slate-100">
+            <div class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 backdrop-blur-xl shadow-xl dark:shadow-2xl rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-slate-100">
                 {{ $slot }}
             </div>
         </div>

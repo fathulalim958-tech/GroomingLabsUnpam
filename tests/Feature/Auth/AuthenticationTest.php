@@ -51,4 +51,35 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_deactivated_users_cannot_authenticate(): void
+    {
+        $cashier = User::factory()->create([
+            'role' => 'kasir',
+            'is_active' => false,
+            'password' => bcrypt('password123'),
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $cashier->email,
+            'password' => 'password123',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors(['email' => 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.']);
+    }
+
+    public function test_deactivated_logged_in_user_is_logged_out_by_role_middleware(): void
+    {
+        $cashier = User::factory()->create([
+            'role' => 'kasir',
+            'is_active' => false,
+        ]);
+
+        $response = $this->actingAs($cashier)->get('/kasir/dashboard');
+
+        $response->assertRedirect('/login');
+        $this->assertGuest();
+        $response->assertSessionHasErrors(['email' => 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.']);
+    }
 }

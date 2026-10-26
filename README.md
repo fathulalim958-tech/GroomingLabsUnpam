@@ -19,6 +19,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - [Akun Demo & Akses Cepat](#-akun-demo--akses-cepat)
 - [Struktur Database & Model Data](#-struktur-database--model-data)
 - [Siklus Status Antrian (State Machine)](#-siklus-status-antrian-state-machine)
+- [Algoritma & Logika Komputasi Sistem](#-algoritma--logika-komputasi-sistem)
 - [Spesifikasi Fungsional Per Peran (Role)](#-spesifikasi-fungsional-per-peran-role)
   - [1. Modul Autentikasi & Halaman Informasi Publik](#1-modul-autentikasi--halaman-informasi-publik)
   - [2. Modul Pelanggan (Customer Experience)](#2-modul-pelanggan-customer-experience)
@@ -34,7 +35,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 
 ## 🚀 Ikhtisar & Teknologi
 
-- **Backend Framework:** Laravel 12 (PHP 8.2+)
+- **Backend Framework:** Laravel 12 (PHP 8.3+)
 - **Frontend Stack:** Tailwind CSS v3 (dengan konfigurasi `darkMode: 'class'`) + Alpine.js + Laravel Blade Components
 - **Asset Bundler:** Vite
 - **Database:** MySQL (Default: `barbershop_mua`) / SQLite Ready
@@ -111,13 +112,20 @@ Setelah menjalankan seeder (`php artisan db:seed`), tersedia akun demo bawaan. H
 │(category, hero, etc.)│
 └──────────────────────┘
 
-┌──────────────────────────────────────┐       1:N       ┌─────────────────────────────────────┐
-│                users                 ├────────────────►│              bookings               │
-│ (role, phone, is_member, disc_quota) │                 │ (queue_number, cashier_id, disc_amt)│
-└──────────────────────────────────────┘                 └──────────────────┬──────────────────┘
-                                                                            │
-                                                                            │ 1:N
-                                                                            ▼
+┌──────────────────────────────────────┐       1:1       ┌─────────────────────────────────────┐
+│                users                 ├────────────────►│              customers              │
+│ (role, phone, is_active, timestamps) │                 │  (name, phone, is_member, discount) │
+└──────────────────┬───────────────────┘                 └──────────────────┬──────────────────┘
+                   │                                                        │
+                   │ 1:N                                                    │ 1:N
+                   ▼                                                        ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                          bookings                                            │
+│ (queue_number, user_id, customer_id, cashier_id, total_price, discount_amount, status)       │
+└──────────────────────────────────────────────┬───────────────────────────────────────────────┘
+                                               │
+                                               │ 1:N
+                                               ▼
 ┌──────────────────────────────────────┐       1:N       ┌─────────────────────────────────────┐
 │               services               ├────────────────►│            booking_items            │
 │  (category, price, duration_minutes) │                 │      (booking_id, service, price)   │
@@ -125,14 +133,15 @@ Setelah menjalankan seeder (`php artisan db:seed`), tersedia akun demo bawaan. H
 ```
 
 ### Tabel Utama:
-1. **`users`**: `id`, `name`, `email`, `phone`, `password`, `role` (`admin`, `kasir`, `pelanggan`), `is_active`, `is_member`, `member_discount_amount`, `member_discount_quota`, `member_discount_remaining`, `timestamps`.
-2. **`services`**: `id`, `category` (`barbershop`, `mua`), `name`, `description`, `price`, `duration_minutes`, `image`, `is_active`, `timestamps`.
-3. **`staffs`**: `id`, `name`, `role` (`kapster`, `mua`), `phone`, `is_active`, `timestamps`.
-4. **`operating_hours`**: `id`, `category` (`barbershop`, `mua`), `day_of_week` (0=Minggu s/d 6=Sabtu), `open_time`, `close_time`, `is_closed`, `max_bookings_per_slot`, `timestamps`.
-5. **`category_contents`**: `id`, `category` (`barbershop`, `mua`), `title`, `subtitle`, `description`, `facilities` (JSON), `rules` (JSON), `banner_url`, `timestamps`.
-6. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261025-XXXX`), `user_id` (nullable untuk walk-in), `customer_name`, `customer_phone`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (`B-001`, `M-001`), `notes`, `total_price`, `discount_amount`, `status`, `timestamps`.
-7. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
-8. **`password_reset_tokens`**: `email`, `token`, `created_at` (token hashed kode OTP 6-digit untuk pemulihan kata sandi).
+1. **`users`**: `id`, `name`, `email`, `phone`, `password`, `role` (`admin`, `kasir`, `pelanggan`), `is_active`, `is_member`, `member_discount`, `member_discount_type`, `member_discount_quota`, `member_discount_remaining`, `timestamps`.
+2. **`customers`** (Data & Profil Pelanggan): `id`, `user_id` (nullable, foreign key ke `users`), `name`, `phone`, `email`, `address`, `is_member`, `member_discount`, `member_discount_type`, `member_discount_quota`, `member_discount_remaining`, `notes`, `timestamps`.
+3. **`services`**: `id`, `category` (`barbershop`, `mua`), `name`, `description`, `price`, `duration_minutes`, `image`, `is_active`, `timestamps`.
+4. **`staffs`**: `id`, `name`, `role` (`kapster`, `mua`), `phone`, `is_active`, `timestamps`.
+5. **`operating_hours`**: `id`, `category` (`barbershop`, `mua`), `day_of_week` (0=Minggu s/d 6=Sabtu), `open_time`, `close_time`, `is_closed`, `max_bookings_per_slot`, `timestamps`.
+6. **`category_contents`**: `id`, `category` (`barbershop`, `mua`), `title`, `subtitle`, `description`, `facilities` (JSON), `rules` (JSON), `banner_url`, `timestamps`.
+7. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261025-XXXX`), `user_id` (nullable untuk walk-in), `customer_id` (nullable, foreign key ke `customers`), `customer_name`, `customer_phone`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (`B-001`, `M-001`), `notes`, `total_price`, `discount_amount`, `status`, `timestamps`.
+8. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
+9. **`password_reset_tokens`**: `email`, `token`, `created_at` (token hashed kode OTP 6-digit untuk pemulihan kata sandi).
 
 ---
 
@@ -159,6 +168,80 @@ stateDiagram-v2
 
 - **Nomor Antrian Mandiri:** Prefix `B-` untuk Barbershop dan `M-` untuk MUA Studio. Nomor urut otomatis di-reset ke `001` setiap pergantian hari (`00:00` WIB).
 - **Layar Pelanggan:** Menampilkan nomor antrian tertinggi/terupdate yang sedang aktif dilayani pada kategori yang dipilih.
+
+---
+
+## 🧠 Algoritma & Logika Komputasi Sistem
+
+Aplikasi ini mengimplementasikan serangkaian algoritma, model komputasi, dan arsitektur pengamanan data untuk memastikan keandalan, integritas transaksi, serta keadilan antrian:
+
+### 1. Algoritma Penjadwalan Antrian Berprioritas (*Priority Queue Scheduling*)
+* **Lokasi Implementasi:** `app/Http/Controllers/Kasir/DashboardController.php`
+* **Prinsip Kerja:** Tampilan antrian kasir tidak hanya menggunakan urutan waktu kedatangan murni, melainkan menerapkan pembobotan status (*Status Weighting Priority*):
+  $$\text{Priority Rank} = \begin{cases}
+  1 & \text{jika } status = \text{'in\_progress' (Sedang Dilayani)} \\
+  2 & \text{jika } status = \text{'called' (Dipanggil)} \\
+  3 & \text{jika } status = \text{'waiting' (Menunggu Giliran)} \\
+  4 & \text{jika } status = \text{'skipped' (Dilewati)} \\
+  5 & \text{jika } status = \text{'completed' (Selesai)} \\
+  6 & \text{jika } status = \text{'cancelled' (Dibatalkan)}
+  \end{cases}$$
+* **Tie-Breaker:** Jika bobot prioritas sama, diurutkan sekunder berdasarkan waktu pemesanan (`booking_time ASC`) dan nomor antrian terawal (`queue_number ASC`). Hal ini menjamin kasir langsung fokus menyelesaikan antrian yang sedang berjalan di kursi/meja layanan sebelum melayani antrian berikutnya.
+
+### 2. Algoritma FIFO dengan Partisi Kategori & Waktu (*First-In, First-Out Queue Partitioning*)
+* **Lokasi Implementasi:** `app/Models/Booking.php` (`generateQueueNumber()`)
+* **Prinsip Kerja:** Pembagian nomor antrian mandiri per kategori dan per hari:
+  * Barbershop: format `B-001`, `B-002`, dst.
+  * MUA Studio: format `M-001`, `M-002`, dst.
+  * Formula: $N_{antrian} = \text{COUNT}(\text{kategori}, \text{tanggal}) + 1$.
+  * Nomor urut otomatis di-reset ke `001` setiap pergantian hari kalender (`00:00` WIB) tanpa saling mengganggu antara Barbershop dan MUA Studio.
+
+### 3. Algoritma Alokasi Kapasitas Slot Waktu & Deteksi Konflik (*Time-Slot Capacity & Conflict Detection*)
+* **Lokasi Implementasi:** `app/Http/Controllers/Pelanggan/BookingController.php`
+* **Prinsip Kerja:**
+  * **Window Boundary Check:** Memvalidasi jam reservasi berada dalam interval jam buka dan tutup operasional: $t_{booking} \in [t_{open}, t_{close})$.
+  * **Slot Threshold Limit:** Mengecek kapasitas paralel kuota kursi/kapster per jam:
+    $$\text{COUNT}(booking\_time = t, \ status \neq 'cancelled') < max\_bookings\_per\_slot$$
+    (Kapasitas default: 5 pelanggan/slot untuk Barbershop, 2 pelanggan/slot untuk MUA Studio).
+  * **Double Booking Prevention:** Mencegah satu akun pelanggan memesan jam yang persis sama di kategori lain saat sudah memiliki tiket aktif.
+
+### 4. Algoritma Kontrol Konkurensi Kasir (*Pessimistic Concurrency Guard & Ownership Lock*)
+* **Lokasi Implementasi:** `app/Http/Controllers/Kasir/QueueController.php`
+* **Prinsip Kerja:**
+  * **Single Active Task Constraint:** Akun kasir yang sedang memiliki status `in_progress` dilarang memanggil/melayani antrian baru sebelum antrian aktifnya diselesaikan:
+    $$\exists \ b \in \text{Bookings} \ (\text{cashier\_id} = \text{auth\_id} \land \text{status} = 'in\_progress') \implies \text{REJECT}$$
+  * **Exclusive Ownership Lock:** Transaksi yang sedang dilayani kasir A hanya dapat diselesaikan (*Complete & Pay*) oleh kasir A. Kasir B ditolak jika mencoba menyelesaikan transaksi milik kasir lain.
+
+### 5. Algoritma Mesin Status Berhingga (*Finite State Machine - FSM*)
+* **Lokasi Implementasi:** `app/Models/Booking.php` & `app/Http/Controllers/Kasir/QueueController.php`
+* **Prinsip Kerja:** Memastikan alur status antrian bersifat deterministik dan linear. Status akhir (`completed` atau `cancelled`) bersifat *terminal state* (tidak dapat diubah kembali ke status sebelumnya).
+
+### 6. Algoritma Mesin Kalkulasi Diskon VIP & Pemotongan Kuota (*Discount & Quota Decrement Engine*)
+* **Lokasi Implementasi:** `app/Models/User.php` (`calculateDiscount()`)
+* **Prinsip Kerja:**
+  * **Tipe Persentase:** $Diskon = \min\left(P_{asli}, \ \text{round}\left(\frac{P_{asli} \times Diskon_{\%}}{100}\right)\right)$
+  * **Tipe Nominal Tetap (Fixed):** $Diskon = \min\left(P_{asli}, \ Diskon_{Rp}\right)$
+  * **Total Akhir:** $P_{total} = \max(0, \ P_{asli} - Diskon)$
+  * **Atomic Decrement:** Mengurangi sisa kuota keanggotaan `member_discount_remaining` secara atomik saat pesanan berhasil disimpan.
+
+### 7. Algoritma Kriptografi & Keamanan (*CSPRNG, Hashing, & TTL Expiration*)
+* **Lokasi Implementasi:** `app/Http/Controllers/Auth/PasswordResetCodeController.php`
+* **Prinsip Kerja:**
+  * **CSPRNG (Cryptographically Secure Pseudo-Random Number Generator):** Fungsi `random_int(100000, 999999)` untuk membangkitkan 6 digit kode OTP verifikasi reset sandi dengan entropi tinggi dan resistan terhadap tebakan acak.
+  * **One-Way Hashing (Bcrypt):** Kata sandi akun dan kode OTP dienkripsi dengan algoritma Blowfish cipher (`Hash::make()` / `Hash::check()`).
+  * **Time-to-Live (TTL) Expiration:** Validasi masa aktif kode OTP dengan batas waktu 15 menit menggunakan delta waktu:
+    $$\Delta t = t_{now} - t_{created} \le 15 \text{ menit}$$
+
+### 8. Algoritma Validasi & Sanitasi Pola (*Regular Expression Pattern Matching*)
+* **Lokasi Implementasi:** `Walk-in Form`, `Registration`, `Profile`, `Customer Management`
+* **Prinsip Kerja:** Sanitasi karakter string nomor kontak melalui ekspresi reguler `/^[0-9+]+$/` untuk menolak input selain nomor seluler dan tanda plus (`+`), mencegah celah XSS (*Cross-Site Scripting*) dan injeksi karakter berbahaya.
+
+### 9. Algoritma Agregasi Data & Analisis Statistik Laporan (*Data Aggregation & Metrics Summary*)
+* **Lokasi Implementasi:** `app/Http/Controllers/Admin/ReportController.php` & `app/Http/Controllers/Kasir/ReportController.php`
+* **Prinsip Kerja:** Melakukan penyaringan baris data berdasar rentang waktu sembarang $[T_{start}, T_{end}]$ dan partisi kategori, kemudian menghitung:
+  * Omzet riil (hanya dari status `completed`).
+  * Rasio konversi pesanan selesai versus pesanan batal/dilewati.
+  * Ekspor streaming berkas Excel Spreadsheet (.xlsx) dan CSV dengan *header UTF-8 BOM* agar terbaca sempurna di Microsoft Excel.
 
 ---
 
@@ -234,7 +317,7 @@ Sistem menggunakan SMTP Gmail agar kode verifikasi 6 digit dikirim langsung seca
 ## 💻 Panduan Instalasi & Menjalankan Proyek
 
 ### 1. Prasyarat Sistem
-- PHP >= 8.2 (ekstensi `pdo_sqlite` atau `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `curl`)
+- PHP >= 8.3 (ekstensi `pdo_sqlite` atau `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `curl`)
 - Composer >= 2.0
 - Node.js >= 18.x & NPM
 - MySQL Server (misal: XAMPP / Laragon / Native MySQL)

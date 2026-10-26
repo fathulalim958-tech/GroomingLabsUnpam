@@ -43,6 +43,43 @@
                     @enderror
                 </div>
 
+                <!-- Status Keaktifan Akun Kasir (Pindahan dari Aksi Tabel) -->
+                <div x-data="{ activeStatus: '{{ old('is_active', $cashier->is_active ? '1' : '0') }}' }">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                        Status Keaktifan Akun Kasir *
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label @click="activeStatus = '1'"
+                               :class="activeStatus === '1' ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-500/20 shadow-sm' : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'"
+                               class="relative flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition">
+                            <input type="radio" name="is_active" value="1" x-model="activeStatus" class="text-emerald-600 focus:ring-emerald-500" />
+                            <div>
+                                <div class="text-xs font-bold flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span>Aktif</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Dapat login &amp; melayani antrian</div>
+                            </div>
+                        </label>
+
+                        <label @click="activeStatus = '0'"
+                               :class="activeStatus === '0' ? 'bg-rose-500/10 border-rose-500/40 text-rose-800 dark:text-rose-300 ring-2 ring-rose-500/20 shadow-sm' : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'"
+                               class="relative flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition">
+                            <input type="radio" name="is_active" value="0" x-model="activeStatus" class="text-rose-600 focus:ring-rose-500" />
+                            <div>
+                                <div class="text-xs font-bold flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                    <span>Nonaktif</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Akses masuk kasir dibekukan</div>
+                            </div>
+                        </label>
+                    </div>
+                    @error('is_active')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
                     <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Kosongkan password jika tidak ingin mengubahnya.</p>
                 </div>

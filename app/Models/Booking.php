@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Booking extends Model
@@ -22,6 +23,7 @@ class Booking extends Model
     protected $fillable = [
         'booking_code',
         'user_id',
+        'customer_id',
         'customer_name',
         'customer_phone',
         'cashier_id',
@@ -70,12 +72,12 @@ class Booking extends Model
      * @var array<string, string>
      */
     public const STATUS_COLORS = [
-        'waiting'     => 'bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 whitespace-nowrap inline-block',
-        'called'      => 'bg-indigo-100 text-indigo-900 border border-indigo-300 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/40 whitespace-nowrap inline-block',
+        'waiting' => 'bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 whitespace-nowrap inline-block',
+        'called' => 'bg-indigo-100 text-indigo-900 border border-indigo-300 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/40 whitespace-nowrap inline-block',
         'in_progress' => 'bg-sky-100 text-sky-900 border border-sky-300 dark:bg-sky-500/25 dark:text-sky-300 dark:border-sky-500/40 font-black whitespace-nowrap inline-block',
-        'skipped'     => 'bg-purple-100 text-purple-900 border border-purple-300 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/40 whitespace-nowrap inline-block',
-        'completed'   => 'bg-emerald-100 text-emerald-900 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 whitespace-nowrap inline-block',
-        'cancelled'   => 'bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 whitespace-nowrap inline-block',
+        'skipped' => 'bg-purple-100 text-purple-900 border border-purple-300 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/40 whitespace-nowrap inline-block',
+        'completed' => 'bg-emerald-100 text-emerald-900 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 whitespace-nowrap inline-block',
+        'cancelled' => 'bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 whitespace-nowrap inline-block',
     ];
 
     /**
@@ -112,12 +114,44 @@ class Booking extends Model
 
     /*
     |--------------------------------------------------------------------------
+    | Booted Model Events
+    |--------------------------------------------------------------------------
+    */
+
+    protected static function booted(): void
+    {
+        static::creating(function (Booking $booking) {
+            if ($booking->user_id && empty($booking->customer_id) && Schema::hasTable('customers')) {
+                $customer = Customer::where('user_id', $booking->user_id)->first();
+                if ($customer) {
+                    $booking->customer_id = $customer->id;
+                }
+            } elseif (empty($booking->user_id) && empty($booking->customer_id) && ! empty($booking->customer_phone) && Schema::hasTable('customers')) {
+                $customer = Customer::firstOrCreate(
+                    ['phone' => $booking->customer_phone],
+                    ['name' => $booking->customer_name]
+                );
+                $booking->customer_id = $customer->id;
+            }
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
     */
 
     /**
-     * Get the customer who made this booking.
+     * Get the customer record associated with this booking.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    /**
+     * Get the customer user who made this booking.
      */
     public function user(): BelongsTo
     {
@@ -192,9 +226,9 @@ class Booking extends Model
     public static function generateBookingCode(): string
     {
         $date = Carbon::today()->format('Ymd');
-        $prefix = 'BK-' . $date . '-';
+        $prefix = 'BK-'.$date.'-';
 
-        $lastBooking = static::where('booking_code', 'like', $prefix . '%')
+        $lastBooking = static::where('booking_code', 'like', $prefix.'%')
             ->orderBy('booking_code', 'desc')
             ->first();
 
@@ -205,7 +239,7 @@ class Booking extends Model
             $nextNumber = 1;
         }
 
-        return $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        return $prefix.str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -223,7 +257,7 @@ class Booking extends Model
 
         $nextNumber = $count + 1;
 
-        return $prefix . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        return $prefix.'-'.str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /*

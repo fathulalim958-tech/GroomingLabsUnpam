@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -24,10 +25,10 @@ class CustomerController extends Controller
                 ->selectRaw('max(booking_date) as last_booking_date')
                 ->groupBy('customer_name', 'customer_phone');
 
-            if (!empty($search)) {
+            if (! empty($search)) {
                 $query->where(function ($q) use ($search) {
                     $q->where('customer_name', 'like', "%{$search}%")
-                      ->orWhere('customer_phone', 'like', "%{$search}%");
+                        ->orWhere('customer_phone', 'like', "%{$search}%");
                 });
             }
 
@@ -37,11 +38,11 @@ class CustomerController extends Controller
                 ->withCount('bookings')
                 ->withMax('bookings', 'booking_date');
 
-            if (!empty($search)) {
+            if (! empty($search)) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('phone', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
                 });
             }
 
@@ -77,5 +78,59 @@ class CustomerController extends Controller
 
         return view('kasir.customers.show', compact('customer', 'bookings'));
     }
-}
 
+    /**
+     * Toggle block/active status of customer.
+     */
+    public function toggleBlock(User $customer)
+    {
+        if ($customer->role !== 'pelanggan') {
+            abort(403);
+        }
+
+        $customer->is_active = ! $customer->is_active;
+        $customer->save();
+
+        $status = $customer->is_active ? 'diaktifkan kembali' : 'diblokir';
+
+        return back()->with('block_status_updated', [
+            'name' => $customer->name,
+            'is_active' => $customer->is_active,
+            'message' => "Akun {$customer->name} berhasil {$status}.",
+        ])->with('success', "Akun pelanggan {$customer->name} berhasil {$status}.");
+    }
+
+    /**
+     * Reset customer password to custom input or default.
+     */
+    public function resetPassword(Request $request, User $customer)
+    {
+        if ($customer->role !== 'pelanggan') {
+            abort(403);
+        }
+
+        $newPassword = $request->input('password');
+
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => ['required', 'string', 'min:6', 'confirmed'],
+            ], [
+                'password.required' => 'Password baru wajib diisi.',
+                'password.min' => 'Password minimal harus 6 karakter.',
+                'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            ]);
+            $newPassword = $request->password;
+        } else {
+            $newPassword = 'password123';
+        }
+
+        $customer->password = Hash::make($newPassword);
+        $customer->save();
+
+        return back()->with('password_reset_success', [
+            'customer_name' => $customer->name,
+            'customer_email' => $customer->email,
+            'new_password' => $newPassword,
+        ])->with('success', "Password baru akun {$customer->name} berhasil disimpan.");
+    }
+}

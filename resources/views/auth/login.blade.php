@@ -64,22 +64,22 @@
     </form>
 
     <!-- Quick Demo Accounts (Helper for quick testing) -->
-    <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800/80">
+    <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center mb-3">Login Cepat (Akun Demo)</p>
         <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="fillLogin('customer@example.com', 'password')"
-                class="p-2 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-center transition">
-                <span class="block font-bold text-amber-600 dark:text-amber-400">Pelanggan</span>
+                class="p-2.5 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-amber-500/50 rounded-xl text-slate-700 dark:text-slate-300 text-center transition shadow-sm">
+                <span class="block font-bold text-amber-500 dark:text-amber-400">Pelanggan</span>
                 <span class="text-[10px] text-slate-500 dark:text-slate-400">John Cust</span>
             </button>
             <button type="button" onclick="fillLogin('kasir@barbershop.com', 'password')"
-                class="p-2 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-center transition">
-                <span class="block font-bold text-blue-600 dark:text-blue-400">Kasir</span>
+                class="p-2.5 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-amber-500/50 rounded-xl text-slate-700 dark:text-slate-300 text-center transition shadow-sm">
+                <span class="block font-bold text-slate-800 dark:text-slate-200">Kasir</span>
                 <span class="text-[10px] text-slate-500 dark:text-slate-400">Kasir Utama</span>
             </button>
             <button type="button" onclick="fillLogin('admin@barbershop.com', 'password')"
-                class="p-2 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-center transition">
-                <span class="block font-bold text-emerald-600 dark:text-emerald-400">Admin</span>
+                class="p-2.5 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-amber-500/50 rounded-xl text-slate-700 dark:text-slate-300 text-center transition shadow-sm">
+                <span class="block font-bold text-slate-800 dark:text-slate-200">Admin</span>
                 <span class="text-[10px] text-slate-500 dark:text-slate-400">Owner</span>
             </button>
         </div>

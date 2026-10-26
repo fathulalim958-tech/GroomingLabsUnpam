@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class CustomerController extends Controller
 {
@@ -25,8 +24,8 @@ class CustomerController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -75,28 +74,50 @@ class CustomerController extends Controller
             abort(403);
         }
 
-        $customer->is_active = !$customer->is_active;
+        $customer->is_active = ! $customer->is_active;
         $customer->save();
 
         $status = $customer->is_active ? 'diaktifkan kembali' : 'diblokir';
 
-        return back()->with('success', "Akun pelanggan berhasil {$status}.");
+        return back()->with('block_status_updated', [
+            'name' => $customer->name,
+            'is_active' => $customer->is_active,
+            'message' => "Akun {$customer->name} berhasil {$status}.",
+        ])->with('success', "Akun pelanggan {$customer->name} berhasil {$status}.");
     }
 
     /**
-     * Reset customer password to default.
+     * Reset customer password to custom input or default.
      */
-    public function resetPassword(User $customer)
+    public function resetPassword(Request $request, User $customer)
     {
         if ($customer->role !== 'pelanggan') {
             abort(403);
         }
 
-        $newPassword = 'password123';
+        $newPassword = $request->input('password');
+
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => ['required', 'string', 'min:6', 'confirmed'],
+            ], [
+                'password.required' => 'Password baru wajib diisi.',
+                'password.min' => 'Password minimal harus 6 karakter.',
+                'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            ]);
+            $newPassword = $request->password;
+        } else {
+            $newPassword = 'password123';
+        }
+
         $customer->password = Hash::make($newPassword);
         $customer->save();
 
-        return back()->with('success', "Password pelanggan berhasil di-reset ke: {$newPassword}");
+        return back()->with('password_reset_success', [
+            'customer_name' => $customer->name,
+            'customer_email' => $customer->email,
+            'new_password' => $newPassword,
+        ])->with('success', "Password baru akun {$customer->name} berhasil disimpan.");
     }
 
     /**
@@ -109,10 +130,10 @@ class CustomerController extends Controller
         }
 
         $validated = $request->validate([
-            'is_member'                  => 'required|boolean',
-            'member_discount'           => 'required_if:is_member,1|numeric|min:0',
-            'member_discount_type'      => 'required_if:is_member,1|in:percent,fixed',
-            'member_discount_quota'     => 'required_if:is_member,1|integer|min:0',
+            'is_member' => 'required|boolean',
+            'member_discount' => 'required_if:is_member,1|numeric|min:0',
+            'member_discount_type' => 'required_if:is_member,1|in:percent,fixed',
+            'member_discount_quota' => 'required_if:is_member,1|integer|min:0',
             'member_discount_remaining' => 'nullable|integer|min:0',
         ], [
             'member_discount.required_if' => 'Besaran diskon wajib diisi jika mendaftarkan member.',
@@ -126,10 +147,10 @@ class CustomerController extends Controller
                 : $quota;
 
             $customer->update([
-                'is_member'                  => true,
-                'member_discount'           => $validated['member_discount'],
-                'member_discount_type'      => $validated['member_discount_type'],
-                'member_discount_quota'     => $quota,
+                'is_member' => true,
+                'member_discount' => $validated['member_discount'],
+                'member_discount_type' => $validated['member_discount_type'],
+                'member_discount_quota' => $quota,
                 'member_discount_remaining' => $remaining,
             ]);
 
@@ -137,14 +158,13 @@ class CustomerController extends Controller
         }
 
         $customer->update([
-            'is_member'                  => false,
-            'member_discount'           => 0,
-            'member_discount_type'      => 'percent',
-            'member_discount_quota'     => 0,
+            'is_member' => false,
+            'member_discount' => 0,
+            'member_discount_type' => 'percent',
+            'member_discount_quota' => 0,
             'member_discount_remaining' => 0,
         ]);
 
         return back()->with('success', "Status member {$customer->name} telah dinonaktifkan.");
     }
 }
-
