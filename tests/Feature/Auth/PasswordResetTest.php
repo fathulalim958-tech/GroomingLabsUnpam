@@ -28,11 +28,25 @@ class PasswordResetTest extends TestCase
 
         $response->assertRedirect(route('password.verify.form'));
         $this->assertEquals($user->email, session('password_reset_email'));
+        $this->assertTrue(session('mail_sent'));
+        $this->assertNull(session('mail_error'));
 
         // Ensure token record exists in DB
         $this->assertDatabaseHas('password_reset_tokens', [
             'email' => $user->email,
         ]);
+    }
+
+    public function test_verification_code_can_be_resent(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->withSession(['password_reset_email' => $user->email])
+            ->post('/forgot-password/resend');
+
+        $response->assertSessionHas('status');
+        $this->assertTrue(session('mail_sent'));
+        $this->assertNull(session('mail_error'));
     }
 
     public function test_verification_code_screen_can_be_rendered(): void

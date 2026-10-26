@@ -14,7 +14,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
   - [⭐ Sistem Member & Kuota Diskon Pelanggan (VIP Membership)](#-sistem-member--kuota-diskon-pelanggan-vip-membership)
   - [🔔 Siklus 3 Aksi Kasir & Pop-up Konfirmasi Interaktif](#-siklus-3-aksi-kasir--pop-up-konfirmasi-interaktif)
   - [📱 Antarmuka Responsif & Mobile-Friendly](#-antarmuka-responsif--mobile-friendly)
-  - [🔐 Reset Password via Kode Verifikasi 6 Digit](#-reset-password-via-kode-verifikasi-6-digit)
+  - [🔐 Reset Password via Kode Verifikasi 6 Digit (OTP & Dev Helper)](#-reset-password-via-kode-verifikasi-6-digit-otp--dev-helper)
   - [✨ CMS Konten Kategori Publik Dinamis](#-cms-konten-kategori-publik-dinamis)
 - [Akun Demo & Akses Cepat](#-akun-demo--akses-cepat)
 - [Struktur Database & Model Data](#-struktur-database--model-data)
@@ -24,6 +24,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
   - [2. Modul Pelanggan (Customer Experience)](#2-modul-pelanggan-customer-experience)
   - [3. Modul Kasir (Front-Desk Operations)](#3-modul-kasir-front-desk-operations)
   - [4. Modul Admin (Back-Office & Executive Reporting)](#4-modul-admin-back-office--executive-reporting)
+- [Konfigurasi Email & Pengiriman OTP](#-konfigurasi-email--pengiriman-otp)
 - [Panduan Instalasi & Menjalankan Proyek](#-panduan-instalasi--menjalankan-proyek)
 - [Pengujian Otomatis (Automated Testing)](#-pengujian-otomatis-automated-testing)
 - [Struktur Direktori Utama](#-struktur-direktori-utama)
@@ -36,7 +37,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - **Backend Framework:** Laravel 12 (PHP 8.2+)
 - **Frontend Stack:** Tailwind CSS v3 (dengan konfigurasi `darkMode: 'class'`) + Alpine.js + Laravel Blade Components
 - **Asset Bundler:** Vite
-- **Database:** SQLite / MySQL Ready
+- **Database:** MySQL (Default: `barbershop_mua`) / SQLite Ready
 - **Real-Time Synchronization:** Polling interval (5–7 detik) untuk sinkronisasi tiket antrian pelanggan dan meja kasir
 - **Desain UI Dual-Theme:** 
   - *Dark Mode:* Nuansa mewah (*luxury dark*) dengan latar slate gelap (`slate-900`/`slate-950`) dan aksen emas (*amber/gold*) untuk Barbershop serta merah muda (*rose/pink*) untuk MUA Studio.
@@ -50,7 +51,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - **Komponen Switcher:** Tombol beralih tema (`<x-theme-toggle />`) tersedia di seluruh layout (Guest, Pelanggan, Kasir, Admin, dan Halaman Info Publik).
 - **Penyimpanan Preferensi:** Pilihan tema disimpan di `localStorage.theme` sehingga konsisten di seluruh sesi.
 - **Anti-FOUC (Flash of Unstyled Content):** Skrip pendeteksi dini di `<head>` mencegah kedipan warna putih saat mode gelap aktif.
-- **Kontras Tinggi & Badge Single-Line:** Teks, tabel, kartu metrik, formulir input, dan label status ("Sedang Dilayani", "Dipanggil", "Menunggu") dirancang tajam dan diproteksi `whitespace-nowrap` agar tidak patah/turun baris di resolusi apa pun.
+- **Kontras Tinggi & Badge Single-Line:** Teks, tabel, kartu metrik, formulir input, dan label status ("Sedang Dilayani", "Dipanggil", "Menunggu") dirancang tajam dan diproteksi `whitespace-nowrap inline-block` agar tidak patah/turun menjadi dua baris di resolusi layar apa pun.
 
 ### 👥 Multi-Akun Kasir Konkuren (Multi-Cashier Concurrency)
 - **Pelayanan Bersamaan:** Beberapa akun kasir dapat aktif melayani antrian yang berbeda secara simultan tanpa saling mengunci (*non-blocking*).
@@ -62,7 +63,7 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - **Pendaftaran Member via Admin:** Admin dapat menetapkan pelanggan menjadi Member VIP melalui modal interaktif di menu **Data Pelanggan**.
 - **Pengaturan Diskon Fleksibel:** Input potongan harga (Rp) serta kuota pemakaian diskon (berapa kali dapat diskon).
 - **Auto-Potongan Saat Booking:** Saat member memesan layanan, sistem otomatis mengaplikasikan diskon dan mengurangi sisa kuota member (`member_discount_remaining`).
-- **Kartu Identitas VIP di Profil:** Pelanggan member memiliki kartu digital VIP eksklusif di halaman profil yang menampilkan sisa kuota diskon secara transparan.
+- **Kartu Identitas VIP di Profil:** Pelanggan member memiliki kartu digital VIP eksklusif di halaman profil yang menampilkan status kuota diskon secara transparan.
 
 ### 🔔 Siklus 3 Aksi Kasir & Pop-up Konfirmasi Interaktif
 - **3 Aksi Utama Antrian:**
@@ -74,10 +75,12 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 ### 📱 Antarmuka Responsif & Mobile-Friendly
 - **Kasir Mobile:** Tampilan tata letak kasir di ponsel cerdas disederhanakan (grid KPI 2 kolom minimalis, kartu antrian ringkas, dan bilah navigasi bawah: *Dashboard, Order, Pekerja, Laporan*).
 - **Pelanggan Mobile-First:** Tiket antrian berukuran besar, pemantauan nomor antrian yang sedang dilayani secara *live*, dan navigasi bawah (*Home, Order, Riwayat, Profil*).
-- **Sanitasi Nomor Telepon:** Seluruh input kontak/WhatsApp (Walk-in, registrasi, profil, kasir, staf) hanya menerima format angka seluler dan tanda `+`.
+- **Sanitasi Nomor Telepon:** Seluruh input kontak/WhatsApp (Walk-in, registrasi, profil, kasir, staf) secara otomatis membatasi input hanya menerima angka seluler dan tanda `+`.
 
-### 🔐 Reset Password via Kode Verifikasi 6 Digit
-- Fitur lupa kata sandi yang praktis tanpa URL email rumit. Sistem menghasilkan kode verifikasi 6-digit acak dengan masa berlaku 15 menit untuk memvalidasi pembaruan sandi pelanggan.
+### 🔐 Reset Password via Kode Verifikasi 6 Digit (Email OTP)
+- Fitur pemulihan kata sandi tanpa tautan email rumit. Sistem menghasilkan kode verifikasi 6-digit acak dengan masa berlaku 15 menit.
+- **Template Email HTML Elegan:** Notifikasi email dikirim dengan template HTML profesional bertema Grooming Lab langsung ke kotak masuk email pengguna.
+- **Aman & Eksklusif:** Kode OTP hanya tersedia di dalam email pengguna (tidak ditampilkan pada layar aplikasi).
 
 ### ✨ CMS Konten Kategori Publik Dinamis
 - Halaman profil publik mendalam:
@@ -127,9 +130,9 @@ Setelah menjalankan seeder (`php artisan db:seed`), tersedia akun demo bawaan. H
 3. **`staffs`**: `id`, `name`, `role` (`kapster`, `mua`), `phone`, `is_active`, `timestamps`.
 4. **`operating_hours`**: `id`, `category` (`barbershop`, `mua`), `day_of_week` (0=Minggu s/d 6=Sabtu), `open_time`, `close_time`, `is_closed`, `max_bookings_per_slot`, `timestamps`.
 5. **`category_contents`**: `id`, `category` (`barbershop`, `mua`), `title`, `subtitle`, `description`, `facilities` (JSON), `rules` (JSON), `banner_url`, `timestamps`.
-6. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261024-XXXX`), `user_id` (nullable untuk walk-in), `customer_name`, `customer_phone`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (`B-001`, `M-001`), `notes`, `total_price`, `discount_amount`, `status`, `timestamps`.
+6. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261025-XXXX`), `user_id` (nullable untuk walk-in), `customer_name`, `customer_phone`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (`B-001`, `M-001`), `notes`, `total_price`, `discount_amount`, `status`, `timestamps`.
 7. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
-8. **`password_reset_codes`**: `email`, `code`, `created_at` (kode OTP 6-digit untuk pemulihan kata sandi).
+8. **`password_reset_tokens`**: `email`, `token`, `created_at` (token hashed kode OTP 6-digit untuk pemulihan kata sandi).
 
 ---
 
@@ -155,7 +158,7 @@ stateDiagram-v2
 ```
 
 - **Nomor Antrian Mandiri:** Prefix `B-` untuk Barbershop dan `M-` untuk MUA Studio. Nomor urut otomatis di-reset ke `001` setiap pergantian hari (`00:00` WIB).
-- **Layar Pelanggan:** Menampilkan nomor antrian tertinggi yang sedang aktif dilayani pada kategori yang dipilih.
+- **Layar Pelanggan:** Menampilkan nomor antrian tertinggi/terupdate yang sedang aktif dilayani pada kategori yang dipilih.
 
 ---
 
@@ -164,7 +167,7 @@ stateDiagram-v2
 ### 1. Modul Autentikasi & Halaman Informasi Publik
 - **Login Terpusat:** Pengalihan cerdas berbasis peran (`admin`, `kasir`, `pelanggan`) dengan tombol pengisi akun demo otomatis.
 - **Registrasi Pelanggan:** Validasi nama, email unik, kata sandi, dan sanitasi nomor WhatsApp hanya format angka seluler.
-- **Pemulihan Sandi (OTP 6-Digit):** Input email &rarr; masukkan kode 6-digit verifikasi &rarr; ganti sandi baru.
+- **Pemulihan Sandi (OTP 6-Digit):** Input email &rarr; masukkan kode 6-digit verifikasi &rarr; buat kata sandi baru.
 - **Halaman Katalog Publik:** Profil Barbershop (`/layanan/barbershop`) dan MUA Studio (`/layanan/mua`) dapat diakses tanpa login.
 
 ### 2. Modul Pelanggan (Customer Experience)
@@ -191,8 +194,8 @@ stateDiagram-v2
   - Tombol *Selesai & Bayar* terproteksi kepemilikan kasir pelayan.
 - **Pesanan Mendatang (Menu Order):** Melihat daftar reservasi untuk tanggal-tanggal yang akan datang.
 - **Input Walk-In Order:** Formulir pemesanan tamu langsung di kasir dengan waktu otomatis saat ini (*current time*) dan nomor telepon opsional.
-- **Daftar Pekerja (Menu Pekerja):** Tampilan daftar kapster & penata rias beserta status keaktifannya secara *read-only*.
-- **Laporan Pelayanan Kasir (Menu Laporan):** Rekapitulasi transaksi harian dan mingguan kasir, lengkap dengan kolom kasir pelayan serta tombol cetak dan unduh Excel.
+- **Daftar Pekerja (Menu Pekerja):** Tampilan daftar kapster & penata rias beserta status keaktifannya secara *read-only* bagi kasir.
+- **Laporan Pelayanan Kasir (Menu Laporan):** Rekapitulasi transaksi harian dan mingguan kasir, lengkap dengan kolom kasir pelayan serta tombol cetak struk dan unduh Excel.
 
 ### 4. Modul Admin (Back-Office & Executive Reporting)
 - **Dashboard Ringkasan Eksekutif:** Metrik performa, transaksi hari berjalan, pendapatan bulanan, dan tabel 10 pesanan terkini dengan status single-line.
@@ -206,32 +209,63 @@ stateDiagram-v2
 
 ---
 
+## 📧 Konfigurasi Email & Pengiriman OTP
+
+### Mode 1: Driver Log (storage/logs/laravel.log)
+Jika menggunakan `MAIL_MAILER=log`, email dicatat ke file `storage/logs/laravel.log` tanpa koneksi internet.
+
+### Mode 2: Pengiriman Riil ke Gmail (SMTP)
+Sistem menggunakan SMTP Gmail agar kode verifikasi 6 digit dikirim langsung secara riil ke inbox pengguna:
+1. Buat **Google App Password (16 Digit)** di [Google Account Security](https://myaccount.google.com/apppasswords) *(memerlukan 2FA aktif)*.
+2. Perbarui variabel di file `.env`:
+   ```env
+   MAIL_MAILER=smtp
+   MAIL_HOST=smtp.gmail.com
+   MAIL_PORT=587
+   MAIL_USERNAME=emailanda@gmail.com
+   MAIL_PASSWORD=abcdefghijklmnop
+   MAIL_FROM_ADDRESS="emailanda@gmail.com"
+   MAIL_FROM_NAME="Grooming Lab & MUA Studio"
+   ```
+3. Restart server pengembangan (`php artisan serve`).
+
+---
+
 ## 💻 Panduan Instalasi & Menjalankan Proyek
 
 ### 1. Prasyarat Sistem
 - PHP >= 8.2 (ekstensi `pdo_sqlite` atau `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `curl`)
 - Composer >= 2.0
 - Node.js >= 18.x & NPM
+- MySQL Server (misal: XAMPP / Laragon / Native MySQL)
 
 ### 2. Langkah Instalasi
 
 ```bash
-# 1. Clone repository atau buka folder proyek
+# 1. Buka terminal pada folder proyek
 cd c:\Users\fathu\Music\GroomingLabsUnpam
 
 # 2. Pasang dependensi PHP via Composer
 composer install
 
-# 3. Siapkan environment file
+# 3. Siapkan file konfigurasi environment
 cp .env.example .env
 
 # 4. Generate application key
 php artisan key:generate
 
-# 5. Jalankan migrasi database dan buat data awal demo
+# 5. Konfigurasikan database pada file .env (buat database MySQL: barbershop_mua)
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=barbershop_mua
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 6. Jalankan migrasi database dan pengisian data demo (seeder)
 php artisan migrate:fresh --seed
 
-# 6. Pasang dependensi frontend dan kompilasi aset
+# 7. Pasang dependensi JavaScript dan kompilasi aset frontend
 npm install
 npm run build
 ```
@@ -243,10 +277,10 @@ Jalankan web server lokal Laravel:
 php artisan serve
 ```
 
-Buka peramban (browser) dan akses:
+Buka browser dan kunjungi:
 👉 **`http://127.0.0.1:8000`**
 
-*(Halaman akan langsung diarahkan ke `/login` yang dilengkapi tombol Login Cepat demo).*
+*(Halaman akan langsung diarahkan ke `/login` yang dilengkapi tombol Login Cepat untuk demonstrasi ketiga peran).*
 
 ---
 
@@ -258,23 +292,23 @@ Aplikasi memiliki rangkaian pengujian fitur otomatis (*Feature & Unit Tests*) ko
 php artisan test
 ```
 
-### Lingkup Pengujian (49 Feature Tests — 313 Assertions):
+### Lingkup Pengujian (50 Feature Tests — 320 Assertions):
 - [x] Registrasi pelanggan dengan validasi nomor seluler
-- [x] Pengalihan login berbasis role (Admin, Kasir, Pelanggan)
+- [x] Pengalihan login berbasis peran pengguna (Admin, Kasir, Pelanggan)
 - [x] Pembuatan booking mandiri & auto-generate nomor antrian (`B-001`, `M-001`)
 - [x] Siklus hidup kontrol antrian kasir (*Waiting &rarr; Called &rarr; In Progress &rarr; Completed*)
 - [x] Konkurensi multi-kasir (multi-cashier concurrency & proteksi penyelesaian order)
 - [x] Pendaftaran member pelanggan & pemotongan otomatis kuota diskon saat booking
 - [x] Pembuatan pesanan Walk-in kasir dengan waktu terkini
 - [x] Ekspor laporan transaksi CSV / Excel admin & kasir dengan kolom pencatatan kasir
-- [x] Pengelolaan konten dinamis halaman publik kategori
-- [x] Alur reset kata sandi dengan kode OTP 6-digit
+- [x] Pengelolaan konten dinamis halaman publik kategori oleh Admin
+- [x] Alur reset kata sandi dengan kode OTP 6-digit & fitur kirim ulang kode
 - [x] Pengujian keamanan otorisasi rute per peran pengguna
 
 **Hasil Verifikasi Terakhir:**
 ```text
-Tests:    49 passed (313 assertions)
-Duration: 4.34s
+Tests:    50 passed (320 assertions)
+Duration: 4.26s
 ```
 
 ---
@@ -320,8 +354,8 @@ GroomingLabsUnpam/
 │   └── auth.php                        # Rute autentikasi Breeze & kode reset sandi
 └── tests/
     └── Feature/
-        ├── BarbershopMuaSystemTest.php # 49 automated feature tests
-        └── Auth/                       # Pengujian autentikasi & reset sandi
+        ├── BarbershopMuaSystemTest.php # 44 automated feature tests skenario operasional
+        └── Auth/                       # 6 automated feature tests autentikasi & OTP reset sandi
 ```
 
 ---
@@ -329,6 +363,3 @@ GroomingLabsUnpam/
 ## 📄 Lisensi
 
 Aplikasi ini dikembangkan untuk solusi operasional modern Barbershop & Make-Up Artist Studio di bawah lisensi open-source [MIT](https://opensource.org/licenses/MIT).
-
-Aplikasi ini dikembangkan untuk solusi operasional modern Barbershop & Make-Up Artist Studio di bawah lisensi open-source [MIT](https://opensource.org/licenses/MIT).
-

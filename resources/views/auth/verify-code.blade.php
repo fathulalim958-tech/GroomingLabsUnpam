@@ -17,6 +17,20 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if (session('mail_error'))
+        <div class="mb-4 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs">
+            <div class="font-bold flex items-center gap-1.5 mb-1">
+                <span>⚠️</span> Pengiriman Email SMTP Terkendala:
+            </div>
+            <p class="font-mono text-[11px] break-words">{{ session('mail_error') }}</p>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">
+                Periksa pengaturan <code>MAIL_USERNAME</code> dan <code>MAIL_PASSWORD</code> di file <code>.env</code> Anda.
+            </p>
+        </div>
+    @endif
+
+
+
     <form method="POST" action="{{ route('password.verify') }}" class="space-y-5">
         @csrf
 

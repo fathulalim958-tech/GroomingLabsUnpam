@@ -58,26 +58,31 @@ class PasswordResetCodeController extends Controller
         );
 
         // Send email with the verification code
+        $mailSent = false;
+        $mailError = null;
+
+        $htmlContent = $this->buildEmailHtml(
+            name: $user->name,
+            code: $code,
+            isResend: false
+        );
+
         try {
-            Mail::raw(
-                "Halo {$user->name},\n\n" .
-                "Kami menerima permintaan untuk mereset kata sandi akun Grooming Lab Anda.\n\n" .
-                "Berikut adalah KODE VERIFIKASI Anda:\n\n" .
-                "    >>> {$code} <<<\n\n" .
-                "Kode verifikasi ini berlaku selama 15 menit.\n" .
-                "Jika Anda tidak pernah meminta perubahan kata sandi ini, silakan abaikan email ini dengan aman.\n\n" .
-                "Salam hangat,\n" .
-                "Tim Grooming Lab & MUA Studio",
-                function ($message) use ($user) {
-                    $message->to($user->email)
-                        ->subject("{$code} adalah Kode Verifikasi Reset Password Anda - Grooming Lab");
-                }
-            );
+            Mail::html($htmlContent, function ($message) use ($user, $code) {
+                $message->to($user->email)
+                    ->subject("{$code} adalah Kode Verifikasi Reset Password Anda - Grooming Lab");
+            });
+            $mailSent = true;
         } catch (\Throwable $e) {
+            $mailError = $e->getMessage();
             logger()->error('Gagal mengirim email reset password: ' . $e->getMessage());
         }
 
-        session(['password_reset_email' => $request->email]);
+        session([
+            'password_reset_email' => $request->email,
+            'mail_sent' => $mailSent,
+            'mail_error' => $mailError,
+        ]);
 
         return redirect()->route('password.verify.form')
             ->with('status', 'Kode verifikasi telah dikirim ke email Anda. Silakan cek kotak masuk atau folder spam.');
@@ -172,24 +177,108 @@ class PasswordResetCodeController extends Controller
             ]
         );
 
+        $mailSent = false;
+        $mailError = null;
+
+        $htmlContent = $this->buildEmailHtml(
+            name: $user->name,
+            code: $code,
+            isResend: true
+        );
+
         try {
-            Mail::raw(
-                "Halo {$user->name},\n\n" .
-                "Berikut adalah KODE VERIFIKASI BARU Anda:\n\n" .
-                "    >>> {$code} <<<\n\n" .
-                "Kode berlaku selama 15 menit.\n\n" .
-                "Salam hangat,\n" .
-                "Tim Grooming Lab & MUA Studio",
-                function ($message) use ($user) {
-                    $message->to($user->email)
-                        ->subject("{$code} adalah Kode Verifikasi Baru Anda - Grooming Lab");
-                }
-            );
+            Mail::html($htmlContent, function ($message) use ($user, $code) {
+                $message->to($user->email)
+                    ->subject("{$code} adalah Kode Verifikasi Baru Anda - Grooming Lab");
+            });
+            $mailSent = true;
         } catch (\Throwable $e) {
+            $mailError = $e->getMessage();
             logger()->error('Gagal mengirim ulang email reset password: ' . $e->getMessage());
         }
 
+        session([
+            'mail_sent' => $mailSent,
+            'mail_error' => $mailError,
+        ]);
+
         return back()->with('status', 'Kode verifikasi baru telah dikirim ke email Anda.');
+    }
+
+    /**
+     * Generate HTML email template for password verification code.
+     */
+    protected function buildEmailHtml(string $name, string $code, bool $isResend = false): string
+    {
+        $headline = $isResend ? 'Kode Verifikasi Baru' : 'Kode Verifikasi Anda';
+        $subtext = $isResend ? 'Berikut adalah kode verifikasi terbaru Anda untuk mereset kata sandi:' : 'Kami menerima permintaan untuk mereset kata sandi akun Grooming Lab Anda. Gunakan kode verifikasi di bawah ini:';
+
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kode Verifikasi Reset Password</title>
+</head>
+<body style="margin: 0; padding: 24px; background-color: #0b1120; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f8fafc;">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #1e293b; border-radius: 20px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 32px 24px 20px 24px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155;">
+                            <div style="display: inline-block; width: 52px; height: 52px; line-height: 52px; border-radius: 16px; background-color: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); font-size: 26px; text-align: center; margin-bottom: 12px;">
+                                💈
+                            </div>
+                            <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px;">GROOMING LAB</h1>
+                            <p style="margin: 4px 0 0 0; font-size: 11px; font-weight: 700; color: #f59e0b; text-transform: uppercase; letter-spacing: 2px;">Barbershop &amp; MUA Studio</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content Body -->
+                    <tr>
+                        <td style="padding: 32px 28px;">
+                            <h2 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 800; color: #ffffff; text-align: center;">{$headline}</h2>
+                            <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 1.6; color: #94a3b8; text-align: center;">
+                                Halo <strong style="color: #f1f5f9;">{$name}</strong>,<br>
+                                {$subtext}
+                            </p>
+
+                            <!-- Verification Code Box -->
+                            <div style="background-color: #090e1a; border-radius: 16px; border: 2px dashed #f59e0b; padding: 24px; text-align: center; margin: 0 0 24px 0;">
+                                <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">6 Digit Kode OTP</div>
+                                <div style="font-family: 'Courier New', Courier, monospace; font-size: 40px; font-weight: 900; letter-spacing: 10px; color: #fbbf24; text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);">
+                                    {$code}
+                                </div>
+                                <div style="margin-top: 10px; font-size: 11px; color: #64748b;">
+                                    ⏱️ Kode ini berlaku selama <strong>15 menit</strong>.
+                                </div>
+                            </div>
+
+                            <p style="margin: 0 0 8px 0; font-size: 12px; line-height: 1.6; color: #cbd5e1;">
+                                <strong>Penting:</strong> Jangan berikan kode ini kepada siapa pun termasuk pihak Grooming Lab. Jika Anda tidak pernah meminta perubahan kata sandi, akun Anda tetap aman dan abaikan pesan ini.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px 28px; background-color: #0f172a; border-top: 1px solid #334155; text-align: center;">
+                            <p style="margin: 0; font-size: 11px; color: #64748b; line-height: 1.5;">
+                                &copy; Grooming Lab &amp; MUA Studio. Seluruh hak cipta dilindungi.<br>
+                                Email ini dibuat secara otomatis oleh sistem reservasi.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+HTML;
     }
 
     /**
