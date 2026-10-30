@@ -43,7 +43,17 @@
             <div class="flex items-center gap-2 sm:gap-3">
                 <x-theme-toggle />
 
-                <span class="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">Hai, <strong class="text-slate-800 dark:text-slate-200">{{ auth()->user()->name }}</strong></span>
+                <a href="{{ route('pelanggan.profile.edit') }}" class="flex items-center gap-2 hover:opacity-85 transition" title="Profil Saya">
+                    @if(auth()->user()->avatar)
+                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="w-7 h-7 rounded-lg object-cover ring-1 ring-amber-500/50 flex-shrink-0">
+                    @else
+                        <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-500 font-bold text-[10px] flex items-center justify-center ring-1 ring-amber-500/40 flex-shrink-0">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                        </div>
+                    @endif
+                    <span class="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">Hai, <strong class="text-slate-800 dark:text-slate-200">{{ auth()->user()->name }}</strong></span>
+                </a>
+
                 <button type="button"
                         @click="showLogoutModal = true"
                         class="text-xs text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-red-300 dark:hover:border-red-900/50 bg-slate-100 dark:bg-slate-900 transition flex items-center gap-1.5">

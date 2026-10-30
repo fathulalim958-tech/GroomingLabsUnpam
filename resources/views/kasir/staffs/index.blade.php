@@ -1,306 +1,277 @@
-<x-kasir-layout title="Informasi Pekerja & Kapster - Grooming Lab">
+<x-kasir-layout title="Riwayat Pelanggan Dilayani - Grooming Lab">
     <div class="space-y-6">
-        <!-- Top Banner Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-5 shadow-sm">
+        <!-- Header Banner -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-sm">
             <div>
-                <h1 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                    INFORMASI PEKERJA / KAPSTER & MUA
+                <h1 class="text-sm sm:text-base lg:text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    RIWAYAT PELANGGAN YANG SUDAH DILAYANI
                 </h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Pantau status keaktifan, ketersediaan, kontak WhatsApp, dan beban kerja kapster & beautician MUA hari ini.
+                <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Arsip data pelanggan yang telah selesai dilayani per hari. Tersedia fitur ekspor berkas Excel harian.
                 </p>
             </div>
 
-            <!-- Role Quick Filter Tabs -->
-            <div class="w-full sm:w-auto grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-900 p-1 sm:p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                <a href="{{ route('kasir.staffs.index', ['role' => 'all', 'status' => $statusFilter, 'search' => $search]) }}"
-                   class="px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center justify-center {{ $roleFilter === 'all' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }}">
-                    Semua
-                </a>
-                <a href="{{ route('kasir.staffs.index', ['role' => 'kapster', 'status' => $statusFilter, 'search' => $search]) }}"
-                   class="px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 {{ $roleFilter === 'kapster' ? 'bg-amber-500 text-slate-950 font-black shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }}">
-                    <span>💈 Kapster</span>
-                </a>
-                <a href="{{ route('kasir.staffs.index', ['role' => 'mua', 'status' => $statusFilter, 'search' => $search]) }}"
-                   class="px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 {{ $roleFilter === 'mua' ? 'bg-pink-500 text-white font-black shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }}">
-                    <span>💄 MUA</span>
+            <!-- Tombol Ekspor Excel Harian -->
+            <div class="flex items-center gap-2">
+                <a href="{{ route('kasir.staffs.export-excel', ['date' => $selectedDate, 'category' => $category]) }}"
+                   class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-600/20 transition transform active:scale-95 whitespace-nowrap">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Unduh Excel Harian</span>
                 </a>
             </div>
         </div>
 
-        <!-- 4 KPI Metrics: Grid Minimalis -->
+        <!-- Section KPI Metrik Harian -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
-            <!-- 1. Total Pekerja -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-4 shadow-sm flex items-center justify-between">
+            <!-- 1. Total Dilayani -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm flex items-center justify-between">
                 <div>
-                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Tim</span>
-                    <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">{{ $totalStaff }}</div>
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400">Pekerja terdaftar</span>
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block truncate">Total Dilayani</span>
+                    <div class="text-lg sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white mt-0.5 sm:mt-1 font-mono">{{ $stats['total_served'] }}</div>
+                    <span class="text-[10px] text-slate-500 block">Pelanggan Selesai</span>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-lg">
-                    👥
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0">
+                    ✓
                 </div>
             </div>
 
-            <!-- 2. Kapster Barbershop -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-4 shadow-sm flex items-center justify-between">
+            <!-- 2. Barbershop -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm flex items-center justify-between">
                 <div>
-                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-400">Kapster Aktif</span>
-                    <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">
-                        {{ $activeKapsters }} <span class="text-xs font-semibold text-slate-400">/ {{ $totalKapsters }}</span>
-                    </div>
-                    <span class="text-[10px] text-amber-600 dark:text-amber-400/90 font-medium">Barbershop</span>
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-500 block truncate">Barbershop</span>
+                    <div class="text-lg sm:text-2xl lg:text-3xl font-black text-amber-500 mt-0.5 sm:mt-1 font-mono">{{ $stats['barbershop_served'] }}</div>
+                    <span class="text-[10px] text-slate-500 block">Layanan Pria</span>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-lg">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/30 flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0">
                     💈
                 </div>
             </div>
 
-            <!-- 3. MUA Beautician -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-4 shadow-sm flex items-center justify-between">
+            <!-- 3. MUA Studio -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm flex items-center justify-between">
                 <div>
-                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-pink-500 dark:text-pink-400">MUA Aktif</span>
-                    <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">
-                        {{ $activeMuas }} <span class="text-xs font-semibold text-slate-400">/ {{ $totalMuas }}</span>
-                    </div>
-                    <span class="text-[10px] text-pink-600 dark:text-pink-400/90 font-medium">Studio Tata Rias</span>
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-pink-400 block truncate">MUA Studio</span>
+                    <div class="text-lg sm:text-2xl lg:text-3xl font-black text-pink-400 mt-0.5 sm:mt-1 font-mono">{{ $stats['mua_served'] }}</div>
+                    <span class="text-[10px] text-slate-500 block">Tata Rias</span>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-500 flex items-center justify-center text-lg">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/30 flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0">
                     💄
                 </div>
             </div>
 
-            <!-- 4. Sedang Bertugas -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-4 shadow-sm flex items-center justify-between">
-                <div>
-                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-500 dark:text-sky-400">Sedang Melayani</span>
-                    <div class="text-2xl sm:text-3xl font-black text-sky-600 dark:text-sky-400 mt-0.5">{{ $onDutyCount }}</div>
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400">Ada sesi berlangsung</span>
+            <!-- 4. Total Omzet Tanggal Ini -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm flex items-center justify-between">
+                <div class="min-w-0 pr-1">
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-500 block truncate">Total Tarif Harian</span>
+                    <div class="text-sm sm:text-lg lg:text-2xl font-black text-emerald-500 mt-0.5 sm:mt-1 font-mono truncate">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</div>
+                    <span class="text-[10px] text-slate-500 block truncate">Selesai Dibayar</span>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-lg">
-                    ✂️
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0">
+                    💰
                 </div>
             </div>
         </div>
 
-        <!-- Filter & Search Toolbar -->
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <!-- Filter & Search Toolbar (Per Hari / Filter Tanggal) -->
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-sm">
             <form method="GET" action="{{ route('kasir.staffs.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <input type="hidden" name="role" value="{{ $roleFilter }}">
-
-                <!-- Status Filter -->
+                <!-- Date Picker Filter (Harian) -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status Keaktifan:</label>
-                    <select name="status" onchange="this.form.submit()"
-                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
-                        <option value="all">Semua Status</option>
-                        <option value="active" {{ $statusFilter === 'active' ? 'selected' : '' }}>Hanya Aktif</option>
-                        <option value="inactive" {{ $statusFilter === 'inactive' ? 'selected' : '' }}>Hanya Nonaktif</option>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1 flex items-center justify-between">
+                        <span>Pilih Tanggal:</span>
+                        <div class="flex items-center gap-1.5 text-[10px]">
+                            <a href="{{ route('kasir.staffs.index', ['date' => \Illuminate\Support\Carbon::today()->format('Y-m-d'), 'category' => $category]) }}"
+                               class="{{ $selectedDate === \Illuminate\Support\Carbon::today()->format('Y-m-d') ? 'text-amber-500 font-black' : 'text-slate-400 hover:text-white' }}">
+                                Hari Ini
+                            </a>
+                            <span>&bull;</span>
+                            <a href="{{ route('kasir.staffs.index', ['date' => \Illuminate\Support\Carbon::yesterday()->format('Y-m-d'), 'category' => $category]) }}"
+                               class="{{ $selectedDate === \Illuminate\Support\Carbon::yesterday()->format('Y-m-d') ? 'text-amber-500 font-black' : 'text-slate-400 hover:text-white' }}">
+                                Kemarin
+                            </a>
+                        </div>
+                    </label>
+                    <input type="date" name="date" value="{{ $selectedDate }}" onchange="this.form.submit()"
+                           class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 font-mono">
+                </div>
+
+                <!-- Category Filter -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Kategori Layanan:</label>
+                    <select name="category" onchange="this.form.submit()"
+                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                        <option value="all">Semua Kategori</option>
+                        <option value="barbershop" {{ $category === 'barbershop' ? 'selected' : '' }}>Barbershop</option>
+                        <option value="mua" {{ $category === 'mua' ? 'selected' : '' }}>MUA Studio</option>
                     </select>
                 </div>
 
                 <!-- Search Input -->
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Cari Pekerja:</label>
+                <div class="sm:col-span-2 lg:col-span-2">
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Cari Pelanggan / Kode:</label>
                     <div class="flex gap-2">
-                        <input type="text" name="search" value="{{ $search }}"
-                               placeholder="Ketik nama atau nomor HP/WA..."
-                               class="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500">
-                        <button type="submit"
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-bold rounded-xl transition flex-shrink-0">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Nama pelanggan, no. HP, kode booking..."
+                               class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                        <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow transition whitespace-nowrap">
                             Cari
                         </button>
                     </div>
                 </div>
-
-                <!-- Reset Filter Button -->
-                <div class="flex items-end">
-                    @if ($roleFilter !== 'all' || $statusFilter !== 'all' || !empty($search))
-                        <a href="{{ route('kasir.staffs.index') }}"
-                           class="w-full text-center px-3.5 py-2 text-xs sm:text-sm font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500 hover:text-white border border-rose-500/30 rounded-xl transition">
-                            Reset Filter
-                        </a>
-                    @endif
-                </div>
             </form>
         </div>
 
-        <!-- Worker List Container -->
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl overflow-hidden shadow-lg">
-            <!-- Mobile Card View (Khusus Layar HP) -->
+        <!-- Table Riwayat Pelanggan Dilayani -->
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
+            <!-- Mobile View: Kartu Riwayat di HP -->
             <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/70">
-                @forelse ($staffs as $staff)
-                    @php
-                        $inProgressBooking = $staff->bookings->first();
-                        $isServing = !is_null($inProgressBooking);
-                    @endphp
-                    <div class="p-4 space-y-3">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-xl flex items-center justify-center font-black text-base {{ $staff->role === 'kapster' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30' : 'bg-pink-500/10 text-pink-500 border border-pink-500/30' }}">
-                                    {{ strtoupper(substr($staff->name, 0, 2)) }}
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-slate-900 dark:text-white">{{ $staff->name }}</div>
-                                    <span class="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $staff->role === 'kapster' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400' : 'bg-pink-500/15 text-pink-600 dark:text-pink-400' }}">
-                                        {{ $staff->role === 'kapster' ? '💈 Kapster Barbershop' : '💄 MUA Beautician' }}
-                                    </span>
-                                </div>
+                @forelse ($bookings as $b)
+                    <div class="p-4 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-black text-base {{ $b->service_category === 'barbershop' ? 'text-amber-500 dark:text-amber-400' : 'text-pink-500 dark:text-pink-400' }}">
+                                    {{ $b->queue_number }}
+                                </span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">#{{ $b->booking_code }}</span>
                             </div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                Selesai
+                            </span>
+                        </div>
 
-                            <!-- Status Badge -->
-                            <div>
-                                @if (!$staff->is_active)
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
-                                        Libur / Nonaktif
-                                    </span>
-                                @elseif ($isServing)
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-sky-500 text-slate-950 animate-pulse">
-                                        Sedang Bertugas
-                                    </span>
+                        <div class="flex items-center gap-3">
+                            <div class="relative flex-shrink-0">
+                                @if($b->user?->avatar)
+                                    <img src="{{ asset('storage/' . $b->user->avatar) }}" alt="{{ $b->customer_name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
                                 @else
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500 text-slate-950">
-                                        ✓ Aktif & Siap
-                                    </span>
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                        {{ strtoupper(substr($b->customer_name, 0, 2)) }}
+                                    </div>
                                 @endif
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm text-slate-900 dark:text-white">{{ $b->customer_name }}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $b->customer_phone ?? '-' }}</div>
                             </div>
                         </div>
 
-                        <!-- Contact & Serving Details -->
-                        <div class="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 text-xs space-y-1.5">
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-500 dark:text-slate-400">Kontak WhatsApp:</span>
-                                @if ($staff->phone)
-                                    <a href="https://wa.me/{{ preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $staff->phone)) }}"
-                                       target="_blank"
-                                       class="font-mono font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
-                                        <span>💬 {{ $staff->phone }}</span>
-                                    </a>
-                                @else
-                                    <span class="text-slate-400">-</span>
-                                @endif
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-500 dark:text-slate-400">Pelayanan Hari Ini:</span>
-                                <span class="font-bold text-slate-900 dark:text-white">
-                                    {{ $staff->bookings_today_completed }} selesai <span class="text-slate-400">({{ $staff->bookings_today_total }} total)</span>
+                        <div class="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700/60">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold uppercase {{ $b->service_category === 'barbershop' ? 'text-amber-500' : 'text-pink-400' }}">
+                                    {{ ucfirst($b->service_category) }}
+                                </span>
+                                <span class="font-mono font-bold text-slate-900 dark:text-white">
+                                    Rp {{ number_format($b->total_price, 0, ',', '.') }}
                                 </span>
                             </div>
-
-                            @if ($isServing)
-                                <div class="pt-1 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-sky-600 dark:text-sky-300 font-semibold">
-                                    <span>Sedang Layani:</span>
-                                    <span class="font-mono font-bold">{{ $inProgressBooking->queue_number }} ({{ $inProgressBooking->customer_name }})</span>
-                                </div>
-                            @endif
+                            <div class="text-slate-600 dark:text-slate-300 font-medium">
+                                {{ $b->items->map(fn($item) => $item->service->name)->join(', ') }}
+                            </div>
+                            <div class="mt-1.5 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono border-t border-slate-200 dark:border-slate-700 pt-1">
+                                <span>Kasir: {{ $b->cashier->name ?? $b->staff->name ?? 'Kasir Utama' }}</span>
+                                <span>⏰ {{ substr($b->booking_time, 0, 5) }} WIB</span>
+                            </div>
                         </div>
                     </div>
                 @empty
-                    <div class="py-12 text-center text-slate-500 dark:text-slate-400 px-4">
-                        <div class="text-3xl">👥</div>
-                        <p class="font-bold text-sm text-slate-700 dark:text-slate-300 mt-2">Tidak ada data pekerja ditemukan.</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Silakan sesuaikan filter atau tambahkan data staf di menu admin.</p>
+                    <div class="py-12 text-center text-slate-500 dark:text-slate-400 p-4">
+                        <div class="text-3xl mb-2">📋</div>
+                        <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Belum ada pelanggan yang dilayani pada tanggal ini.</p>
+                        <p class="text-xs mt-1">Gunakan filter tanggal di atas untuk melihat riwayat hari lain.</p>
                     </div>
                 @endforelse
             </div>
 
-            <!-- Desktop View: Tabel Lengkap -->
+            <!-- Desktop View: Tabel Riwayat Lengkap -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
-                    <thead class="bg-slate-200 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-black text-xs uppercase tracking-wider border-b border-slate-300 dark:border-slate-800">
+                    <thead class="bg-slate-50 dark:bg-slate-900/90 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                         <tr>
-                            <th class="py-4 px-4 font-black">Nama Pekerja</th>
-                            <th class="py-4 px-4 font-black">Peran / Kategori</th>
-                            <th class="py-4 px-4 font-black">No. WhatsApp / HP</th>
-                            <th class="py-4 px-4 font-black">Status Keaktifan</th>
-                            <th class="py-4 px-4 font-black">Tugas Hari Ini</th>
+                            <th class="py-3.5 px-4 font-bold">No. Antrian & Kode</th>
+                            <th class="py-3.5 px-4 font-bold">Data Pelanggan</th>
+                            <th class="py-3.5 px-4 font-bold">Kategori</th>
+                            <th class="py-3.5 px-4 font-bold">Layanan Dikerjakan</th>
+                            <th class="py-3.5 px-4 font-bold">Waktu Layanan</th>
+                            <th class="py-3.5 px-4 font-bold">Kasir / Pelayan</th>
+                            <th class="py-3.5 px-4 font-bold">Total Tarif</th>
+                            <th class="py-3.5 px-4 font-bold text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/70">
-                        @forelse ($staffs as $staff)
-                            @php
-                                $inProgressBooking = $staff->bookings->first();
-                                $isServing = !is_null($inProgressBooking);
-                            @endphp
-                            <tr class="hover:bg-slate-100/70 dark:hover:bg-slate-700/60 transition {{ $isServing ? 'bg-sky-50/50 dark:bg-sky-950/20' : '' }}">
-                                <!-- Staff Name & Avatar -->
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60">
+                        @forelse ($bookings as $b)
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                <td class="py-4 px-4">
+                                    <div class="font-mono font-black text-lg {{ $b->service_category === 'barbershop' ? 'text-amber-500 dark:text-amber-400' : 'text-pink-500 dark:text-pink-400' }}">
+                                        {{ $b->queue_number }}
+                                    </div>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-mono tracking-tight">{{ $b->booking_code }}</span>
+                                </td>
+
                                 <td class="py-4 px-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm {{ $staff->role === 'kapster' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30' : 'bg-pink-500/10 text-pink-500 border border-pink-500/30' }}">
-                                            {{ strtoupper(substr($staff->name, 0, 2)) }}
+                                        <div class="relative flex-shrink-0">
+                                            @if($b->user?->avatar)
+                                                <img src="{{ asset('storage/' . $b->user->avatar) }}" alt="{{ $b->customer_name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                            @else
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                                    {{ strtoupper(substr($b->customer_name, 0, 2)) }}
+                                                </div>
+                                            @endif
                                         </div>
                                         <div>
-                                            <div class="font-bold text-base text-slate-900 dark:text-white">{{ $staff->name }}</div>
-                                            <div class="text-xs text-slate-400 font-mono">ID: #{{ $staff->id }}</div>
+                                            <div class="font-bold text-base text-slate-900 dark:text-white">{{ $b->customer_name }}</div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $b->customer_phone ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- Role -->
                                 <td class="py-4 px-4">
-                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ $staff->role === 'kapster' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 'bg-pink-500/20 text-pink-600 dark:text-pink-400' }}">
-                                        {{ $staff->role === 'kapster' ? '💈 Kapster Barbershop' : '💄 MUA Beautician' }}
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider {{ $b->service_category === 'barbershop' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/40' : 'bg-pink-500/20 text-pink-400 border border-pink-500/40' }}">
+                                        {{ ucfirst($b->service_category) }}
                                     </span>
                                 </td>
 
-                                <!-- WhatsApp Contact -->
-                                <td class="py-4 px-4 font-mono text-sm">
-                                    @if ($staff->phone)
-                                        <a href="https://wa.me/{{ preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $staff->phone)) }}"
-                                           target="_blank"
-                                           class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1.5"
-                                           title="Kirim pesan WhatsApp">
-                                            <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.101.005.24-.038.376.289.144.346.491 1.2.534 1.287.043.087.072.188.014.303-.058.116-.087.188-.173.289l-.26.303c-.087.087-.178.182-.077.355.101.173.449.741.964 1.201.662.591 1.221.774 1.394.861.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z" />
-                                            </svg>
-                                            <span>{{ $staff->phone }}</span>
-                                        </a>
-                                    @else
-                                        <span class="text-slate-400 italic">Tidak ada nomor</span>
-                                    @endif
-                                </td>
-
-                                <!-- Status Keaktifan -->
-                                <td class="py-4 px-4">
-                                    @if (!$staff->is_active)
-                                        <span class="px-3.5 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 dark:bg-slate-750 dark:text-slate-400">
-                                            Libur / Nonaktif
-                                        </span>
-                                    @elseif ($isServing)
-                                        <div class="space-y-1">
-                                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-500 text-slate-950 inline-block animate-pulse">
-                                                Sedang Bertugas
-                                            </span>
-                                            <div class="text-xs text-sky-600 dark:text-sky-300 font-semibold font-mono">
-                                                Antrian: {{ $inProgressBooking->queue_number }}
-                                            </div>
+                                <td class="py-4 px-4 max-w-xs">
+                                    <div class="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                                        {{ $b->items->map(fn($item) => $item->service->name)->join(', ') }}
+                                    </div>
+                                    @if ($b->notes)
+                                        <div class="text-xs text-amber-500 dark:text-amber-300 font-medium italic mt-0.5 truncate">
+                                            📝 {{ $b->notes }}
                                         </div>
-                                    @else
-                                        <span class="px-3.5 py-1 rounded-full text-xs font-black bg-emerald-500 text-slate-950 shadow-sm">
-                                            ✓ Aktif & Siap
-                                        </span>
                                     @endif
                                 </td>
 
-                                <!-- Tasks Today -->
-                                <td class="py-4 px-4">
+                                <td class="py-4 px-4 text-sm font-mono text-slate-700 dark:text-slate-300">
                                     <div class="font-bold text-slate-900 dark:text-white">
-                                        {{ $staff->bookings_today_completed }} <span class="text-xs font-normal text-slate-500 dark:text-slate-400">Selesai</span>
+                                        {{ $b->booking_date ? \Illuminate\Support\Carbon::parse($b->booking_date)->translatedFormat('d M Y') : '-' }}
                                     </div>
-                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                                        {{ $staff->bookings_today_total }} total order hari ini
-                                    </div>
+                                    <div class="text-xs text-slate-400 font-semibold mt-0.5">{{ substr($b->booking_time, 0, 5) }} WIB</div>
+                                </td>
+
+                                <td class="py-4 px-4 font-medium text-sm text-slate-300">
+                                    {{ $b->cashier->name ?? $b->staff->name ?? 'Kasir Utama' }}
+                                </td>
+
+                                <td class="py-4 px-4 font-black text-base text-slate-900 dark:text-white font-mono">
+                                    Rp {{ number_format($b->total_price, 0, ',', '.') }}
+                                </td>
+
+                                <td class="py-4 px-4 text-center whitespace-nowrap">
+                                    <span class="px-3.5 py-1 rounded-full text-xs uppercase tracking-wider font-bold inline-block whitespace-nowrap bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                        Selesai
+                                    </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-12 text-center text-slate-500 dark:text-slate-400">
+                                <td colspan="8" class="py-12 text-center text-slate-500 dark:text-slate-400">
                                     <div class="max-w-xs mx-auto space-y-2">
-                                        <div class="text-3xl">👥</div>
-                                        <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Tidak ada data pekerja ditemukan.</p>
-                                        <p class="text-xs">Silakan sesuaikan filter atau tambahkan data staf di menu admin.</p>
+                                        <div class="text-3xl">📋</div>
+                                        <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Belum ada pelanggan yang dilayani pada tanggal ini.</p>
+                                        <p class="text-xs">Silakan pilih tanggal lain pada formulir filter di atas.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -308,7 +279,12 @@
                     </tbody>
                 </table>
             </div>
+
+            @if ($bookings->hasPages())
+                <div class="px-5 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    {{ $bookings->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </x-kasir-layout>
-

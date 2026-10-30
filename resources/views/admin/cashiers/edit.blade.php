@@ -10,7 +10,24 @@
             </a>
         </div>
 
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl space-y-6">
+            <!-- Header Profil Kasir -->
+            <div class="flex items-center gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div class="relative flex-shrink-0">
+                    @if($cashier->avatar)
+                        <img src="{{ asset('storage/' . $cashier->avatar) }}" alt="{{ $cashier->name }}" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-amber-500/50 shadow-md">
+                    @else
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xl shadow-md">
+                            {{ strtoupper(substr($cashier->name, 0, 2)) }}
+                        </div>
+                    @endif
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white">{{ $cashier->name }}</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">ID: KSR-{{ str_pad($cashier->id, 3, '0', STR_PAD_LEFT) }} &bull; {{ $cashier->email }}</p>
+                </div>
+            </div>
+
             <form method="POST" action="{{ route('admin.cashiers.update', $cashier) }}" class="space-y-4">
                 @csrf
                 @method('PUT')

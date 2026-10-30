@@ -3,7 +3,7 @@
         <div class="mb-4 sm:mb-6 flex items-center justify-between gap-2">
             <div>
                 <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Kasir Front-Desk</span>
-                <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">Input Pesanan Walk-In (Offline)</h1>
+                <h1 class="text-base sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">Input Pesanan Walk-In (Offline)</h1>
                 <p class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mt-0.5">Tambahkan antrian untuk pelanggan yang datang langsung</p>
             </div>
             <a href="{{ route('kasir.dashboard') }}" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex-shrink-0">
@@ -149,7 +149,7 @@
                 <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div>
                         <span class="text-xs text-slate-500 dark:text-slate-400 block">Total Biaya Walk-In</span>
-                        <span class="text-2xl font-black text-amber-600 dark:text-amber-400" x-text="formatRupiah(selectedService ? selectedService.price : 0)">Rp 0</span>
+                        <span class="text-lg sm:text-2xl font-black text-amber-600 dark:text-amber-400" x-text="formatRupiah(selectedService ? selectedService.price : 0)">Rp 0</span>
                     </div>
 
                     <button type="button"

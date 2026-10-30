@@ -10,28 +10,35 @@ use Illuminate\Support\Carbon;
 class OrderController extends Controller
 {
     /**
-     * Display the list of orders with upcoming and monthly filter views.
+     * Display the list of upcoming orders only (excludes completed, cancelled, or past orders).
+     * By default displays orders for tomorrow (H+1) with a date picker supporting up to 7 days ahead.
      */
     public function index(Request $request)
     {
-        $viewType = $request->get('view', 'upcoming'); // upcoming, month, all
-        $selectedMonth = $request->get('month', Carbon::today()->format('Y-m'));
+        $today = Carbon::today();
+        $tomorrow = Carbon::tomorrow()->format('Y-m-d');
+        $max7Days = $today->copy()->addDays(7)->format('Y-m-d');
+
+        // By default, display orders for tomorrow (H+1) unless explicitly viewing all or picking a date
+        if ($request->get('view') === 'upcoming' || $request->get('date') === 'all') {
+            $selectedDate = null;
+        } else {
+            $selectedDate = $request->get('date', $tomorrow);
+        }
+
         $category = $request->get('category', 'all');
-        $status = $request->get('status', 'all');
         $search = $request->get('search');
 
-        $query = Booking::with(['user', 'items.service', 'staff', 'cashier']);
+        // Strictly UPCOMING orders only:
+        // Exclude completed (sudah dilayani), cancelled (dibatalkan), and skipped
+        // Must be today or future dates
+        $query = Booking::with(['user', 'items.service', 'staff', 'cashier'])
+            ->whereDate('booking_date', '>=', $today)
+            ->whereNotIn('status', ['completed', 'cancelled', 'skipped']);
 
-        // Date range filtering based on view or specific date
-        if ($request->filled('date')) {
-            $query->whereDate('booking_date', $request->get('date'));
-        } elseif ($viewType === 'upcoming') {
-            $query->whereDate('booking_date', '>', Carbon::today());
-        } elseif ($viewType === 'month') {
-            $startOfMonth = Carbon::createFromFormat('Y-m', $selectedMonth)->startOfMonth();
-            $endOfMonth = Carbon::createFromFormat('Y-m', $selectedMonth)->endOfMonth();
-            $query->whereDate('booking_date', '>=', $startOfMonth)
-                  ->whereDate('booking_date', '<=', $endOfMonth);
+        // Filter per date (defaults to tomorrow)
+        if (!empty($selectedDate)) {
+            $query->whereDate('booking_date', $selectedDate);
         }
 
         // Category filter
@@ -39,48 +46,29 @@ class OrderController extends Controller
             $query->where('service_category', $category);
         }
 
-        // Status filter
-        if ($status !== 'all' && array_key_exists($status, Booking::STATUS_LABELS)) {
-            $query->where('status', $status);
-        }
-
         // Search filter
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('booking_code', 'like', "%{$search}%")
-                  ->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%")
                   ->orWhere('customer_phone', 'like', "%{$search}%")
                   ->orWhere('queue_number', 'like', "%{$search}%");
             });
         }
 
-        // Sorting
-        if ($viewType === 'upcoming') {
-            $query->orderBy('booking_date', 'asc')->orderBy('booking_time', 'asc');
-        } else {
-            $query->orderBy('booking_date', 'desc')->orderBy('booking_time', 'desc');
-        }
+        // Sorting: Closest upcoming date and time first
+        $query->orderBy('booking_date', 'asc')->orderBy('booking_time', 'asc');
 
         $orders = $query->paginate(15)->withQueryString();
 
-        // Metrics for badges & summary cards
-        $upcomingCount = Booking::whereDate('booking_date', '>', Carbon::today())
-            ->whereIn('status', ['waiting', 'called', 'in_progress'])
-            ->count();
-
-        $currentMonthCount = Booking::whereYear('booking_date', Carbon::today()->year)
-            ->whereMonth('booking_date', Carbon::today()->month)
-            ->count();
-
         return view('kasir.orders.index', compact(
             'orders',
-            'viewType',
-            'selectedMonth',
+            'selectedDate',
             'category',
-            'status',
             'search',
-            'upcomingCount',
-            'currentMonthCount'
+            'today',
+            'tomorrow',
+            'max7Days'
         ));
     }
 }

@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelang
 
     // Booking Flow
     Route::get('/booking', [BookingController::class, 'selectCategory'])->name('booking.category');
+    Route::get('/booking/check-slots', [BookingController::class, 'checkSlots'])->name('booking.check-slots');
     Route::get('/booking/{category}', [BookingController::class, 'create'])->name('booking.create');
     Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 
@@ -91,8 +92,9 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     // Order Menu (Mendatang & Bulanan)
     Route::get('/orders', [KasirOrderController::class, 'index'])->name('orders.index');
 
-    // Informasi Pekerja / Kapster Kasir (Read-only)
+    // Riwayat Pelanggan Dilayani Kasir (Pengganti Menu Pekerja)
     Route::get('/staffs', [KasirStaffController::class, 'index'])->name('staffs.index');
+    Route::get('/staffs/export-excel', [KasirStaffController::class, 'exportExcel'])->name('staffs.export-excel');
 
     // Kelola Pelanggan Kasir
     Route::get('/customers', [KasirCustomerController::class, 'index'])->name('customers.index');
@@ -100,8 +102,9 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::post('/customers/{customer}/toggle-block', [KasirCustomerController::class, 'toggleBlock'])->name('customers.toggle-block');
     Route::post('/customers/{customer}/reset-password', [KasirCustomerController::class, 'resetPassword'])->name('customers.reset-password');
 
-    // Laporan Pelayanan (Harian & Mingguan)
+    // Profil Akun Kasir & Data Diri Karyawan (Pengganti Menu Laporan)
     Route::get('/reports', [KasirReportController::class, 'index'])->name('reports.index');
+    Route::put('/reports/profile', [KasirReportController::class, 'updateProfile'])->name('reports.update-profile');
     Route::get('/reports/export-excel', [KasirReportController::class, 'exportExcel'])->name('reports.export-excel');
     Route::get('/reports/export-pdf', [KasirReportController::class, 'exportPdf'])->name('reports.export-pdf');
 

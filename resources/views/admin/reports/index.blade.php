@@ -114,7 +114,6 @@
                             <th class="py-3 px-4">Pelanggan</th>
                             <th class="py-3 px-4">Kategori</th>
                             <th class="py-3 px-4">Layanan</th>
-                            <th class="py-3 px-4">Staff</th>
                             <th class="py-3 px-4">Kasir</th>
                             <th class="py-3 px-4 text-right">Harga</th>
                             <th class="py-3 px-4 text-center">Status</th>
@@ -139,7 +138,6 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">{{ $b->items->map(fn($i) => $i->service->name)->join(', ') ?: '-' }}</td>
-                                <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">{{ $b->staff->name ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-300">{{ $b->cashier->name ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
                                     Rp {{ number_format($b->total_price, 0, ',', '.') }}

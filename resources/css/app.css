@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 :root {
-    --glowcut-bg: #0B0B0B;
-    --glowcut-surface: #111111;
-    --glowcut-card: #171717;
-    --glowcut-input: #141414;
-    --glowcut-border: #343434;
-    --glowcut-gold: #D4AF5A;
-    --glowcut-gold-light: #F0D58A;
-    --glowcut-gold-hover: #C59E47;
-    --glowcut-text: #F5F0E6;
-    --glowcut-text-muted: #A7A7A7;
+    --glowcut-bg: #050505;
+    --glowcut-surface: #0C0C0C;
+    --glowcut-card: #141414;
+    --glowcut-input: #0E0E0E;
+    --glowcut-border: #2A2A2A;
+    --glowcut-gold: #E5A823;
+    --glowcut-gold-light: #F7C754;
+    --glowcut-gold-hover: #C88A14;
+    --glowcut-text: #FFFFFF;
+    --glowcut-text-muted: #B0B0B0;
 }
 
 html {
@@ -21,20 +21,20 @@ html {
 
 html.dark {
     color-scheme: dark;
-    background-color: #0B0B0B;
-    color: #F5F0E6;
+    background-color: #050505;
+    color: #FFFFFF;
 }
 
 html.dark body {
-    background-color: #0B0B0B;
-    color: #F5F0E6;
+    background-color: #050505;
+    color: #FFFFFF;
 }
 
 html.light {
     color-scheme: light;
 }
 
-/* GlowCut Input Defaults in Dark Mode */
+/* GlowCut Deep High-Contrast Input Defaults in Dark Mode */
 html.dark input[type="text"],
 html.dark input[type="email"],
 html.dark input[type="password"],
@@ -45,89 +45,89 @@ html.dark input[type="date"],
 html.dark input[type="time"],
 html.dark select,
 html.dark textarea {
-    background-color: #141414 !important;
-    border-color: #343434 !important;
-    color: #F5F0E6 !important;
+    background-color: #0E0E0E !important;
+    border-color: #2A2A2A !important;
+    color: #FFFFFF !important;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-    color: #737373 !important;
+    color: #6E6E6E !important;
 }
 
 html.dark input:focus,
 html.dark select:focus,
 html.dark textarea:focus {
-    border-color: #D4AF5A !important;
-    --tw-ring-color: #D4AF5A !important;
+    border-color: #E5A823 !important;
+    --tw-ring-color: #E5A823 !important;
     outline: none !important;
-    box-shadow: 0 0 0 2px rgba(212, 175, 90, 0.25) !important;
+    box-shadow: 0 0 0 2px rgba(229, 168, 35, 0.3) !important;
 }
 
 /* Custom Selection Color */
 ::selection {
-    background-color: #D4AF5A;
-    color: #0B0B0B;
+    background-color: #E5A823;
+    color: #000000;
 }
 
-/* Admin Sidebar Active Navigation - GlowCut Gold Accent */
+/* Admin Sidebar Active Navigation - Rich Gold Accent */
 aside .bg-emerald-500 {
-    background-color: #D4AF5A !important;
-    color: #0B0B0B !important;
-    font-weight: 700 !important;
-    box-shadow: 0 4px 14px 0 rgba(212, 175, 90, 0.25) !important;
+    background-color: #E5A823 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 16px 0 rgba(229, 168, 35, 0.35) !important;
 }
 
 aside .bg-emerald-500 svg {
-    color: #0B0B0B !important;
+    color: #000000 !important;
 }
 
-/* Kasir Primary Action Buttons (e.g., + Order Walk-In) - GlowCut Gold */
+/* Kasir Primary Action Buttons (e.g., + Order Walk-In) - Rich Gold */
 a.bg-blue-600,
 button.bg-blue-600 {
-    background-color: #D4AF5A !important;
-    color: #0B0B0B !important;
-    font-weight: 700 !important;
-    box-shadow: 0 4px 14px 0 rgba(212, 175, 90, 0.2) !important;
+    background-color: #E5A823 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 16px 0 rgba(229, 168, 35, 0.3) !important;
 }
 
 a.bg-blue-600:hover,
 button.bg-blue-600:hover {
-    background-color: #C59E47 !important;
-    color: #0B0B0B !important;
+    background-color: #C88A14 !important;
+    color: #000000 !important;
 }
 
-/* Primary CTA Buttons across Auth & Booking */
+/* Primary CTA Buttons across Auth & Booking - Rich Shimmer Gold */
 button.bg-gradient-to-r.from-amber-500.to-yellow-500,
 a.bg-gradient-to-r.from-amber-500.to-yellow-500,
 button.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400,
 a.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400 {
-    background-image: linear-gradient(135deg, #D4AF5A 0%, #F0D58A 100%) !important;
-    color: #0B0B0B !important;
-    font-weight: 800 !important;
-    box-shadow: 0 4px 16px 0 rgba(212, 175, 90, 0.28) !important;
+    background-image: linear-gradient(135deg, #E5A823 0%, #F7C754 50%, #DF9B28 100%) !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 4px 20px 0 rgba(229, 168, 35, 0.4) !important;
 }
 
 button.bg-gradient-to-r.from-amber-500.to-yellow-500:hover,
 a.bg-gradient-to-r.from-amber-500.to-yellow-500:hover,
 button.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400:hover,
 a.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400:hover {
-    background-image: linear-gradient(135deg, #C59E47 0%, #D4AF5A 100%) !important;
-    color: #0B0B0B !important;
+    background-image: linear-gradient(135deg, #C88A14 0%, #E5A823 100%) !important;
+    color: #000000 !important;
 }
 
 /* Kasir / Admin Logo Pill */
 .bg-blue-600.w-8.h-8,
 .bg-blue-600.w-9.h-9 {
-    background-color: #D4AF5A !important;
-    color: #0B0B0B !important;
+    background-color: #E5A823 !important;
+    color: #000000 !important;
 }
 
 /* Subtle Dark Card Border refinement */
 html.dark .border-slate-800,
 html.dark .border-slate-700,
 html.dark .border-slate-750 {
-    border-color: #343434 !important;
+    border-color: #2A2A2A !important;
 }
 
 /* Subtle Dark Table Row Hover */
@@ -142,14 +142,14 @@ html.dark tbody tr:hover {
 }
 
 html.dark ::-webkit-scrollbar-track {
-    background: #0B0B0B;
+    background: #050505;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-    background: #343434;
+    background: #2A2A2A;
     border-radius: 9999px;
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-    background: #D4AF5A;
+    background: #E5A823;
 }

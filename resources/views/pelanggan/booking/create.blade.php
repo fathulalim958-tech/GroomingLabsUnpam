@@ -139,18 +139,41 @@
                             <button type="button"
                                     :disabled="!isSlotAvailable('{{ $slot['value'] }}')"
                                     @click="isSlotAvailable('{{ $slot['value'] }}') && setTime('{{ $slot['value'] }}', '{{ $slot['label'] }}')"
-                                    class="py-2.5 px-3 rounded-xl border text-center transition font-mono text-xs font-bold flex items-center justify-center gap-1.5"
+                                    :title="isSlotFull('{{ $slot['value'] }}') ? 'Slot waktu jam ini sudah penuh' : (!isSlotAvailable('{{ $slot['value'] }}') ? 'Di luar jam operasional' : 'Tersedia')"
+                                    class="py-2.5 px-3 rounded-xl border text-center transition font-mono text-xs font-bold flex flex-col items-center justify-center gap-1 relative overflow-hidden"
                                     :class="!isSlotAvailable('{{ $slot['value'] }}')
-                                        ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-900/60 border-dashed border-slate-300 dark:border-slate-800 text-slate-400'
+                                        ? (isSlotFull('{{ $slot['value'] }}')
+                                            ? 'opacity-60 cursor-not-allowed bg-rose-500/10 dark:bg-rose-950/20 border-rose-500/30 text-rose-500 dark:text-rose-400'
+                                            : 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-900/60 border-dashed border-slate-300 dark:border-slate-800 text-slate-400')
                                         : (selectedTime === '{{ $slot['value'] }}'
                                             ? '{{ $category === 'barbershop' ? 'bg-amber-500 text-slate-950 font-black border-amber-500 shadow-md ring-2 ring-amber-500/20' : 'bg-pink-500 text-white font-black border-pink-500 shadow-md ring-2 ring-pink-500/20' }}'
                                             : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700')">
-                                <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>{{ $slot['label'] }}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>{{ $slot['label'] }}</span>
+                                </div>
+                                <template x-if="isSlotFull('{{ $slot['value'] }}')">
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/40">
+                                        Penuh
+                                    </span>
+                                </template>
+                                <template x-if="!isSlotFull('{{ $slot['value'] }}') && isSlotAvailable('{{ $slot['value'] }}') && getRemainingSlots('{{ $slot['value'] }}') !== null">
+                                    <span class="text-[10px] font-normal" :class="selectedTime === '{{ $slot['value'] }}' ? '{{ $category === 'barbershop' ? 'text-slate-900 font-bold' : 'text-white font-bold' }}' : 'text-slate-500 dark:text-slate-400'">
+                                        Sisa <span class="font-bold font-mono" :class="selectedTime === '{{ $slot['value'] }}' ? '{{ $category === 'barbershop' ? 'text-slate-950' : 'text-white' }}' : 'text-emerald-500'" x-text="getRemainingSlots('{{ $slot['value'] }}')"></span> slot
+                                    </span>
+                                </template>
                             </button>
                         @endforeach
+                    </div>
+                    <div class="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                        <span class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Tersedia
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> Penuh (Tidak Dapat Dipilih)
+                        </span>
                     </div>
                     @error('booking_time')
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -319,8 +342,11 @@
 
     @push('scripts')
     <script>
+        const serverSlotsAvailability = @json($slotsAvailability ?? []);
+
         function bookingForm() {
             return {
+                slotsAvailability: serverSlotsAvailability || {},
                 selectedService: null,
                 selectedDate: '{{ $availableDates[0]['date'] ?? '' }}',
                 selectedDateLabel: '{{ $availableDates[0]['label'] ?? '' }}',
@@ -365,11 +391,47 @@
                     }
                 },
 
+                getSlotInfo(slotValue) {
+                    if (this.slotsAvailability && this.slotsAvailability[this.selectedDate]) {
+                        return this.slotsAvailability[this.selectedDate][slotValue] || null;
+                    }
+                    return null;
+                },
+
+                isSlotFull(slotValue) {
+                    const info = this.getSlotInfo(slotValue);
+                    return Boolean(info && info.is_full);
+                },
+
+                getRemainingSlots(slotValue) {
+                    const info = this.getSlotInfo(slotValue);
+                    return info ? info.remaining : null;
+                },
+
                 isSlotAvailable(slotValue) {
-                    return slotValue >= this.currentOpenTime && slotValue < this.currentCloseTime;
+                    // Di luar jam operasional
+                    if (slotValue < this.currentOpenTime || slotValue >= this.currentCloseTime) {
+                        return false;
+                    }
+
+                    // Slot waktu per jam sudah penuh
+                    if (this.isSlotFull(slotValue)) {
+                        return false;
+                    }
+
+                    // Pengguna sudah memiliki pesanan lain pada jam yang sama
+                    const info = this.getSlotInfo(slotValue);
+                    if (info && info.user_already_booked) {
+                        return false;
+                    }
+
+                    return true;
                 },
 
                 setTime(time, label) {
+                    if (!this.isSlotAvailable(time)) {
+                        return;
+                    }
                     this.selectedTime = time;
                     this.selectedTimeLabel = label;
                 },
@@ -383,14 +445,18 @@
                         alert('Silakan pilih tanggal reservasi.');
                         return;
                     }
-                    if (!this.selectedTime) {
-                        alert('Silakan pilih sesi jam reservasi.');
+                    if (!this.selectedTime || !this.isSlotAvailable(this.selectedTime)) {
+                        alert('Silakan pilih sesi jam reservasi yang masih tersedia.');
                         return;
                     }
                     this.showConfirmModal = true;
                 },
 
                 submitBooking() {
+                    if (!this.selectedTime || !this.isSlotAvailable(this.selectedTime)) {
+                        alert('Sesi jam reservasi yang dipilih tidak tersedia atau sudah penuh.');
+                        return;
+                    }
                     this.$refs.bookingForm.submit();
                 },
 

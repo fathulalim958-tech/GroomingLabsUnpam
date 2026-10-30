@@ -436,6 +436,25 @@ class BarbershopMuaSystemTest extends TestCase
 
         $res2->assertSessionHasErrors('booking_time');
 
+        // Customer 2 views MUA booking page: 10:00 is marked full in slotsAvailability and rendered
+        $resViewMua = $this->actingAs($customer2)->get('/pelanggan/booking/mua');
+        $resViewMua->assertOk();
+        $resViewMua->assertSee('x-data="bookingForm()"', false);
+        $resViewMua->assertSee('serverSlotsAvailability', false);
+        $resViewMua->assertViewHas('slotsAvailability', function ($slots) use ($tomorrow) {
+            $dateKey = $tomorrow->format('Y-m-d');
+            return isset($slots[$dateKey]['10:00']) && $slots[$dateKey]['10:00']['is_full'] === true;
+        });
+
+        // AJAX check slots endpoint also confirms 10:00 is full for MUA
+        $resAjaxMua = $this->actingAs($customer2)->get(route('pelanggan.booking.check-slots', [
+            'category' => 'mua',
+            'date' => $tomorrow->format('Y-m-d'),
+        ]));
+        $resAjaxMua->assertOk();
+        $resAjaxMua->assertJsonPath('slots.10:00.is_full', true);
+        $resAjaxMua->assertJsonPath('slots.10:00.remaining', 0);
+
         // But customer 2 CAN book barbershop at the same date & time because Barbershop has separate quota!
         $serviceBarber = Service::create([
             'name' => 'Classic Cut',
@@ -774,6 +793,12 @@ class BarbershopMuaSystemTest extends TestCase
         $resDate->assertStatus(200);
         $resDate->assertSee('M-001');
         $resDate->assertSee('Pelanggan MUA Future');
+
+        // 4. Default order page loads tomorrow's orders without shortcut pills
+        $resDefault = $this->actingAs($cashier)->get('/kasir/orders');
+        $resDefault->assertStatus(200);
+        $resDefault->assertViewHas('selectedDate', Carbon::tomorrow()->format('Y-m-d'));
+        $resDefault->assertDontSee('Semua Mendatang');
     }
 
     /**
@@ -1097,10 +1122,29 @@ class BarbershopMuaSystemTest extends TestCase
         $resCustomers->assertStatus(200);
         $resCustomers->assertSee('Budi Santoso');
 
-        // 9. Verify Kasir Reports Menu & Export Constraints
+        // 9. Verify Kasir Reports Menu (Profil Akun Kasir & Data Diri Karyawan Murni Tanpa Akses Password) & Export Constraints
         $resReports = $this->actingAs($cashier)->get('/kasir/reports');
         $resReports->assertStatus(200);
-        $resReports->assertSee('LAPORAN PELAYANAN KASIR');
+        $resReports->assertSee('DATA DIRI KARYAWAN');
+        $resReports->assertDontSee('Total Pendapatan');
+        $resReports->assertDontSee('Riwayat Pelayanan Terakhir yang Ditangani');
+        $resReports->assertDontSee('Password Baru');
+
+        // Test update profile (nama & no. hp saja)
+        $resUpdateProfile = $this->actingAs($cashier)->put(route('kasir.reports.update-profile'), [
+            'name' => 'Kasir Diperbarui',
+            'phone' => '081234567890',
+        ]);
+        $resUpdateProfile->assertRedirect(route('kasir.reports.index'));
+        $this->assertEquals('Kasir Diperbarui', $cashier->fresh()->name);
+
+        // Verify cashier is strictly forbidden from changing password
+        $resPassword = $this->actingAs($cashier)->put('/password', [
+            'current_password' => 'password',
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ]);
+        $resPassword->assertStatus(403);
 
         // Export Daily Excel -> Success (200)
         $resExportDaily = $this->actingAs($cashier)->get(route('kasir.reports.export-excel', ['period' => 'daily']));
@@ -1145,7 +1189,7 @@ class BarbershopMuaSystemTest extends TestCase
         $resInvalidPhone->assertSessionHasErrors('customer_phone');
 
         // Logout cashier to test guest registration with invalid phone
-        auth()->logout();
+        $this->app['auth']->logout();
 
         // Attempt register with letters in phone
         $resRegisterInvalid = $this->post('/register', [
@@ -1253,7 +1297,7 @@ class BarbershopMuaSystemTest extends TestCase
     }
 
     /**
-     * Test kasir can access staff menu in read-only mode without edit buttons.
+     * Test kasir riwayat menu displays served customers history and daily excel export.
      */
     public function test_kasir_can_access_staff_menu_in_readonly_mode(): void
     {
@@ -1264,22 +1308,33 @@ class BarbershopMuaSystemTest extends TestCase
             'role' => 'kasir',
         ]);
 
-        $staff = Staff::create([
-            'name' => 'Rahmat Kapster',
-            'role' => 'kapster',
-            'phone' => '0877889900',
-            'is_active' => true,
+        $today = Carbon::today()->format('Y-m-d');
+        $booking = Booking::create([
+            'booking_code' => 'BK-TEST-SERVED',
+            'queue_number' => 'B-099',
+            'customer_name' => 'Pelanggan Dilayani',
+            'customer_phone' => '0877889900',
+            'booking_date' => $today,
+            'booking_time' => '10:00:00',
+            'service_category' => 'barbershop',
+            'status' => 'completed',
+            'cashier_id' => $cashier->id,
+            'total_price' => 75000,
+            'payment_status' => 'paid',
+            'payment_method' => 'cash',
         ]);
 
-        // Kasir views staff list
-        $response = $this->actingAs($cashier)->get(route('kasir.staffs.index'));
+        // Kasir views served customer history
+        $response = $this->actingAs($cashier)->get(route('kasir.staffs.index', ['date' => $today]));
         $response->assertStatus(200);
-        $response->assertSee('INFORMASI PEKERJA');
-        $response->assertSee('Rahmat Kapster');
+        $response->assertSee('RIWAYAT PELANGGAN YANG SUDAH DILAYANI');
+        $response->assertSee('Pelanggan Dilayani');
         $response->assertSee('0877889900');
-        // Read-only: no toggle active buttons
-        $response->assertDontSee('Set Nonaktif');
-        $response->assertDontSee('Set Aktif');
+
+        // Test daily excel export
+        $exportResponse = $this->actingAs($cashier)->get(route('kasir.staffs.export-excel', ['date' => $today]));
+        $exportResponse->assertStatus(200);
+        $exportResponse->assertHeader('content-disposition');
     }
 
     /**
@@ -1439,6 +1494,14 @@ class BarbershopMuaSystemTest extends TestCase
         $resAdminBlock->assertSessionHas('block_status_updated');
         $customer->refresh();
         $this->assertFalse($customer->is_active);
+
+        // 5b. Admin customer show page renders modals for block and reset-password
+        $resShow = $this->actingAs($admin)->get(route('admin.customers.show', $customer));
+        $resShow->assertOk();
+        $resShow->assertSee('openBlockModal');
+        $resShow->assertSee('openResetPasswordModal');
+        $resShow->assertSee('Konfirmasi Blokir Pelanggan');
+        $resShow->assertSee('Reset Password Pelanggan');
 
         // 6. Admin resets password with custom input
         $resAdminReset = $this->actingAs($admin)->post(route('admin.customers.reset-password', $customer), [

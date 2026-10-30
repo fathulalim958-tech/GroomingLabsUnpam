@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Kasir;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -16,55 +19,53 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ReportController extends Controller
 {
     /**
-     * Display cashier report page (Harian & Mingguan).
+     * Display cashier account profile & employee personal data (Murni Menu Profile Karyawan Tanpa Laporan Transaksi).
      */
     public function index(Request $request)
     {
-        $reportType = $request->get('type', 'daily'); // daily or weekly
-        $selectedDate = $request->get('date', Carbon::today()->format('Y-m-d'));
-        $category = $request->get('category', 'all');
+        /** @var \App\Models\User $user */
+        $user = $request->user();
 
-        if ($reportType === 'weekly') {
-            $startDate = Carbon::parse($selectedDate)->startOfWeek()->format('Y-m-d');
-            $endDate = Carbon::parse($selectedDate)->endOfWeek()->format('Y-m-d');
-        } else {
-            $reportType = 'daily';
-            $startDate = $selectedDate;
-            $endDate = $selectedDate;
+        return view('kasir.reports.index', compact('user'));
+    }
+
+    /**
+     * Update cashier personal data (nama, no. WhatsApp/HP, dan foto profil).
+     * Akses ganti password ditiadakan untuk akun kasir.
+     */
+    public function updateProfile(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+        ], [
+            'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka.',
+            'avatar.image' => 'File foto profil harus berupa gambar.',
+            'avatar.mimes' => 'Format foto harus berupa JPG, JPEG, PNG, atau WEBP.',
+            'avatar.max' => 'Ukuran foto profil maksimal 2 MB.',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        } elseif ($request->boolean('delete_avatar')) {
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = null;
         }
 
-        $query = Booking::with(['user', 'cashier', 'staff', 'items.service'])
-            ->whereDate('booking_date', '>=', $startDate)
-            ->whereDate('booking_date', '<=', $endDate);
+        $user->name = $validated['name'];
+        $user->phone = $validated['phone'];
+        $user->save();
 
-        if ($category !== 'all' && in_array($category, ['barbershop', 'mua'])) {
-            $query->where('service_category', $category);
-        }
-
-        $allBookings = (clone $query)->get();
-        $completedBookings = $allBookings->where('status', 'completed');
-
-        $summary = [
-            'total_orders'           => $allBookings->count(),
-            'completed_orders'       => $completedBookings->count(),
-            'total_revenue'          => $completedBookings->sum('total_price'),
-            'barbershop_revenue'     => $completedBookings->where('service_category', 'barbershop')->sum('total_price'),
-            'mua_revenue'            => $completedBookings->where('service_category', 'mua')->sum('total_price'),
-            'barbershop_orders'      => $completedBookings->where('service_category', 'barbershop')->count(),
-            'mua_orders'             => $completedBookings->where('service_category', 'mua')->count(),
-        ];
-
-        $bookings = (clone $query)->orderBy('booking_date', 'asc')->orderBy('booking_time', 'asc')->paginate(15)->withQueryString();
-
-        return view('kasir.reports.index', compact(
-            'bookings',
-            'summary',
-            'reportType',
-            'selectedDate',
-            'startDate',
-            'endDate',
-            'category'
-        ));
+        return redirect()->route('kasir.reports.index')->with('success', 'Data diri dan foto profil kasir berhasil diperbarui.');
     }
 
     /**

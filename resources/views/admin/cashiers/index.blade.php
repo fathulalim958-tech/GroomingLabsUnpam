@@ -30,7 +30,26 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
                         @forelse ($cashiers as $cashier)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                                <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{{ $cashier->name }}</td>
+                                <td class="py-3.5 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <!-- Foto Profil Kasir -->
+                                        <div class="relative flex-shrink-0">
+                                            @if($cashier->avatar)
+                                                <img src="{{ asset('storage/' . $cashier->avatar) }}" alt="{{ $cashier->name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                            @else
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm">
+                                                    {{ strtoupper(substr($cashier->name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                                                <span>{{ $cashier->name }}</span>
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 font-mono">ID: KSR-{{ str_pad($cashier->id, 3, '0', STR_PAD_LEFT) }}</div>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="py-3.5 px-4 text-xs font-mono text-slate-600 dark:text-slate-300">{{ $cashier->email }}</td>
                                 <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">{{ $cashier->phone ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center whitespace-nowrap">

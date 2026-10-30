@@ -59,10 +59,19 @@
 
                 <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
 
-                <div class="text-right hidden md:block">
-                    <span class="block text-xs font-bold text-slate-800 dark:text-slate-100">{{ auth()->user()->name }}</span>
-                    <span class="block text-[10px] text-slate-500 dark:text-slate-300 font-mono">{{ now()->translatedFormat('l, d M Y') }}</span>
-                </div>
+                <a href="{{ route('kasir.reports.index') }}" class="flex items-center gap-2 hover:opacity-85 transition" title="Lihat Profil Kasir">
+                    @if(auth()->user()->avatar)
+                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-lg object-cover ring-1 ring-amber-500/50 flex-shrink-0">
+                    @else
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-500 font-bold text-xs flex items-center justify-center flex-shrink-0 ring-1 ring-amber-500/30">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                        </div>
+                    @endif
+                    <div class="text-left hidden md:block">
+                        <span class="block text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">{{ auth()->user()->name }}</span>
+                        <span class="block text-[9px] text-amber-500 font-semibold uppercase">Kasir Front-Desk</span>
+                    </div>
+                </a>
 
                 <button type="button"
                         @click="showLogoutModal = true"
@@ -126,22 +135,22 @@
                 <span class="text-[11px]">Order</span>
             </a>
 
-            <!-- 3. Informasi Pekerja / Kapster -->
+            <!-- 3. Riwayat Pelanggan yang Sudah Dilayani -->
             <a href="{{ route('kasir.staffs.index') }}"
-               class="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition {{ request()->routeIs('kasir.staffs.*') ? 'text-blue-600 dark:text-blue-400 bg-blue-500/10 font-bold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200' }}">
+               class="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition {{ request()->routeIs('kasir.staffs.*') ? 'text-amber-500 dark:text-amber-400 bg-amber-500/10 font-bold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200' }}">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-[11px]">Riwayat</span>
+            </a>
+
+            <!-- 4. Profil Akun Kasir (Data Diri Karyawan) -->
+            <a href="{{ route('kasir.reports.index') }}"
+               class="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition {{ request()->routeIs('kasir.reports.*') ? 'text-amber-500 dark:text-amber-400 bg-amber-500/10 font-bold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200' }}">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span class="text-[11px]">Pekerja</span>
-            </a>
-
-            <!-- 4. Laporan Pelayanan -->
-            <a href="{{ route('kasir.reports.index') }}"
-               class="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition {{ request()->routeIs('kasir.reports.*') ? 'text-blue-600 dark:text-blue-400 bg-blue-500/10 font-bold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200' }}">
-                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span class="text-[11px]">Laporan</span>
+                <span class="text-[11px]">Profil</span>
             </a>
         </div>
     </nav>

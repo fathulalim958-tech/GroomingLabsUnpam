@@ -13,68 +13,68 @@ export default {
     theme: {
         extend: {
             colors: {
-                // GlowCut Luxury Dark Palette mapped to slate & gray utilities
+                // GlowCut Deep High-Contrast Obsidian & Jet Black Palette
                 slate: {
-                    50: '#FAF7F2',
-                    100: '#F5F0E6', // GlowCut Main warm off-white text
-                    200: '#E5DDD5',
-                    300: '#D1C7BD',
-                    400: '#A7A7A7', // GlowCut Secondary muted text
+                    50: '#FAFAFA',
+                    100: '#FFFFFF', // Pure crisp white text (kontras tinggi, tidak kusam)
+                    200: '#ECECEC',
+                    300: '#D4D4D4',
+                    400: '#B0B0B0', // Neutral bright gray secondary text
                     500: '#737373',
-                    600: '#4A4A4A',
-                    700: '#343434', // GlowCut Fine dark border
-                    750: '#232323',
-                    800: '#171717', // GlowCut Card & Panel surface
-                    850: '#141414', // GlowCut Input field background
-                    900: '#111111', // GlowCut Secondary surface / headers
-                    950: '#0B0B0B', // GlowCut Pure charcoal main background
+                    600: '#404040',
+                    700: '#2A2A2A', // Crisp fine border
+                    750: '#1E1E1E',
+                    800: '#141414', // Deep obsidian card & panel
+                    850: '#0E0E0E', // Deep jet input field
+                    900: '#0C0C0C', // Deep black secondary surface / headers
+                    950: '#050505', // Deep Jet Black (pekat, tidak pucat keabuan)
                 },
                 gray: {
-                    50: '#FAF7F2',
-                    100: '#F5F0E6',
-                    200: '#E5DDD5',
-                    300: '#D1C7BD',
-                    400: '#A7A7A7',
+                    50: '#FAFAFA',
+                    100: '#FFFFFF',
+                    200: '#ECECEC',
+                    300: '#D4D4D4',
+                    400: '#B0B0B0',
                     500: '#737373',
-                    600: '#4A4A4A',
-                    700: '#343434',
-                    750: '#232323',
-                    800: '#171717',
-                    850: '#141414',
-                    900: '#111111',
-                    950: '#0B0B0B',
+                    600: '#404040',
+                    700: '#2A2A2A',
+                    750: '#1E1E1E',
+                    800: '#141414',
+                    850: '#0E0E0E',
+                    900: '#0C0C0C',
+                    950: '#050505',
                 },
-                // GlowCut Champagne Gold Palette mapped to amber & gold
+                // Rich Vibrant Royal Gold Palette (pekat, berkilau, mewah, tidak pucat)
                 gold: {
-                    50: '#FAF6EB',
-                    100: '#F5ECDC',
-                    200: '#ECD9B5',
-                    300: '#E2C48D',
-                    400: '#F0D58A', // GlowCut Light Gold
-                    500: '#D4AF5A', // GlowCut Main Champagne Gold
-                    600: '#B8933E', // GlowCut Hover Gold
-                    700: '#9C772F',
-                    800: '#6E521F',
-                    900: '#423112',
-                    950: '#231805',
+                    50: '#FFFDF5',
+                    100: '#FFF4D4',
+                    200: '#FCE6A3',
+                    300: '#FBD778',
+                    400: '#F7C754', // Vibrant shining light gold
+                    500: '#E5A823', // Rich Warm Royal Gold (pekat & menyala)
+                    600: '#C88A14', // Deep burnished hover gold
+                    700: '#A6700E',
+                    800: '#7A5007',
+                    900: '#4D3203',
+                    950: '#2B1B01',
                 },
                 amber: {
-                    50: '#FAF6EB',
-                    100: '#F5ECDC',
-                    200: '#ECD9B5',
-                    300: '#E2C48D',
-                    400: '#F0D58A', // GlowCut Light Gold
-                    500: '#D4AF5A', // GlowCut Main Champagne Gold
-                    600: '#B8933E', // GlowCut Hover Gold
-                    700: '#9C772F',
-                    800: '#6E521F',
-                    900: '#423112',
-                    950: '#231805',
+                    50: '#FFFDF5',
+                    100: '#FFF4D4',
+                    200: '#FCE6A3',
+                    300: '#FBD778',
+                    400: '#F7C754', // Vibrant shining light gold
+                    500: '#E5A823', // Rich Warm Royal Gold
+                    600: '#C88A14', // Deep burnished hover gold
+                    700: '#A6700E',
+                    800: '#7A5007',
+                    900: '#4D3203',
+                    950: '#2B1B01',
                 },
                 yellow: {
-                    400: '#F0D58A',
-                    500: '#D4AF5A',
-                    600: '#B8933E',
+                    400: '#F7C754',
+                    500: '#E5A823',
+                    600: '#C88A14',
                 },
                 emerald: {
                     400: '#34D399',
@@ -87,16 +87,16 @@ export default {
                     600: '#DC2626',
                 },
                 glowcut: {
-                    bg: '#0B0B0B',
-                    surface: '#111111',
-                    card: '#171717',
-                    input: '#141414',
-                    border: '#343434',
-                    gold: '#D4AF5A',
-                    'gold-light': '#F0D58A',
-                    'gold-dark': '#B8933E',
-                    text: '#F5F0E6',
-                    'text-muted': '#A7A7A7',
+                    bg: '#050505',
+                    surface: '#0C0C0C',
+                    card: '#141414',
+                    input: '#0E0E0E',
+                    border: '#2A2A2A',
+                    gold: '#E5A823',
+                    'gold-light': '#F7C754',
+                    'gold-dark': '#C88A14',
+                    text: '#FFFFFF',
+                    'text-muted': '#B0B0B0',
                 },
             },
             fontFamily: {

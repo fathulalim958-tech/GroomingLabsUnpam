@@ -9,13 +9,24 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </a>
-                <div>
-                    <h1 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                        RIWAYAT PELANGGAN: {{ $customer->name }}
-                    </h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">
-                        {{ $customer->phone ?? 'Tidak ada nomor telepon' }} &bull; {{ $customer->email }}
-                    </p>
+                <div class="flex items-center gap-3">
+                    <div class="relative flex-shrink-0">
+                        @if($customer->avatar)
+                            <img src="{{ asset('storage/' . $customer->avatar) }}" alt="{{ $customer->name }}" class="w-12 h-12 rounded-2xl object-cover ring-2 ring-amber-500/50 shadow-md">
+                        @else
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-sm shadow-md">
+                                {{ strtoupper(substr($customer->name, 0, 2)) }}
+                            </div>
+                        @endif
+                    </div>
+                    <div>
+                        <h1 class="text-sm sm:text-base lg:text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                            RIWAYAT PELANGGAN: {{ $customer->name }}
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                            {{ $customer->phone ?? 'Tidak ada nomor telepon' }} &bull; {{ $customer->email }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

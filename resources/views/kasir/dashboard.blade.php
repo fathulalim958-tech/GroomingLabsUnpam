@@ -48,7 +48,7 @@
             <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm dark:shadow-md flex items-center justify-between">
                 <div class="min-w-0 pr-1">
                     <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300 block truncate">Total Hari Ini</span>
-                    <div class="text-xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mt-0.5 sm:mt-1.5 font-mono">{{ $stats['total'] }}</div>
+                    <div class="text-base sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white mt-0.5 sm:mt-1.5 font-mono">{{ $stats['total'] }}</div>
                 </div>
                 <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-slate-100 dark:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600/60 flex items-center justify-center shadow-inner flex-shrink-0">
                     <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
             <div class="bg-white dark:bg-slate-800 border-l-4 border-l-amber-500 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm dark:shadow-md flex items-center justify-between">
                 <div class="min-w-0 pr-1">
                     <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-400 block truncate">Menunggu</span>
-                    <div class="text-xl sm:text-3xl lg:text-4xl font-black text-amber-500 dark:text-amber-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['waiting'] }}</div>
+                    <div class="text-base sm:text-2xl lg:text-3xl font-black text-amber-500 dark:text-amber-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['waiting'] }}</div>
                 </div>
                 <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@
             <div class="bg-white dark:bg-slate-800 border-l-4 border-l-indigo-500 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm dark:shadow-md flex items-center justify-between">
                 <div class="min-w-0 pr-1">
                     <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-300 block truncate">Dipanggil</span>
-                    <div class="text-xl sm:text-3xl lg:text-4xl font-black text-indigo-500 dark:text-indigo-300 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['called'] }}</div>
+                    <div class="text-base sm:text-2xl lg:text-3xl font-black text-indigo-500 dark:text-indigo-300 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['called'] }}</div>
                 </div>
                 <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-indigo-300 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@
             <div class="bg-white dark:bg-slate-800 border-l-4 border-l-sky-500 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm dark:shadow-md flex items-center justify-between">
                 <div class="min-w-0 pr-1">
                     <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 block truncate">Sedang Dilayani</span>
-                    <div class="text-xl sm:text-3xl lg:text-4xl font-black text-sky-600 dark:text-sky-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['in_progress'] }}</div>
+                    <div class="text-base sm:text-2xl lg:text-3xl font-black text-sky-600 dark:text-sky-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['in_progress'] }}</div>
                 </div>
                 <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/30 flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@
             <div class="bg-white dark:bg-slate-800 border-l-4 border-l-emerald-500 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm dark:shadow-md flex items-center justify-between">
                 <div class="min-w-0 pr-1">
                     <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block truncate">Selesai</span>
-                    <div class="text-xl sm:text-3xl lg:text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['completed'] }}</div>
+                    <div class="text-base sm:text-2xl lg:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['completed'] }}</div>
                 </div>
                 <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@
             <div class="bg-white dark:bg-slate-800 border-l-4 border-l-rose-500 border border-slate-200 dark:border-slate-700/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm dark:shadow-md flex items-center justify-between">
                 <div class="min-w-0 pr-1">
                     <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-rose-500 dark:text-rose-400 block truncate">Dibatalkan</span>
-                    <div class="text-xl sm:text-3xl lg:text-4xl font-black text-rose-500 dark:text-rose-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['cancelled'] }}</div>
+                    <div class="text-base sm:text-2xl lg:text-3xl font-black text-rose-500 dark:text-rose-400 mt-0.5 sm:mt-1.5 font-mono">{{ $stats['cancelled'] }}</div>
                 </div>
                 <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-rose-500/10 dark:bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/30 flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,19 +132,30 @@
                         <span class="text-xs font-black uppercase tracking-widest text-amber-500 dark:text-amber-400">Sedang Anda Layani &bull; Barbershop</span>
                     </div>
                     @if ($currentServing)
-                        <div class="flex items-baseline gap-3 mt-2">
-                            <span class="text-4xl sm:text-5xl font-black text-amber-500 dark:text-amber-400 font-mono tracking-tight">{{ $currentServing->queue_number }}</span>
-                            <span class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">{{ $currentServing->customer_name }}</span>
+                        <div class="flex items-center gap-2 sm:gap-3 mt-2">
+                            <span class="text-2xl sm:text-4xl lg:text-5xl font-black text-amber-500 dark:text-amber-400 font-mono tracking-tight">{{ $currentServing->queue_number }}</span>
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="relative flex-shrink-0">
+                                    @if($currentServing->user?->avatar)
+                                        <img src="{{ asset('storage/' . $currentServing->user->avatar) }}" alt="{{ $currentServing->customer_name }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                    @else
+                                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                            {{ strtoupper(substr($currentServing->customer_name, 0, 2)) }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <span class="text-sm sm:text-base lg:text-xl font-bold text-slate-900 dark:text-white truncate">{{ $currentServing->customer_name }}</span>
+                            </div>
                         </div>
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
                             Layanan: <strong class="text-slate-900 dark:text-white">{{ $currentServing->items->map(fn($i) => $i->service->name)->join(', ') }}</strong>
                             @if ($currentServing->cashier)
                                 &bull; <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Kasir: {{ $currentServing->cashier_id === auth()->id() ? 'Anda' : $currentServing->cashier->name }}</span>
                             @endif
                         </p>
                     @else
-                        <div class="text-2xl font-black text-slate-900 dark:text-white mt-2">Tidak ada antrian aktif di akun Anda</div>
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Gunakan tombol <strong>Panggil</strong> atau <strong>Layani</strong> pada antrian di bawah untuk mulai melayani pelanggan.</p>
+                        <div class="text-sm sm:text-base lg:text-xl font-black text-slate-900 dark:text-white mt-2">Tidak ada antrian aktif di akun Anda</div>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Gunakan tombol <strong>Panggil</strong> atau <strong>Layani</strong> pada antrian di bawah untuk mulai melayani pelanggan.</p>
                     @endif
                 </div>
 
@@ -180,19 +191,30 @@
                         <span class="text-xs font-black uppercase tracking-widest text-pink-500 dark:text-pink-400">Sedang Anda Layani &bull; MUA Studio</span>
                     </div>
                     @if ($currentServing)
-                        <div class="flex items-baseline gap-3 mt-2">
-                            <span class="text-4xl sm:text-5xl font-black text-pink-500 dark:text-pink-400 font-mono tracking-tight">{{ $currentServing->queue_number }}</span>
-                            <span class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">{{ $currentServing->customer_name }}</span>
+                        <div class="flex items-center gap-2 sm:gap-3 mt-2">
+                            <span class="text-2xl sm:text-4xl lg:text-5xl font-black text-pink-500 dark:text-pink-400 font-mono tracking-tight">{{ $currentServing->queue_number }}</span>
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="relative flex-shrink-0">
+                                    @if($currentServing->user?->avatar)
+                                        <img src="{{ asset('storage/' . $currentServing->user->avatar) }}" alt="{{ $currentServing->customer_name }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover ring-1 ring-pink-500/50 shadow-sm">
+                                    @else
+                                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-pink-500/20 via-slate-100 dark:via-slate-800 to-pink-500/10 ring-1 ring-pink-500/30 flex items-center justify-center text-pink-500 font-black text-xs shadow-sm flex-shrink-0">
+                                            {{ strtoupper(substr($currentServing->customer_name, 0, 2)) }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <span class="text-sm sm:text-base lg:text-xl font-bold text-slate-900 dark:text-white truncate">{{ $currentServing->customer_name }}</span>
+                            </div>
                         </div>
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
                             Layanan: <strong class="text-slate-900 dark:text-white">{{ $currentServing->items->map(fn($i) => $i->service->name)->join(', ') }}</strong>
                             @if ($currentServing->cashier)
                                 &bull; <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Kasir: {{ $currentServing->cashier_id === auth()->id() ? 'Anda' : $currentServing->cashier->name }}</span>
                             @endif
                         </p>
                     @else
-                        <div class="text-2xl font-black text-slate-900 dark:text-white mt-2">Tidak ada antrian aktif di akun Anda</div>
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Gunakan tombol <strong>Panggil</strong> atau <strong>Layani</strong> pada antrian di bawah untuk mulai melayani pelanggan.</p>
+                        <div class="text-sm sm:text-base lg:text-xl font-black text-slate-900 dark:text-white mt-2">Tidak ada antrian aktif di akun Anda</div>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Gunakan tombol <strong>Panggil</strong> atau <strong>Layani</strong> pada antrian di bawah untuk mulai melayani pelanggan.</p>
                     @endif
                 </div>
 
@@ -289,7 +311,7 @@
                         <!-- Top Row: Queue number & status -->
                         <div class="flex items-center justify-between gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="font-mono font-black text-2xl {{ $b->service_category === 'barbershop' ? 'text-amber-500 dark:text-amber-400' : 'text-pink-500 dark:text-pink-400' }}">
+                                <span class="font-mono font-black text-lg sm:text-2xl {{ $b->service_category === 'barbershop' ? 'text-amber-500 dark:text-amber-400' : 'text-pink-500 dark:text-pink-400' }}">
                                     {{ $b->queue_number }}
                                 </span>
                                 <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono bg-slate-100 dark:bg-slate-750 px-2 py-0.5 rounded">
@@ -309,10 +331,21 @@
                         </div>
 
                         <!-- Middle Row: Customer & Time -->
-                        <div class="flex items-start justify-between gap-2 text-xs">
-                            <div>
-                                <div class="font-bold text-sm text-slate-900 dark:text-white">{{ $b->customer_name }}</div>
-                                <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ $b->customer_phone ?? '-' }}</div>
+                        <div class="flex items-center justify-between gap-2 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <div class="relative flex-shrink-0">
+                                    @if($b->user?->avatar)
+                                        <img src="{{ asset('storage/' . $b->user->avatar) }}" alt="{{ $b->customer_name }}" class="w-9 h-9 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                    @else
+                                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                            {{ strtoupper(substr($b->customer_name, 0, 2)) }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-slate-900 dark:text-white">{{ $b->customer_name }}</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ $b->customer_phone ?? '-' }}</div>
+                                </div>
                             </div>
                             <div class="text-right">
                                 <div class="font-bold text-slate-900 dark:text-white font-mono flex items-center justify-end gap-1">
@@ -487,8 +520,21 @@
 
                                 <!-- Customer -->
                                 <td class="py-4 px-4">
-                                    <div class="font-bold text-base text-slate-900 dark:text-white">{{ $b->customer_name }}</div>
-                                    <div class="text-sm text-slate-500 dark:text-slate-300 font-mono font-medium">{{ $b->customer_phone ?? '-' }}</div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="relative flex-shrink-0">
+                                            @if($b->user?->avatar)
+                                                <img src="{{ asset('storage/' . $b->user->avatar) }}" alt="{{ $b->customer_name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                            @else
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                                    {{ strtoupper(substr($b->customer_name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-base text-slate-900 dark:text-white">{{ $b->customer_name }}</div>
+                                            <div class="text-sm text-slate-500 dark:text-slate-300 font-mono font-medium">{{ $b->customer_phone ?? '-' }}</div>
+                                        </div>
+                                    </div>
                                 </td>
 
                                 <!-- Services & Notes -->

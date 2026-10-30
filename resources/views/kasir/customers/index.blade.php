@@ -1,13 +1,13 @@
 <x-kasir-layout title="Kelola Pelanggan - Grooming Lab">
     <div class="space-y-6" x-data="customerKasirManager()">
         <!-- Header Banner -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-sm">
             <div>
-                <h1 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                <h1 class="text-sm sm:text-base lg:text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500"></span>
                     KELOLA DATA PELANGGAN
                 </h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Database pelanggan yang telah membuat akun maupun pelanggan walk-in salon.
                 </p>
             </div>
@@ -61,16 +61,27 @@
                     @endphp
                     <div class="p-3.5 space-y-2.5">
                         <div class="flex items-start justify-between gap-2">
-                            <div>
-                                <div class="font-bold text-sm text-slate-900 dark:text-white">
-                                    {{ $tab === 'registered' ? $c->name : $c->customer_name }}
+                            <div class="flex items-center gap-2.5">
+                                <div class="relative flex-shrink-0">
+                                    @if ($tab === 'registered' && $c->avatar)
+                                        <img src="{{ asset('storage/' . $c->avatar) }}" alt="{{ $c->name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                    @else
+                                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                            {{ strtoupper(substr($tab === 'registered' ? $c->name : $c->customer_name, 0, 2)) }}
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                                    {{ $tab === 'registered' ? ($c->phone ?? '-') : ($c->customer_phone ?? '-') }}
+                                <div>
+                                    <div class="font-bold text-sm text-slate-900 dark:text-white">
+                                        {{ $tab === 'registered' ? $c->name : $c->customer_name }}
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                                        {{ $tab === 'registered' ? ($c->phone ?? '-') : ($c->customer_phone ?? '-') }}
+                                    </div>
+                                    @if ($tab === 'registered' && $c->email)
+                                        <div class="text-[11px] text-slate-400 truncate max-w-[200px]">{{ $c->email }}</div>
+                                    @endif
                                 </div>
-                                @if ($tab === 'registered' && $c->email)
-                                    <div class="text-[11px] text-slate-400 truncate max-w-[200px]">{{ $c->email }}</div>
-                                @endif
                             </div>
                             <div class="flex flex-col items-end gap-1">
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">
@@ -139,8 +150,26 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700/70">
                         @forelse ($customers as $c)
                             <tr class="hover:bg-slate-100/70 dark:hover:bg-slate-700/60 transition">
-                                <td class="py-4 px-4 font-bold text-base text-slate-900 dark:text-white">
-                                    {{ $tab === 'registered' ? $c->name : $c->customer_name }}
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="relative flex-shrink-0">
+                                            @if ($tab === 'registered' && $c->avatar)
+                                                <img src="{{ asset('storage/' . $c->avatar) }}" alt="{{ $c->name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                            @else
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm flex-shrink-0">
+                                                    {{ strtoupper(substr($tab === 'registered' ? $c->name : $c->customer_name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-base text-slate-900 dark:text-white">
+                                                {{ $tab === 'registered' ? $c->name : $c->customer_name }}
+                                            </div>
+                                            @if($tab === 'registered')
+                                                <div class="text-[10px] text-slate-500 font-mono">ID: #{{ $c->id }}</div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </td>
 
                                 <td class="py-4 px-4 font-mono text-sm text-slate-700 dark:text-slate-300 font-medium">

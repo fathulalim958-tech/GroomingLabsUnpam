@@ -40,13 +40,27 @@
                         @forelse ($customers as $customer)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                                 <td class="py-3.5 px-4">
-                                    <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                                        <span>{{ $customer->name }}</span>
-                                        @if ($customer->is_member)
-                                            <span class="text-amber-500 text-xs" title="Member Aktif">⭐</span>
-                                        @endif
+                                    <div class="flex items-center gap-3">
+                                        <!-- Foto Profil Pelanggan -->
+                                        <div class="relative flex-shrink-0">
+                                            @if($customer->avatar)
+                                                <img src="{{ asset('storage/' . $customer->avatar) }}" alt="{{ $customer->name }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500/50 shadow-sm">
+                                            @else
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 via-slate-100 dark:via-slate-800 to-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs shadow-sm">
+                                                    {{ strtoupper(substr($customer->name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                                                <span>{{ $customer->name }}</span>
+                                                @if ($customer->is_member)
+                                                    <span class="text-amber-500 text-xs" title="Member Aktif">⭐</span>
+                                                @endif
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 font-mono">ID: #{{ $customer->id }}</div>
+                                        </div>
                                     </div>
-                                    <div class="text-[10px] text-slate-500 font-mono">ID: #{{ $customer->id }}</div>
                                 </td>
                                 <td class="py-3.5 px-4 text-xs">
                                     <div class="text-slate-900 dark:text-slate-200">{{ $customer->email }}</div>
