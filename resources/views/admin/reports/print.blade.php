@@ -109,7 +109,7 @@
                 <th>Pelanggan</th>
                 <th>Kategori</th>
                 <th>Layanan</th>
-                <th>Kasir</th>
+                <th>Staff / Kasir</th>
                 <th class="text-right">Total (Rp)</th>
             </tr>
         </thead>
@@ -123,7 +123,7 @@
                     <td>{{ $b->customer_name }}</td>
                     <td>{{ ucfirst($b->service_category) }}</td>
                     <td>{{ $b->items->map(fn($i) => $i->service->name)->join(', ') }}</td>
-                    <td>{{ $b->cashier->name ?? '-' }}</td>
+                    <td>{{ $b->staff->name ?? $b->cashier->name ?? '-' }}</td>
                     <td class="text-right">{{ number_format($b->total_price, 0, ',', '.') }}</td>
                 </tr>
             @empty

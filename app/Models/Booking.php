@@ -109,7 +109,15 @@ class Booking extends Model
      */
     public function getIsWalkInAttribute(): bool
     {
-        return $this->user_id === null || $this->cashier_id !== null;
+        return empty($this->user_id) || ($this->notes && str_contains(strtolower($this->notes), 'walk-in'));
+    }
+
+    /**
+     * Get booking channel / type label ('Online' or 'Offline').
+     */
+    public function getBookingTypeAttribute(): string
+    {
+        return $this->is_walk_in ? 'Offline' : 'Online';
     }
 
     /*

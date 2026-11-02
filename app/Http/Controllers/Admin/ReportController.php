@@ -186,14 +186,14 @@ class ReportController extends Controller
         foreach ($bookings as $index => $booking) {
             $tanggal = $booking->booking_date ? Carbon::parse($booking->booking_date)->format('d/m/Y') : '-';
             $waktu = $booking->booking_time ? substr($booking->booking_time, 0, 5) : '-';
-            $jenis = ($booking->cashier_id || ($booking->notes && str_contains(strtolower($booking->notes), 'walk-in'))) ? 'Offline' : 'Online';
+            $jenis = $booking->is_walk_in ? 'Offline' : 'Online';
             $pelanggan = $booking->customer_name;
             $kategori = $booking->service_category === 'mua' ? 'MUA' : 'Barbershop';
             $layanan = $booking->items->map(fn($item) => $item->service->name ?? '')->filter()->join(', ');
             if (empty($layanan)) {
                 $layanan = '-';
             }
-            $staff = $booking->staff->name ?? '-';
+            $staff = $booking->staff->name ?? $booking->cashier->name ?? '-';
             $harga = 'Rp' . number_format($booking->total_price, 0, ',', '.');
             
             // Format status: completed -> Completed, cancelled -> Cancelled, etc.
@@ -325,11 +325,11 @@ class ReportController extends Controller
                     $index + 1,
                     $booking->booking_date ? Carbon::parse($booking->booking_date)->format('d/m/Y') : '-',
                     $booking->booking_time ? substr($booking->booking_time, 0, 5) : '-',
-                    ($booking->cashier_id || ($booking->notes && str_contains(strtolower($booking->notes), 'walk-in'))) ? 'Offline' : 'Online',
+                    $booking->is_walk_in ? 'Offline' : 'Online',
                     $booking->customer_name,
                     $booking->service_category === 'mua' ? 'MUA' : 'Barbershop',
                     $booking->items->map(fn($item) => $item->service->name ?? '')->filter()->join(', '),
-                    $booking->staff->name ?? '-',
+                    $booking->staff->name ?? $booking->cashier->name ?? '-',
                     $booking->cashier->name ?? '-',
                     'Rp' . number_format($booking->total_price, 0, ',', '.'),
                     ucfirst($booking->status),

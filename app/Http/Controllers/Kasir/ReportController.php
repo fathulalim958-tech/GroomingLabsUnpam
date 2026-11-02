@@ -140,7 +140,7 @@ class ReportController extends Controller
             $sheet->setCellValue('E' . $row, $b->customer_name);
             $sheet->setCellValue('F' . $row, ucfirst($b->service_category));
             $sheet->setCellValue('G' . $row, $b->items->map(fn($i) => $i->service->name)->join(', '));
-            $sheet->setCellValue('H' . $row, $b->cashier->name ?? '-');
+            $sheet->setCellValue('H' . $row, $b->staff->name ?? $b->cashier->name ?? '-');
             $sheet->setCellValue('I' . $row, $b->total_price);
             $sheet->getStyle('I' . $row)->getNumberFormat()->setFormatCode('#,##0');
             $sheet->setCellValue('J' . $row, $b->status_label);

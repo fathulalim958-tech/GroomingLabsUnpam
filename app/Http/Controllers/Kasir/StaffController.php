@@ -204,14 +204,14 @@ class StaffController extends Controller
         foreach ($bookings as $index => $booking) {
             $tanggal = $booking->booking_date ? Carbon::parse($booking->booking_date)->format('d/m/Y') : '-';
             $waktu = $booking->booking_time ? substr($booking->booking_time, 0, 5) : '-';
-            $jenis = ($booking->cashier_id || ($booking->notes && str_contains(strtolower($booking->notes), 'walk-in'))) ? 'Offline' : 'Online';
+            $jenis = $booking->is_walk_in ? 'Offline' : 'Online';
             $pelanggan = $booking->customer_name;
             $kategori = $booking->service_category === 'mua' ? 'MUA' : 'Barbershop';
             $layanan = $booking->items->map(fn($item) => $item->service->name ?? '')->filter()->join(', ');
             if (empty($layanan)) {
                 $layanan = '-';
             }
-            $staff = $booking->cashier->name ?? $booking->staff->name ?? 'Kasir';
+            $staff = $booking->staff->name ?? $booking->cashier->name ?? 'Kasir';
             $harga = 'Rp' . number_format($booking->total_price, 0, ',', '.');
             $status = 'Completed';
 

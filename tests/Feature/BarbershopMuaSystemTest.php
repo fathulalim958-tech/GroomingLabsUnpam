@@ -626,6 +626,103 @@ class BarbershopMuaSystemTest extends TestCase
     }
 
     /**
+     * Test Excel export populates serving cashier name in Staff column when served by cashier.
+     */
+    public function test_excel_export_displays_serving_cashier_when_staff_is_not_assigned(): void
+    {
+        $admin = User::create([
+            'name' => 'Admin Excel Cashier',
+            'email' => 'adminexcelcashier@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $cashier = User::create([
+            'name' => 'Kasir Budi',
+            'email' => 'kasirbudi@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'kasir',
+        ]);
+
+        $customer = User::create([
+            'name' => 'Pelanggan Walkin',
+            'email' => 'walkin@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'pelanggan',
+        ]);
+
+        $service = Service::create([
+            'name' => 'Classic Cut',
+            'category' => 'barbershop',
+            'price' => 35000,
+            'duration_minutes' => 30,
+            'is_active' => true,
+        ]);
+
+        $booking = Booking::create([
+            'booking_code' => 'BK-CASHIER-01',
+            'user_id' => $customer->id,
+            'cashier_id' => $cashier->id,
+            'staff_id' => null,
+            'service_category' => 'barbershop',
+            'booking_date' => '2026-10-15',
+            'booking_time' => '10:00',
+            'queue_number' => 'B-015',
+            'total_price' => 35000,
+            'status' => 'completed',
+        ]);
+        BookingItem::create([
+            'booking_id' => $booking->id,
+            'service_id' => $service->id,
+            'price' => 35000,
+        ]);
+
+        // Walk-in booking without user account
+        $walkinBooking = Booking::create([
+            'booking_code' => 'BK-WALKIN-01',
+            'user_id' => null,
+            'customer_name' => 'Bambang Walkin',
+            'cashier_id' => $cashier->id,
+            'staff_id' => null,
+            'service_category' => 'barbershop',
+            'booking_date' => '2026-10-15',
+            'booking_time' => '11:00',
+            'queue_number' => 'B-016',
+            'notes' => 'Walk-in customer',
+            'total_price' => 35000,
+            'status' => 'completed',
+        ]);
+        BookingItem::create([
+            'booking_id' => $walkinBooking->id,
+            'service_id' => $service->id,
+            'price' => 35000,
+        ]);
+
+        $response = $this->actingAs($admin)->get('/admin/reports/export-excel?start_date=2026-10-15&end_date=2026-10-15');
+        $response->assertStatus(200);
+
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_excel_cashier_');
+        file_put_contents($tempFile, $content);
+
+        $spreadsheet = IOFactory::load($tempFile);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Row 12: Online customer booking served by cashier
+        $this->assertEquals('Online', $sheet->getCell('D12')->getValue());
+        $this->assertEquals('Kasir Budi', $sheet->getCell('H12')->getValue());
+
+        // Row 13: Walk-in booking without account
+        $this->assertEquals('Offline', $sheet->getCell('D13')->getValue());
+        $this->assertEquals('Kasir Budi', $sheet->getCell('H13')->getValue());
+
+        @unlink($tempFile);
+    }
+
+    /**
      * Test selecting multiple services is rejected (only 1 service allowed).
      */
     public function test_booking_and_walkin_reject_multiple_services_selection(): void

@@ -174,14 +174,19 @@ class BookingController extends Controller
         $discountAmount = 0;
 
         $user = Auth::user();
-        $membership = $user?->membership;
-        $hasActiveDiscount = $membership
-            && $membership->is_active
-            && (int) $membership->discount_remaining > 0;
+        if ($user && $user->hasActiveMemberDiscount()) {
+            $discountAmount = $user->calculateDiscount($originalPrice);
+            $user->decrement('member_discount_remaining');
+        } else {
+            $membership = $user?->membership;
+            $hasActiveDiscount = $membership
+                && $membership->is_active
+                && (int) $membership->discount_remaining > 0;
 
-        if ($hasActiveDiscount) {
-            $discountAmount = $originalPrice * ((float) $membership->discount_percentage / 100);
-            $membership->decrement('discount_remaining');
+            if ($hasActiveDiscount) {
+                $discountAmount = $originalPrice * ((float) $membership->discount_percentage / 100);
+                $membership->decrement('discount_remaining');
+            }
         }
 
         $totalPrice = max(0, $originalPrice - $discountAmount);

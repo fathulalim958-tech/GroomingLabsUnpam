@@ -16,10 +16,10 @@
                     <span>Ekspor Excel (.xlsx)</span>
                 </a>
 
-                <a href="{{ route('admin.reports.export-excel', array_merge(request()->all(), ['format' => 'csv'])) }}"
+                {{-- <a href="{{ route('admin.reports.export-excel', array_merge(request()->all(), ['format' => 'csv'])) }}"
                    class="px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl border border-slate-200 dark:border-slate-700 transition flex items-center gap-1 shadow-sm" title="Unduh format CSV">
                     <span>CSV</span>
-                </a>
+                </a> --}}
 
                 <a href="{{ route('admin.reports.export-pdf', request()->all()) }}" target="_blank"
                    class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5 shadow-sm">
@@ -114,7 +114,7 @@
                             <th class="py-3 px-4">Pelanggan</th>
                             <th class="py-3 px-4">Kategori</th>
                             <th class="py-3 px-4">Layanan</th>
-                            <th class="py-3 px-4">Kasir</th>
+                            <th class="py-3 px-4">Staff / Kasir</th>
                             <th class="py-3 px-4 text-right">Harga</th>
                             <th class="py-3 px-4 text-center">Status</th>
                         </tr>
@@ -127,8 +127,8 @@
                                     {{ $b->booking_date->format('d/m/Y') }} &bull; {{ substr($b->booking_time, 0, 5) }}
                                 </td>
                                 <td class="py-3.5 px-4 text-xs">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold {{ ($b->cashier_id || ($b->notes && str_contains(strtolower($b->notes), 'walk-in'))) ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' }}">
-                                        {{ ($b->cashier_id || ($b->notes && str_contains(strtolower($b->notes), 'walk-in'))) ? 'Offline' : 'Online' }}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold {{ $b->is_walk_in ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' }}">
+                                        {{ $b->is_walk_in ? 'Offline' : 'Online' }}
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 font-medium text-slate-900 dark:text-white">{{ $b->customer_name }}</td>
@@ -138,7 +138,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">{{ $b->items->map(fn($i) => $i->service->name)->join(', ') ?: '-' }}</td>
-                                <td class="py-3.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-300">{{ $b->cashier->name ?? '-' }}</td>
+                                <td class="py-3.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-300">{{ $b->staff->name ?? $b->cashier->name ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
                                     Rp {{ number_format($b->total_price, 0, ',', '.') }}
                                 </td>
