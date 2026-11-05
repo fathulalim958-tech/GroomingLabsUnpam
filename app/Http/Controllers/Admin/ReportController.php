@@ -16,13 +16,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ReportController extends Controller
 {
     /**
-     * Display reports dashboard with filtering.
+     * Build base report query with date, category, and search filters.
      */
-    public function index(Request $request)
+    private function buildReportQuery(Request $request): array
     {
         $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::today()->format('Y-m-d'));
         $category = $request->get('category', 'all');
+        $search = trim($request->get('search', ''));
 
         $query = Booking::with(['user', 'cashier', 'staff', 'items.service'])
             ->whereDate('booking_date', '>=', $startDate)
@@ -31,6 +32,38 @@ class ReportController extends Controller
         if ($category !== 'all' && in_array($category, ['barbershop', 'mua'])) {
             $query->where('service_category', $category);
         }
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('booking_code', 'like', "%{$search}%")
+                  ->orWhere('queue_number', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%")
+                         ->orWhere('phone', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('staff', function ($sq) use ($search) {
+                      $sq->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('cashier', function ($cq) use ($search) {
+                      $cq->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('items.service', function ($iq) use ($search) {
+                      $iq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        return [$query, $startDate, $endDate, $category, $search];
+    }
+
+    /**
+     * Display reports dashboard with filtering and search.
+     */
+    public function index(Request $request)
+    {
+        [$query, $startDate, $endDate, $category, $search] = $this->buildReportQuery($request);
 
         $allBookings = (clone $query)->get();
         $completedBookings = $allBookings->where('status', 'completed');
@@ -48,7 +81,21 @@ class ReportController extends Controller
 
         $bookings = (clone $query)->orderBy('booking_date', 'desc')->paginate(15)->withQueryString();
 
-        return view('admin.reports.index', compact('bookings', 'summary', 'startDate', 'endDate', 'category'));
+        return view('admin.reports.index', compact('bookings', 'summary', 'startDate', 'endDate', 'category', 'search'));
+    }
+
+    /**
+     * Delete all transaction and booking records from database.
+     */
+    public function destroyAll(Request $request)
+    {
+        $count = Booking::count();
+
+        \App\Models\BookingItem::query()->delete();
+        Booking::query()->delete();
+
+        return redirect()->route('admin.reports.index')
+            ->with('success', "Seluruh data riwayat transaksi ({$count} transaksi) berhasil dihapus dari sistem.");
     }
 
     /**
@@ -56,17 +103,7 @@ class ReportController extends Controller
      */
     public function exportExcel(Request $request)
     {
-        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->get('end_date', Carbon::today()->format('Y-m-d'));
-        $category = $request->get('category', 'all');
-
-        $query = Booking::with(['user', 'cashier', 'staff', 'items.service'])
-            ->whereDate('booking_date', '>=', $startDate)
-            ->whereDate('booking_date', '<=', $endDate);
-
-        if ($category !== 'all' && in_array($category, ['barbershop', 'mua'])) {
-            $query->where('service_category', $category);
-        }
+        [$query, $startDate, $endDate, $category, $search] = $this->buildReportQuery($request);
 
         $bookings = $query->orderBy('booking_date', 'asc')->orderBy('booking_time', 'asc')->get();
 
@@ -195,7 +232,7 @@ class ReportController extends Controller
             }
             $staff = $booking->staff->name ?? $booking->cashier->name ?? '-';
             $harga = 'Rp' . number_format($booking->total_price, 0, ',', '.');
-            
+
             // Format status: completed -> Completed, cancelled -> Cancelled, etc.
             $status = match (strtolower($booking->status)) {
                 'completed'   => 'Completed',
@@ -347,22 +384,11 @@ class ReportController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        $startDate = $request->get('start_date', Carbon::today()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->get('end_date', Carbon::today()->format('Y-m-d'));
-        $category = $request->get('category', 'all');
+        [$query, $startDate, $endDate, $category, $search] = $this->buildReportQuery($request);
 
-        $query = Booking::with(['user', 'cashier', 'staff', 'items.service'])
-            ->whereDate('booking_date', '>=', $startDate)
-            ->whereDate('booking_date', '<=', $endDate)
-            ->where('status', 'completed');
-
-        if ($category !== 'all' && in_array($category, ['barbershop', 'mua'])) {
-            $query->where('service_category', $category);
-        }
-
-        $bookings = $query->orderBy('booking_date', 'desc')->get();
+        $bookings = $query->where('status', 'completed')->orderBy('booking_date', 'desc')->get();
         $totalRevenue = $bookings->sum('total_price');
 
-        return view('admin.reports.print', compact('bookings', 'totalRevenue', 'startDate', 'endDate', 'category'));
+        return view('admin.reports.print', compact('bookings', 'totalRevenue', 'startDate', 'endDate', 'category', 'search'));
     }
 }

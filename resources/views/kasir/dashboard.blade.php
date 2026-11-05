@@ -27,6 +27,21 @@
             </div>
         </div>
 
+        <!-- Jadwal Tugas Kasir Info Banner -->
+        <div class="px-3.5 py-2 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs {{ auth()->user()->isScheduledToday() ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-300' : 'bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-300' }}">
+            <div class="flex items-center gap-2">
+                <span>{{ auth()->user()->isScheduledToday() ? '🟢' : '🟡' }}</span>
+                <span>
+                    <strong>Jadwal Tugas Anda:</strong> {{ auth()->user()->work_days_formatted }}
+                    &bull;
+                    <span class="font-semibold">{{ auth()->user()->isScheduledToday() ? 'Hari ini Anda terjadwal bertugas melayani antrian.' : 'Hari ini Anda tidak ada jadwal bertugas.' }}</span>
+                </span>
+            </div>
+            <span class="self-start sm:self-auto text-[10px] uppercase font-bold px-2 py-0.5 rounded {{ auth()->user()->isScheduledToday() ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-amber-500/20 text-amber-700 dark:text-amber-300' }}">
+                {{ auth()->user()->isScheduledToday() ? 'Aktif Bertugas' : 'Di Luar Jadwal' }}
+            </span>
+        </div>
+
         @if ($upcomingCount > 0)
             <!-- Upcoming reservations banner notice linking to Order menu -->
             <div class="p-3 sm:p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-xs sm:text-sm text-indigo-900 dark:text-indigo-200 shadow-sm">

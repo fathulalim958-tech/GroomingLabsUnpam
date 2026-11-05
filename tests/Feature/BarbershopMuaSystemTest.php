@@ -111,7 +111,7 @@ class BarbershopMuaSystemTest extends TestCase
         ]);
 
         // Find next valid open date (not Sunday)
-        $date = now();
+        $date = Carbon::tomorrow();
         if ($date->dayOfWeek === 0) {
             $date = $date->addDay();
         }
@@ -331,6 +331,74 @@ class BarbershopMuaSystemTest extends TestCase
         $this->assertEquals('Updated Barbershop VIP', $content->title);
         $this->assertEquals('New Premium Experience', $content->tagline);
         $this->assertCount(3, $content->facilities_list);
+    }
+
+    /**
+     * Test admin can manage login page content and it reflects on login page.
+     */
+    public function test_admin_can_manage_login_page_content_and_it_reflects_on_login(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        // 1. Visit index - auto-creates login record if not present
+        $indexResponse = $this->actingAs($admin)->get('/admin/category-contents');
+        $indexResponse->assertStatus(200);
+        $indexResponse->assertSee('Halaman Login');
+
+        $loginContent = CategoryContent::where('category', 'login')->firstOrFail();
+
+        // 2. Visit edit page
+        $editResponse = $this->actingAs($admin)->get("/admin/category-contents/{$loginContent->id}/edit");
+        $editResponse->assertStatus(200);
+        $editResponse->assertSee('Edit Konten &amp; Tampilan Halaman Login', false);
+        $editResponse->assertSee('Judul Sambutan Banner (Kiri)');
+
+        // 3. Update login content with custom text and fake banner image
+        $fakeImage = \Illuminate\Http\UploadedFile::fake()->image('barber-chair.jpg', 800, 600);
+
+        $updateResponse = $this->actingAs($admin)->put("/admin/category-contents/{$loginContent->id}", [
+            'title' => 'Selamat Bergabung',
+            'tagline' => 'Eksklusif Barbershop',
+            'description' => 'Silakan masuk untuk reservasi kapster terbaik kami',
+            'facilities' => 'Grooming Bersama',
+            'terms' => 'Silakan gunakan email terdaftar Anda',
+            'banner_image' => $fakeImage,
+            'is_active' => '1',
+        ]);
+
+        $updateResponse->assertRedirect('/admin/category-contents');
+
+        $loginContent->refresh();
+        $this->assertEquals('Selamat Bergabung', $loginContent->title);
+        $this->assertEquals('Eksklusif Barbershop', $loginContent->tagline);
+        $this->assertEquals('Grooming Bersama', $loginContent->facilities);
+        $this->assertNotNull($loginContent->banner_image);
+        $this->assertTrue(\Illuminate\Support\Facades\Storage::disk('public')->exists($loginContent->banner_image));
+
+        // 4. Admin visits preview login route without being redirected by guest middleware
+        $previewResponse = $this->actingAs($admin)->get('/admin/category-contents/preview-login');
+        $previewResponse->assertStatus(200);
+        $previewResponse->assertSee('Pratinjau Halaman Login');
+        $previewResponse->assertSee('Kembali ke Kelola Konten');
+        $previewResponse->assertSee('Selamat');
+        $previewResponse->assertSee('Bergabung');
+        $previewResponse->assertSee('Silakan masuk untuk reservasi kapster terbaik kami');
+
+        // 5. Verify public login page displays the updated content for guests
+        $this->post('/logout');
+
+        $guestLoginResponse = $this->get('/login');
+        $guestLoginResponse->assertStatus(200);
+        $guestLoginResponse->assertSee('Selamat');
+        $guestLoginResponse->assertSee('Bergabung');
+        $guestLoginResponse->assertSee('Eksklusif Barbershop');
+        $guestLoginResponse->assertSee('Grooming Bersama');
+        $guestLoginResponse->assertSee('Silakan masuk untuk reservasi kapster terbaik kami');
+        $guestLoginResponse->assertSee('Silakan gunakan email terdaftar Anda');
     }
 
     /**
@@ -1592,21 +1660,26 @@ class BarbershopMuaSystemTest extends TestCase
         $customer->refresh();
         $this->assertFalse($customer->is_active);
 
-        // 5b. Admin customer show page renders modals for block and reset-password
+        // 5b. Admin customer show page renders modals for block and member
         $resShow = $this->actingAs($admin)->get(route('admin.customers.show', $customer));
         $resShow->assertOk();
         $resShow->assertSee('openBlockModal');
-        $resShow->assertSee('openResetPasswordModal');
+        $resShow->assertSee('openMemberModal');
         $resShow->assertSee('Konfirmasi Blokir Pelanggan');
-        $resShow->assertSee('Reset Password Pelanggan');
+        $resShow->assertSee('Atur Member');
 
-        // 6. Admin resets password with custom input
-        $resAdminReset = $this->actingAs($admin)->post(route('admin.customers.reset-password', $customer), [
+        // 6. Admin can update customer biodata and reset password via edit modal
+        $resAdminUpdate = $this->actingAs($admin)->put(route('admin.customers.update', $customer), [
+            'name' => 'Chelsey Updated',
+            'email' => $customer->email,
+            'phone' => '08999888777',
             'password' => 'AdminNewPass#2026',
             'password_confirmation' => 'AdminNewPass#2026',
         ]);
-        $resAdminReset->assertSessionHas('password_reset_success');
+        $resAdminUpdate->assertSessionHas('success');
         $customer->refresh();
+        $this->assertEquals('Chelsey Updated', $customer->name);
+        $this->assertEquals('08999888777', $customer->phone);
         $this->assertTrue(Hash::check('AdminNewPass#2026', $customer->password));
     }
 
@@ -1643,5 +1716,493 @@ class BarbershopMuaSystemTest extends TestCase
         $resDelete = $this->actingAs($admin)->delete(route('admin.cashiers.destroy', $cashier));
         $resDelete->assertRedirect(route('admin.cashiers.index'));
         $this->assertDatabaseMissing('users', ['id' => $cashier->id]);
+    }
+
+    /**
+     * Test booking time slots that have already passed their 1-hour range for today cannot be selected or booked.
+     * E.g. for 10.00-11.00, at 10.59 it is still selectable. At 11.00 it is disabled.
+     */
+    public function test_passed_booking_time_slots_cannot_be_booked_for_today(): void
+    {
+        // Mock current time to 10:59 AM WIB on Monday 2026-11-02
+        Carbon::setTestNow(Carbon::parse('2026-11-02 10:59:00', 'Asia/Jakarta'));
+
+        $customer = User::create([
+            'name' => 'John Customer',
+            'email' => 'johncust@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'pelanggan',
+        ]);
+
+        $service = Service::create([
+            'name' => 'Haircut Biasa',
+            'category' => 'barbershop',
+            'price' => 30000,
+            'duration_minutes' => 30,
+            'is_active' => true,
+        ]);
+
+        OperatingHour::updateOrCreate(
+            ['category' => 'barbershop', 'day_of_week' => 1], // Monday
+            ['open_time' => '09:00:00', 'close_time' => '21:00:00', 'is_closed' => false, 'max_bookings_per_slot' => 5]
+        );
+
+        // 1. At 10:59 AM:
+        // - 09:00 (09.00 - 10.00) has passed 10:00 -> is_past = true
+        // - 10:00 (10.00 - 11.00) has NOT passed 11:00 -> is_past = false (still selectable)
+        // - 11:00 (11.00 - 12.00) -> is_past = false
+        $resAjax = $this->actingAs($customer)->getJson('/pelanggan/booking/check-slots?category=barbershop&date=2026-11-02');
+        $resAjax->assertOk();
+        $slots = $resAjax->json('slots');
+        $this->assertTrue($slots['09:00']['is_past']);
+        $this->assertFalse($slots['10:00']['is_past']);
+        $this->assertFalse($slots['11:00']['is_past']);
+
+        // 2. Booking 09:00 (range ended at 10:00) on today must FAIL with error
+        $resPost0900 = $this->actingAs($customer)->post('/pelanggan/booking', [
+            'category' => 'barbershop',
+            'services' => [$service->id],
+            'booking_date' => '2026-11-02',
+            'booking_time' => '09:00',
+        ]);
+        $resPost0900->assertSessionHasErrors('booking_time');
+
+        // 3. Booking 10:00 at 10:59 (range ends at 11:00) on today must SUCCEED
+        $resPost1000 = $this->actingAs($customer)->post('/pelanggan/booking', [
+            'category' => 'barbershop',
+            'services' => [$service->id],
+            'booking_date' => '2026-11-02',
+            'booking_time' => '10:00',
+        ]);
+        $resPost1000->assertSessionHasNoErrors();
+        $resPost1000->assertRedirect('/pelanggan/order');
+        $this->assertEquals(1, Booking::where('user_id', $customer->id)->count());
+
+        // 4. Advance time to 11:00 AM (range 10.00 - 11.00 has now completely passed)
+        Carbon::setTestNow(Carbon::parse('2026-11-02 11:00:00', 'Asia/Jakarta'));
+
+        $customer2 = User::create([
+            'name' => 'Second Customer',
+            'email' => 'secondcust@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'pelanggan',
+        ]);
+
+        $resAjax1100 = $this->actingAs($customer2)->getJson('/pelanggan/booking/check-slots?category=barbershop&date=2026-11-02');
+        $slots1100 = $resAjax1100->json('slots');
+        $this->assertTrue($slots1100['10:00']['is_past']);
+
+        $resPost1000At1100 = $this->actingAs($customer2)->post('/pelanggan/booking', [
+            'category' => 'barbershop',
+            'services' => [$service->id],
+            'booking_date' => '2026-11-02',
+            'booking_time' => '10:00',
+        ]);
+        $resPost1000At1100->assertSessionHasErrors('booking_time');
+
+        Carbon::setTestNow(); // Clear mocked time
+    }
+
+    /**
+     * Test admin can log in using username, access account settings menu, and update Gmail and password.
+     */
+    public function test_admin_can_login_with_username_and_update_gmail_and_password(): void
+    {
+        $admin = User::create([
+            'name' => 'Owner Admin',
+            'username' => 'adminutama',
+            'email' => 'adminlama@gmail.com',
+            'password' => bcrypt('password123'),
+            'role' => 'admin',
+        ]);
+
+        // 1. Admin can log in using username 'adminutama' (without entering email)
+        $responseLogin = $this->post('/login', [
+            'email' => 'adminutama',
+            'password' => 'password123',
+        ]);
+        $responseLogin->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticatedAs($admin);
+
+        // 2. Admin can view account settings page
+        $resEdit = $this->actingAs($admin)->get(route('admin.profile.edit'));
+        $resEdit->assertOk();
+        $resEdit->assertSee('Pengaturan Akun Administrator');
+        $resEdit->assertSee('adminutama');
+        $resEdit->assertSee('adminlama@gmail.com');
+
+        // 3. Admin can update Gmail and username
+        $resUpdate = $this->actingAs($admin)->put(route('admin.profile.update'), [
+            'name' => 'Super Admin Baru',
+            'username' => 'adminbaru',
+            'email' => 'adminbaru@gmail.com',
+            'phone' => '081234567899',
+        ]);
+        $resUpdate->assertRedirect();
+        $resUpdate->assertSessionHas('success');
+
+        $admin->refresh();
+        $this->assertEquals('adminbaru', $admin->username);
+        $this->assertEquals('adminbaru@gmail.com', $admin->email);
+        $this->assertEquals('Super Admin Baru', $admin->name);
+
+        // 4. Admin can update password
+        $resPass = $this->actingAs($admin)->put(route('admin.profile.password'), [
+            'current_password' => 'password123',
+            'password' => 'passwordBaru2026',
+            'password_confirmation' => 'passwordBaru2026',
+        ]);
+        $resPass->assertRedirect();
+        $resPass->assertSessionHas('success');
+
+        // 5. Admin can log in with new username and new password
+        $this->post('/logout');
+        $this->assertGuest();
+
+        $responseLoginNew = $this->post('/login', [
+            'email' => 'adminbaru',
+            'password' => 'passwordBaru2026',
+        ]);
+        $responseLoginNew->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticatedAs($admin);
+    }
+
+    public function test_admin_reports_auto_submit_and_can_destroy_all_transaction_records(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // 1. Visit report page, verify buttons "Terapkan Filter" and "Reset" are gone
+        $res = $this->actingAs($admin)->get(route('admin.reports.index'));
+        $res->assertOk();
+        $res->assertDontSee('Terapkan Filter');
+        $res->assertSee('Hapus Semua Data');
+        $res->assertSee('onchange="this.form.submit()"', false);
+
+        // 2. Admin calls destroy-all to clear transactions
+        $resDeleteAll = $this->actingAs($admin)->delete(route('admin.reports.destroy-all'));
+        $resDeleteAll->assertRedirect(route('admin.reports.index'));
+        $resDeleteAll->assertSessionHas('success');
+        $this->assertEquals(0, \App\Models\Booking::count());
+        $this->assertEquals(0, \App\Models\BookingItem::count());
+    }
+
+    public function test_admin_reports_search_feature_filters_transactions_properly(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $customer1 = User::factory()->create(['name' => 'Budi Santoso', 'email' => 'budi@example.com']);
+        $customer2 = User::factory()->create(['name' => 'Siti Rahma', 'email' => 'siti@example.com']);
+
+        Booking::create([
+            'booking_code' => 'BK-BUDI-001',
+            'user_id' => $customer1->id,
+            'customer_name' => 'Budi Santoso',
+            'customer_phone' => '081234567890',
+            'service_category' => 'barbershop',
+            'booking_date' => Carbon::today()->format('Y-m-d'),
+            'booking_time' => '10:00:00',
+            'queue_number' => 'B-001',
+            'total_price' => 35000,
+            'status' => 'completed',
+        ]);
+
+        Booking::create([
+            'booking_code' => 'BK-SITI-002',
+            'user_id' => $customer2->id,
+            'customer_name' => 'Siti Rahma',
+            'customer_phone' => '089876543210',
+            'service_category' => 'mua',
+            'booking_date' => Carbon::today()->format('Y-m-d'),
+            'booking_time' => '11:00:00',
+            'queue_number' => 'M-001',
+            'total_price' => 150000,
+            'status' => 'completed',
+        ]);
+
+        // 1. Visit reports with search query 'Budi'
+        $response = $this->actingAs($admin)->get(route('admin.reports.index', [
+            'start_date' => Carbon::today()->startOfMonth()->format('Y-m-d'),
+            'end_date' => Carbon::today()->format('Y-m-d'),
+            'search' => 'Budi',
+        ]));
+
+        $response->assertOk();
+        $response->assertSee('Cari Transaksi');
+        $response->assertSee('Budi Santoso');
+        $response->assertDontSee('Siti Rahma');
+
+        // 2. Visit reports with search query by booking code
+        $responseCode = $this->actingAs($admin)->get(route('admin.reports.index', [
+            'start_date' => Carbon::today()->startOfMonth()->format('Y-m-d'),
+            'end_date' => Carbon::today()->format('Y-m-d'),
+            'search' => 'BK-BUDI-001',
+        ]));
+
+        $responseCode->assertOk();
+        $responseCode->assertSee('Budi Santoso');
+        $responseCode->assertDontSee('Siti Rahma');
+
+        // 3. Visit reports with search query 'M-001'
+        $responseQueue = $this->actingAs($admin)->get(route('admin.reports.index', [
+            'start_date' => Carbon::today()->startOfMonth()->format('Y-m-d'),
+            'end_date' => Carbon::today()->format('Y-m-d'),
+            'search' => 'M-001',
+        ]));
+
+        $responseQueue->assertOk();
+        $responseQueue->assertSee('Siti Rahma');
+        $responseQueue->assertDontSee('Budi Santoso');
+
+        // 4. Search with non-existent keyword
+        $responseNotFound = $this->actingAs($admin)->get(route('admin.reports.index', [
+            'start_date' => Carbon::today()->startOfMonth()->format('Y-m-d'),
+            'end_date' => Carbon::today()->format('Y-m-d'),
+            'search' => 'KeywordTidakAda123',
+        ]));
+
+        $responseNotFound->assertOk();
+        $responseNotFound->assertSee('Tidak ditemukan transaksi dengan kata kunci');
+    }
+
+    public function test_admin_can_assign_services_to_cashier_by_category(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // Create barbershop & MUA services
+        $cut = Service::create([
+            'name' => 'Cukur Ganteng',
+            'category' => 'barbershop',
+            'price' => 35000,
+            'duration_minutes' => 30,
+            'is_active' => true,
+        ]);
+
+        $shave = Service::create([
+            'name' => 'Gentlemen Shaving',
+            'category' => 'barbershop',
+            'price' => 25000,
+            'duration_minutes' => 20,
+            'is_active' => true,
+        ]);
+
+        $makeup = Service::create([
+            'name' => 'Bridal Glam Makeup',
+            'category' => 'mua',
+            'price' => 450000,
+            'duration_minutes' => 90,
+            'is_active' => true,
+        ]);
+
+        $cashier = User::factory()->create([
+            'name' => 'Kasir Satu',
+            'role' => 'kasir',
+            'service_category' => 'barbershop',
+        ]);
+
+        // 1. Visit edit cashier page
+        $editResponse = $this->actingAs($admin)->get(route('admin.cashiers.edit', $cashier));
+        $editResponse->assertOk();
+        $editResponse->assertSee('Kategori Akun Kasir / Staf');
+        $editResponse->assertSee('Barberman');
+        $editResponse->assertSee('Cukur Ganteng');
+        $editResponse->assertSee('Gentlemen Shaving');
+
+        // 2. Admin updates cashier as Barberman with 2 barbershop services (attempting to also sneak an MUA service)
+        $updateResponse = $this->actingAs($admin)->put(route('admin.cashiers.update', $cashier), [
+            'name' => 'Kasir Satu Barber',
+            'email' => $cashier->email,
+            'phone' => '081234567890',
+            'service_category' => 'barbershop',
+            'services' => [$cut->id, $shave->id, $makeup->id], // $makeup should be filtered out
+            'is_active' => 1,
+            'work_days' => [1, 2, 3, 4, 5],
+        ]);
+
+        $updateResponse->assertRedirect(route('admin.cashiers.index'));
+        $cashier->refresh();
+
+        $this->assertEquals('barbershop', $cashier->service_category);
+        $this->assertEquals(2, $cashier->services()->count());
+        $this->assertTrue($cashier->services->contains($cut));
+        $this->assertTrue($cashier->services->contains($shave));
+        $this->assertFalse($cashier->services->contains($makeup));
+
+        // 3. Admin switches cashier to MUA and assigns Bridal Glam Makeup
+        $updateToMuaResponse = $this->actingAs($admin)->put(route('admin.cashiers.update', $cashier), [
+            'name' => 'Kasir Satu MUA',
+            'email' => $cashier->email,
+            'phone' => '081234567890',
+            'service_category' => 'mua',
+            'services' => [$makeup->id, $cut->id], // $cut should be filtered out
+            'is_active' => 1,
+            'work_days' => [6, 0],
+        ]);
+
+        $updateToMuaResponse->assertRedirect(route('admin.cashiers.index'));
+        $cashier->refresh();
+
+        $this->assertEquals('mua', $cashier->service_category);
+        $this->assertEquals(1, $cashier->services()->count());
+        $this->assertTrue($cashier->services->contains($makeup));
+        $this->assertFalse($cashier->services->contains($cut));
+
+        // 4. Verify cashier index shows MUA badge
+        $indexResponse = $this->actingAs($admin)->get(route('admin.cashiers.index'));
+        $indexResponse->assertOk();
+        $indexResponse->assertSee('✨ MUA');
+
+        // Verify edit page has the assigned service
+        $editResponse = $this->actingAs($admin)->get(route('admin.cashiers.edit', $cashier));
+        $editResponse->assertOk();
+        $editResponse->assertSee($makeup->name);
+    }
+
+    public function test_booking_page_renders_clean_single_date_number_chips(): void
+    {
+        $customer = User::factory()->create(['role' => 'pelanggan']);
+
+        $response = $this->actingAs($customer)->get('/pelanggan/booking/barbershop');
+        $response->assertOk();
+
+        $today = Carbon::today();
+        $doubleDatePattern = $today->format('d') . ' ' . $today->format('d');
+        // Ensure no doubled numbers like "05 05" in rendered view
+        $response->assertDontSee($doubleDatePattern);
+
+        // Verify "Tersedia" and "Tidak Tersedia" labels and dark mode classes
+        $response->assertSee('Tersedia');
+        $response->assertSee('Tidak Tersedia');
+        $response->assertSee('dark:bg-sky-950/70');
+    }
+
+    public function test_customer_booking_respects_staff_assigned_services(): void
+    {
+        $customer = User::factory()->create(['role' => 'pelanggan']);
+
+        $serviceCut = Service::create([
+            'name' => 'Cukur Ganteng Khusus',
+            'category' => 'barbershop',
+            'price' => 35000,
+            'duration_minutes' => 30,
+            'is_active' => true,
+        ]);
+
+        $serviceShave = Service::create([
+            'name' => 'Shaving Khusus',
+            'category' => 'barbershop',
+            'price' => 25000,
+            'duration_minutes' => 20,
+            'is_active' => true,
+        ]);
+
+        $staffAndi = Staff::create([
+            'name' => 'Andi Spesialis Cukur',
+            'role' => 'kapster',
+            'phone' => '08129999001',
+            'is_active' => true,
+        ]);
+
+        $staffBudi = Staff::create([
+            'name' => 'Budi Spesialis Shave',
+            'role' => 'kapster',
+            'phone' => '08129999002',
+            'is_active' => true,
+        ]);
+
+        $cashierAndi = User::factory()->create([
+            'name' => 'Andi Spesialis Cukur',
+            'role' => 'kasir',
+            'service_category' => 'barbershop',
+            'work_days' => [1, 2, 3, 4, 5, 6, 0],
+        ]);
+        $cashierAndi->services()->sync([$serviceCut->id]);
+
+        $cashierBudi = User::factory()->create([
+            'name' => 'Budi Spesialis Shave',
+            'role' => 'kasir',
+            'service_category' => 'barbershop',
+            'work_days' => [1, 2, 3, 4, 5, 6, 0],
+        ]);
+        $cashierBudi->services()->sync([$serviceShave->id]);
+
+        // 1. Visit booking create page: staffList contains service_ids
+        $resPage = $this->actingAs($customer)->get('/pelanggan/booking/barbershop');
+        $resPage->assertOk();
+        $resPage->assertViewHas('staffList', function ($list) use ($serviceCut, $serviceShave) {
+            $andi = collect($list)->firstWhere('name', 'Andi Spesialis Cukur');
+            $budi = collect($list)->firstWhere('name', 'Budi Spesialis Shave');
+            return in_array($serviceCut->id, $andi['service_ids'])
+                && !in_array($serviceShave->id, $andi['service_ids'])
+                && in_array($serviceShave->id, $budi['service_ids'])
+                && !in_array($serviceCut->id, $budi['service_ids']);
+        });
+
+        // Pick next Monday for booking
+        $bookingDate = Carbon::today()->next(Carbon::MONDAY)->format('Y-m-d');
+
+        // 2. Customer attempts to book Cukur Cut with Budi (who only does Shaving) -> fails with error
+        $resInvalid = $this->actingAs($customer)->post(route('pelanggan.booking.store'), [
+            'category' => 'barbershop',
+            'services' => [$serviceCut->id],
+            'staff_id' => $staffBudi->id,
+            'booking_date' => $bookingDate,
+            'booking_time' => '13:00',
+        ]);
+
+        $resInvalid->assertSessionHasErrors('staff_id');
+
+        // 3. Customer books Cukur Cut with Andi (who does Cukur Cut) -> succeeds!
+        $resValid = $this->actingAs($customer)->post(route('pelanggan.booking.store'), [
+            'category' => 'barbershop',
+            'services' => [$serviceCut->id],
+            'staff_id' => $staffAndi->id,
+            'booking_date' => $bookingDate,
+            'booking_time' => '14:00',
+        ]);
+
+        $resValid->assertRedirect(route('pelanggan.order.index'));
+        $this->assertDatabaseHas('bookings', [
+            'user_id' => $customer->id,
+            'staff_id' => $staffAndi->id,
+            'service_category' => 'barbershop',
+            'booking_date' => $bookingDate . ' 00:00:00',
+        ]);
+    }
+
+    public function test_history_and_profile_page_ui_updates(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'pelanggan',
+            'name' => 'Budi Pelanggan',
+        ]);
+
+        $booking = Booking::create([
+            'booking_code' => 'BK-TEST999',
+            'user_id' => $customer->id,
+            'service_category' => 'barbershop',
+            'booking_date' => '2026-11-01',
+            'booking_time' => '10:00',
+            'queue_number' => 'B-001',
+            'total_price' => 35000,
+            'status' => 'completed',
+        ]);
+
+        // 1. Riwayat order page assertions
+        $resHistory = $this->actingAs($customer)->get(route('pelanggan.history.index'));
+        $resHistory->assertOk();
+        $resHistory->assertSee('Riwayat Order');
+        $resHistory->assertDontSee('Riwayat Transaksi');
+        // Booking code should not be displayed on card
+        $resHistory->assertDontSee('#BK-TEST999');
+
+        // 2. Profile page assertions
+        $resProfile = $this->actingAs($customer)->get(route('pelanggan.profile.edit'));
+        $resProfile->assertOk();
+        // ID akun pelanggan (#ID-...) should not be displayed
+        $idPattern = '#ID-' . str_pad($customer->id, 4, '0', STR_PAD_LEFT);
+        $resProfile->assertDontSee($idPattern);
+        // Smooth accordion transition classes should be present
+        $resProfile->assertSee('grid-rows-[1fr]');
+        $resProfile->assertSee('grid-rows-[0fr]');
+        $resProfile->assertSee('transition-all duration-300 ease-in-out');
     }
 }

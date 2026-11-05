@@ -3,38 +3,86 @@
 @tailwind utilities;
 
 :root {
-    --glowcut-bg: #050505;
-    --glowcut-surface: #0C0C0C;
-    --glowcut-card: #141414;
-    --glowcut-input: #0E0E0E;
-    --glowcut-border: #2A2A2A;
-    --glowcut-gold: #E5A823;
-    --glowcut-gold-light: #F7C754;
-    --glowcut-gold-hover: #C88A14;
-    --glowcut-text: #FFFFFF;
-    --glowcut-text-muted: #B0B0B0;
+    --primary-navy: #0B2D50;
+    --secondary-navy: #164A7A;
+    --primary-blue: #1769AA;
+    --light-blue: #EAF3FF;
+    --soft-blue: #D7E7FA;
+    --background: #F7FAFE;
+    --surface: #FFFFFF;
+    --text-primary: #14243A;
+    --text-secondary: #64748B;
+    --border-color: #E2EAF4;
 }
 
 html {
-    color-scheme: dark light;
+    color-scheme: light dark;
 }
 
-html.dark {
-    color-scheme: dark;
-    background-color: #050505;
-    color: #FFFFFF;
+body {
+    background-color: #F7FAFE;
+    background-image: url('/images/bg-abstract-waves.svg');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #14243A;
+    -webkit-font-smoothing: antialiased;
 }
 
 html.dark body {
-    background-color: #050505;
+    background-color: #0A0F1D;
+    background-image: none;
+    color: #F8FAFC;
+}
+
+/* Service Card Abstract Wave Pseudo-Element */
+.service-card-decorated {
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card-decorated::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 130px;
+    height: 90px;
+    background-image: url('/images/card-abstract-wave.svg');
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    background-size: contain;
+    pointer-events: none;
+    opacity: 0.85;
+    z-index: 1;
+}
+
+html.dark .service-card-decorated::after {
+    opacity: 0.15;
+}
+
+/* Custom Selection Color */
+::selection {
+    background-color: #1769AA;
     color: #FFFFFF;
 }
 
-html.light {
-    color-scheme: light;
+/* Form inputs styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+    border-color: #E2E8F0;
+    transition: all 0.2s ease;
 }
 
-/* GlowCut Deep High-Contrast Input Defaults in Dark Mode */
 html.dark input[type="text"],
 html.dark input[type="email"],
 html.dark input[type="password"],
@@ -45,111 +93,112 @@ html.dark input[type="date"],
 html.dark input[type="time"],
 html.dark select,
 html.dark textarea {
-    background-color: #0E0E0E !important;
-    border-color: #2A2A2A !important;
-    color: #FFFFFF !important;
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
 }
 
-html.dark input::placeholder,
-html.dark textarea::placeholder {
-    color: #6E6E6E !important;
-}
-
-html.dark input:focus,
-html.dark select:focus,
-html.dark textarea:focus {
-    border-color: #E5A823 !important;
-    --tw-ring-color: #E5A823 !important;
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #1769AA !important;
+    --tw-ring-color: #1769AA !important;
     outline: none !important;
-    box-shadow: 0 0 0 2px rgba(229, 168, 35, 0.3) !important;
+    box-shadow: 0 0 0 2px rgba(23, 105, 170, 0.2) !important;
 }
 
-/* Custom Selection Color */
-::selection {
-    background-color: #E5A823;
-    color: #000000;
-}
-
-/* Admin Sidebar Active Navigation - Rich Gold Accent */
+/* Admin Sidebar Active Navigation - Primary Blue Accent */
 aside .bg-emerald-500 {
-    background-color: #E5A823 !important;
-    color: #000000 !important;
-    font-weight: 800 !important;
-    box-shadow: 0 4px 16px 0 rgba(229, 168, 35, 0.35) !important;
+    background-color: #0B2D50 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px 0 rgba(11, 45, 80, 0.2) !important;
 }
 
 aside .bg-emerald-500 svg {
-    color: #000000 !important;
+    color: #FFFFFF !important;
 }
 
-/* Kasir Primary Action Buttons (e.g., + Order Walk-In) - Rich Gold */
+/* Kasir Primary Action Buttons */
 a.bg-blue-600,
 button.bg-blue-600 {
-    background-color: #E5A823 !important;
-    color: #000000 !important;
-    font-weight: 800 !important;
-    box-shadow: 0 4px 16px 0 rgba(229, 168, 35, 0.3) !important;
+    background-color: #0B2D50 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px 0 rgba(11, 45, 80, 0.15) !important;
 }
 
 a.bg-blue-600:hover,
 button.bg-blue-600:hover {
-    background-color: #C88A14 !important;
-    color: #000000 !important;
+    background-color: #164A7A !important;
+    color: #FFFFFF !important;
 }
 
-/* Primary CTA Buttons across Auth & Booking - Rich Shimmer Gold */
+/* Primary CTA Buttons across Auth & Booking */
 button.bg-gradient-to-r.from-amber-500.to-yellow-500,
 a.bg-gradient-to-r.from-amber-500.to-yellow-500,
 button.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400,
 a.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400 {
-    background-image: linear-gradient(135deg, #E5A823 0%, #F7C754 50%, #DF9B28 100%) !important;
-    color: #000000 !important;
-    font-weight: 900 !important;
-    box-shadow: 0 4px 20px 0 rgba(229, 168, 35, 0.4) !important;
+    background-image: linear-gradient(135deg, #0B2D50 0%, #164A7A 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px 0 rgba(11, 45, 80, 0.2) !important;
 }
 
 button.bg-gradient-to-r.from-amber-500.to-yellow-500:hover,
 a.bg-gradient-to-r.from-amber-500.to-yellow-500:hover,
 button.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400:hover,
 a.bg-gradient-to-r.from-amber-500.via-amber-400.to-yellow-400:hover {
-    background-image: linear-gradient(135deg, #C88A14 0%, #E5A823 100%) !important;
-    color: #000000 !important;
+    background-image: linear-gradient(135deg, #071E36 0%, #0B2D50 100%) !important;
+    color: #FFFFFF !important;
 }
 
 /* Kasir / Admin Logo Pill */
 .bg-blue-600.w-8.h-8,
 .bg-blue-600.w-9.h-9 {
-    background-color: #E5A823 !important;
-    color: #000000 !important;
+    background-color: #0B2D50 !important;
+    color: #FFFFFF !important;
 }
 
-/* Subtle Dark Card Border refinement */
-html.dark .border-slate-800,
-html.dark .border-slate-700,
-html.dark .border-slate-750 {
-    border-color: #2A2A2A !important;
-}
-
-/* Subtle Dark Table Row Hover */
-html.dark tbody tr:hover {
-    background-color: #1A1A1A !important;
-}
-
-/* GlowCut subtle scrollbars */
+/* Scrollbars */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
-html.dark ::-webkit-scrollbar-track {
-    background: #050505;
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-html.dark ::-webkit-scrollbar-thumb {
-    background: #2A2A2A;
+::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
     border-radius: 9999px;
 }
 
-html.dark ::-webkit-scrollbar-thumb:hover {
-    background: #E5A823;
+html.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
+/* Fix Browser Autofill Ugly Gray / Dark Backgrounds */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover,
+html.dark input:-webkit-autofill:focus,
+html.dark textarea:-webkit-autofill,
+html.dark select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
+    -webkit-text-fill-color: #f8fafc !important;
 }

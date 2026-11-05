@@ -19,7 +19,7 @@
         <div>
             <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
             <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
-                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1769AA] focus:border-transparent transition"
                 placeholder="Contoh: Budi Prasetyo" />
         </div>
 
@@ -29,7 +29,7 @@
             <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" required autocomplete="tel"
                 inputmode="numeric" pattern="[0-9]*"
                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition font-mono"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1769AA] focus:border-transparent transition font-mono"
                 placeholder="Contoh: 081234567890" />
         </div>
 
@@ -37,7 +37,7 @@
         <div>
             <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Alamat Email</label>
             <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username"
-                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1769AA] focus:border-transparent transition"
                 placeholder="nama@email.com" />
         </div>
 
@@ -45,7 +45,7 @@
         <div>
             <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Kata Sandi</label>
             <input id="password" type="password" name="password" required autocomplete="new-password"
-                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1769AA] focus:border-transparent transition"
                 placeholder="Minimal 8 karakter" />
         </div>
 
@@ -53,20 +53,20 @@
         <div>
             <label for="password_confirmation" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Konfirmasi Kata Sandi</label>
             <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
-                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1769AA] focus:border-transparent transition"
                 placeholder="Ulangi kata sandi" />
         </div>
 
         <div class="pt-2">
             <button type="submit"
-                class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-95">
+                class="w-full py-3 px-4 bg-[#0B2D50] hover:bg-[#164A7A] text-white font-bold rounded-xl shadow-lg shadow-[#0B2D50]/20 transition transform active:scale-95">
                 Daftar Sekarang
             </button>
         </div>
 
         <div class="text-center pt-2">
             <span class="text-sm text-slate-600 dark:text-slate-400">Sudah memiliki akun?</span>
-            <a href="{{ route('login') }}" class="text-sm font-bold text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300 ms-1 transition">
+            <a href="{{ route('login') }}" class="text-sm font-bold text-[#1769AA] hover:text-[#164A7A] dark:text-[#93C5FD] ms-1 transition">
                 Masuk di sini
             </a>
         </div>

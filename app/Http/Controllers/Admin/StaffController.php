@@ -20,8 +20,9 @@ class StaffController extends Controller
         }
 
         $staffs = $query->paginate(15)->withQueryString();
+        $cashierCount = \App\Models\User::where('role', 'kasir')->count();
 
-        return view('admin.staffs.index', compact('staffs'));
+        return view('admin.staffs.index', compact('staffs', 'cashierCount'));
     }
 
     /**
@@ -41,12 +42,14 @@ class StaffController extends Controller
             'name'      => 'required|string|max:255',
             'role'      => 'required|in:kapster,mua',
             'phone'     => ['nullable', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
-            'is_active' => 'boolean',
+            'email'     => ['nullable', 'string', 'email', 'max:255'],
+            'is_active' => 'nullable|in:0,1,true,false',
         ], [
             'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
+            'email.email' => 'Format alamat email tidak valid.',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active'] = $request->boolean('is_active', true);
 
         Staff::create($validated);
 
@@ -71,12 +74,14 @@ class StaffController extends Controller
             'name'      => 'required|string|max:255',
             'role'      => 'required|in:kapster,mua',
             'phone'     => ['nullable', 'string', 'max:20', 'regex:/^[0-9+]+$/'],
-            'is_active' => 'boolean',
+            'email'     => ['nullable', 'string', 'email', 'max:255'],
+            'is_active' => 'nullable|in:0,1,true,false',
         ], [
             'phone.regex' => 'Nomor WhatsApp / telepon hanya boleh berisi angka nomor seluler.',
+            'email.email' => 'Format alamat email tidak valid.',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active'] = $request->boolean('is_active', true);
 
         $staff->update($validated);
 

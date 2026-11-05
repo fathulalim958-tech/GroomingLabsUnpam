@@ -51,6 +51,45 @@ class CustomerController extends Controller
     }
 
     /**
+     * Update customer profile biodata & optional password reset.
+     */
+    public function update(Request $request, User $customer)
+    {
+        if ($customer->role !== 'pelanggan') {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $customer->id],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+        ], [
+            'name.required' => 'Nama lengkap pelanggan wajib diisi.',
+            'email.required' => 'Alamat email pelanggan wajib diisi.',
+            'email.unique' => 'Alamat email sudah digunakan oleh akun lain.',
+            'password.min' => 'Password minimal harus 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+        ]);
+
+        $customer->name = $request->name;
+        $customer->email = $request->email;
+        $customer->phone = $request->phone;
+
+        $passwordUpdated = false;
+        if ($request->filled('password')) {
+            $customer->password = Hash::make($request->password);
+            $passwordUpdated = true;
+        }
+
+        $customer->save();
+
+        $message = "Biodata pelanggan {$customer->name} berhasil diperbarui" . ($passwordUpdated ? " beserta kata sandi baru." : ".");
+
+        return back()->with('success', $message);
+    }
+
+    /**
      * Delete customer.
      */
     public function destroy(User $customer)

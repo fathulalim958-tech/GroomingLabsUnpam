@@ -1,17 +1,47 @@
-<x-admin-layout title="Kelola Staf - Grooming Lab & MUA">
+<x-admin-layout title="Kelola Kasir & Staf - Grooming Lab & MUA">
     <div class="space-y-6" x-data="staffManager()">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-black text-slate-900 dark:text-white">Kelola Staf & Kapster</h1>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Daftar kapster barbershop pria dan perias MUA studio</p>
+        <!-- Header & Unified Tabs -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Kelola Kasir &amp; Staf</h1>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Manajemen akun kasir, jadwal bertugas, dan data staf kapster &amp; MUA dalam satu menu terpadu</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('admin.staffs.create') }}"
+                       class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>+ Tambah Staf</span>
+                    </a>
+                </div>
             </div>
-            <a href="{{ route('admin.staffs.create') }}"
-               class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                <span>+ Tambah Staf</span>
-            </a>
+
+            <!-- Unified Tabs Switcher -->
+            <div class="flex border-b border-slate-200 dark:border-slate-800 space-x-1">
+                <a href="{{ route('admin.cashiers.index') }}"
+                   class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 font-semibold text-sm flex items-center gap-2 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>Akun &amp; Jadwal Kasir</span>
+                    <span class="px-2 py-0.5 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
+                        {{ $cashierCount ?? 0 }}
+                    </span>
+                </a>
+
+                <a href="{{ route('admin.staffs.index') }}"
+                   class="px-5 py-3 border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold text-sm flex items-center gap-2 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>Data Staf (Kapster &amp; MUA)</span>
+                    <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono">
+                        {{ $staffs->total() }}
+                    </span>
+                </a>
+            </div>
         </div>
 
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl">
@@ -21,13 +51,16 @@
                         <tr>
                             <th class="py-3 px-4">Nama Staf</th>
                             <th class="py-3 px-4">Peran / Profesi</th>
-                            <th class="py-3 px-4">No. Telepon / WhatsApp</th>
+                            <th class="py-3 px-4">Kontak (Email / WhatsApp)</th>
                             <th class="py-3 px-4 text-center">Status</th>
                             <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
                         @forelse ($staffs as $staff)
+                            @php
+                                $staffUser = \App\Models\User::where('name', $staff->name)->first();
+                            @endphp
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                                 <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{{ $staff->name }}</td>
                                 <td class="py-3.5 px-4 whitespace-nowrap">
@@ -35,7 +68,10 @@
                                         {{ $staff->role === 'kapster' ? 'Kapster / Barber' : 'MUA Penata Rias' }}
                                     </span>
                                 </td>
-                                <td class="py-3.5 px-4 text-xs font-mono text-slate-600 dark:text-slate-300">{{ $staff->phone ?? '-' }}</td>
+                                <td class="py-3.5 px-4 text-xs">
+                                    <div class="font-mono text-slate-700 dark:text-slate-300 font-semibold">{{ $staff->email ?: ($staffUser?->email ?? '-') }}</div>
+                                    <div class="text-slate-500 dark:text-slate-400 mt-0.5 font-mono">{{ $staff->phone ?? $staffUser?->phone ?? '-' }}</div>
+                                </td>
                                 <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap inline-block {{ $staff->is_active ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' : 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30' }}">
                                         {{ $staff->is_active ? 'Aktif Bekerja' : 'Cuti / Nonaktif' }}

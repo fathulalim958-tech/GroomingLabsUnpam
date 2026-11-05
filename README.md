@@ -11,11 +11,13 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - [Fitur Unggulan Terbaru](#-fitur-unggulan-terbaru)
   - [🌙 Mode Gelap & Terang (Dual Theme High-Contrast)](#-mode-gelap--terang-dual-theme-high-contrast)
   - [👥 Multi-Akun Kasir Konkuren (Multi-Cashier Concurrency)](#-multi-akun-kasir-konkuren-multi-cashier-concurrency)
+  - [✂️ Spesialisasi Layanan Kasir & Pemilihan Kapster Cerdas](#-spesialisasi-layanan-kasir--pemilihan-kapster-cerdas)
   - [⭐ Sistem Member & Kuota Diskon Pelanggan (VIP Membership)](#-sistem-member--kuota-diskon-pelanggan-vip-membership)
   - [🔔 Siklus 3 Aksi Kasir & Pop-up Konfirmasi Interaktif](#-siklus-3-aksi-kasir--pop-up-konfirmasi-interaktif)
   - [📱 Antarmuka Responsif & Mobile-Friendly](#-antarmuka-responsif--mobile-friendly)
-  - [🔐 Reset Password via Kode Verifikasi 6 Digit (OTP & Dev Helper)](#-reset-password-via-kode-verifikasi-6-digit-otp--dev-helper)
-  - [✨ CMS Konten Kategori Publik Dinamis](#-cms-konten-kategori-publik-dinamis)
+  - [🔍 Pencarian Multikriteria Laporan Transaksi](#-pencarian-multikriteria-laporan-transaksi)
+  - [🔐 Reset Password via Kode Verifikasi 6 Digit (OTP)](#-reset-password-via-kode-verifikasi-6-digit-otp)
+  - [✨ CMS Konten Kategori Publik & Halaman Login Dinamis](#-cms-konten-kategori-publik--halaman-login-dinamis)
 - [Akun Demo & Akses Cepat](#-akun-demo--akses-cepat)
 - [Struktur Database & Model Data](#-struktur-database--model-data)
 - [Siklus Status Antrian (State Machine)](#-siklus-status-antrian-state-machine)
@@ -60,6 +62,13 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - **Proteksi Penyelesaian Order:** Pesanan yang sedang dilayani kasir A hanya dapat diselesaikan (`Selesai & Bayar`) oleh kasir A. Kasir B melihat indikator informatif `"• Diproses oleh [Nama Kasir A]"`.
 - **Audit Jejak Kasir:** Nama kasir yang memproses pesanan dicatat (`cashier_id`) dan ditampilkan pada tabel riwayat, dashboard, dan laporan kasir maupun admin.
 
+### ✂️ Spesialisasi Layanan Kasir & Pemilihan Kapster Cerdas
+- **Penetapan Layanan Kasir via Admin:** Admin dapat memilih secara spesifik layanan apa saja yang dapat dilakukan oleh kasir/kapster tersebut (hanya layanan Barbershop untuk Barberman, dan hanya layanan MUA untuk penata rias).
+- **Integrasi Akun Kasir & Data Staf:** Pembuatan akun kasir terhubung langsung dengan master data staf (hanya staf yang belum dibuatkan akun kasir yang muncul pada dropdown pilihan).
+- **Filter Kapster Dinamis di Halaman Pelanggan:** Saat pelanggan memilih suatu layanan, kartu staf kapster/MUA secara otomatis disaring. Staf yang memiliki kompetensi layanan tersebut dan bertugas pada tanggal yang dipilih akan berstatus **`● Tersedia`**, sedangkan staf yang tidak melayani layanan tersebut atau sedang libur akan berstatus **`● Tidak Tersedia`** dan dinonaktifkan dari pemilihan.
+- **Auto-Reset Pilihan Kapster:** Jika pelanggan mengganti layanan yang dipilih ke layanan yang tidak dapat dilayani oleh kapster terpilih, sistem secara otomatis mereset pilihan kembali ke opsi netral *"⭐ Siapa Saja yang Tersedia"*.
+- **Validasi Server-Side Kuat:** Sistem backend memvalidasi kembali bahwa kapster yang dipilih benar-benar berwenang menangani layanan yang di-booking.
+
 ### ⭐ Sistem Member & Kuota Diskon Pelanggan (VIP Membership)
 - **Pendaftaran Member via Admin:** Admin dapat menetapkan pelanggan menjadi Member VIP melalui modal interaktif di menu **Data Pelanggan**.
 - **Pengaturan Diskon Fleksibel:** Input potongan harga (Rp) serta kuota pemakaian diskon (berapa kali dapat diskon).
@@ -74,20 +83,34 @@ Aplikasi ini menggabungkan landing page publik interaktif, pemesanan mandiri ole
 - **Modal Konfirmasi Interaktif:** Setiap aksi krusial dilindungi pop-up dialog konfirmasi (Alpine.js) untuk mencegah ketidaksengajaan klik oleh kasir.
 
 ### 📱 Antarmuka Responsif & Mobile-Friendly
+- **Alur Booking Berurutan & Tanggal Bahasa Indonesia:** Urutan form booking terstruktur: (1) Hari & Tanggal dalam Bahasa Indonesia dengan deteksi tanggal merah/libur, (2) Pilih Layanan, (3) Pilih Kapster/MUA yang Tersedia, (4) Sesi Jam 1 Jam-an, (5) Catatan Khusus, dan (6) Ringkasan Estimasi Biaya & Modal Konfirmasi.
+- **Riwayat Order Bersih:** Halaman riwayat order menampilkan kartu ringkas tanpa menampilkan kode booking teknis, memprioritaskan kategori, nama layanan, waktu reservasi, status antrian, dan harga.
+- **Profil Halus (Smooth Transition Accordion):** Dropdown formulir Ubah Data Diri dan Ubah Kata Sandi pada halaman profil menggunakan transisi CSS Grid (`grid-rows-[0fr]` ke `grid-rows-[1fr]`) yang mulus tanpa efek patah, serta ID akun teknis pelanggan disembunyikan agar tampilan lebih minimalis dan elegan.
 - **Kasir Mobile:** Tampilan tata letak kasir di ponsel cerdas disederhanakan (grid KPI 2 kolom minimalis, kartu antrian ringkas, dan bilah navigasi bawah: *Dashboard, Order, Pekerja, Laporan*).
 - **Pelanggan Mobile-First:** Tiket antrian berukuran besar, pemantauan nomor antrian yang sedang dilayani secara *live*, dan navigasi bawah (*Home, Order, Riwayat, Profil*).
 - **Sanitasi Nomor Telepon:** Seluruh input kontak/WhatsApp (Walk-in, registrasi, profil, kasir, staf) secara otomatis membatasi input hanya menerima angka seluler dan tanda `+`.
+
+### 💬 Notifikasi WhatsApp Admin Otomatis (Fonnte Gateway)
+- Setiap kali ada pelanggan yang berhasil membuat pesanan booking online, sistem secara otomatis mengirimkan notifikasi WhatsApp *real-time* ke nomor WhatsApp Admin.
+- Format pesan dirancang rapi dan elegan, memuat: nomor antrian, kategori & layanan, nama & nomor HP pelanggan, tanggal & jam reservasi, nama kapster bertugas, serta catatan khusus pelanggan.
+- Terintegrasi aman dengan *fail-safe*: jika gateway WhatsApp sedang offline atau kehabisan kuota, transaksi booking pelanggan tetap tersimpan aman di database tanpa terganggu.
+
+### 🔍 Pencarian Multikriteria Laporan Transaksi
+- Admin dapat melakukan pencarian cepat pada menu **Laporan Transaksi** dengan kata kunci:
+  - Kode Booking (misal: `BK-20261103-0001`)
+  - Nomor Antrian (misal: `B-001`, `M-001`)
+  - Nama Pelanggan
+  - Nomor WhatsApp / HP Pelanggan
+  - Nama Kasir / Staf Pelayan
 
 ### 🔐 Reset Password via Kode Verifikasi 6 Digit (Email OTP)
 - Fitur pemulihan kata sandi tanpa tautan email rumit. Sistem menghasilkan kode verifikasi 6-digit acak dengan masa berlaku 15 menit.
 - **Template Email HTML Elegan:** Notifikasi email dikirim dengan template HTML profesional bertema Grooming Lab langsung ke kotak masuk email pengguna.
 - **Aman & Eksklusif:** Kode OTP hanya tersedia di dalam email pengguna (tidak ditampilkan pada layar aplikasi).
 
-### ✨ CMS Konten Kategori Publik Dinamis
-- Halaman profil publik mendalam:
-  - `/layanan/barbershop` (profil fasilitas pangkas rambut pria, paket *grooming*, dan tata tertib).
-  - `/layanan/mua` (profil studio tata rias wanita, paket wisuda/bridal, dan konsultasi).
-- Seluruh teks hero, fasilitas, aturan, dan foto banner dapat dikelola secara dinamis oleh Admin melalui menu **Konten Kategori**.
+### ✨ CMS Konten Kategori Publik & Halaman Login Dinamis
+- **Kelola Konten Profil Publik:** Informasi fasilitas, tata tertib, dan hero banner Barbershop (`/layanan/barbershop`) dan MUA Studio (`/layanan/mua`) dapat diperbarui secara dinamis oleh Admin.
+- **Kelola Konten Halaman Login:** Admin dapat mengatur langsung judul sambutan, deskripsi pengantar, dan teks *experience tag* pada halaman login, lengkap dengan tombol **Pratinjau Halaman Login** interaktif.
 
 ---
 
@@ -133,15 +156,16 @@ Setelah menjalankan seeder (`php artisan db:seed`), tersedia akun demo bawaan. H
 ```
 
 ### Tabel Utama:
-1. **`users`**: `id`, `name`, `email`, `phone`, `password`, `role` (`admin`, `kasir`, `pelanggan`), `is_active`, `is_member`, `member_discount`, `member_discount_type`, `member_discount_quota`, `member_discount_remaining`, `timestamps`.
+1. **`users`**: `id`, `name`, `email`, `phone`, `password`, `role` (`admin`, `kasir`, `pelanggan`), `service_category` (`barbershop`, `mua`), `work_days` (JSON array hari bertugas), `avatar`, `is_active`, `is_member`, `member_discount`, `member_discount_type`, `member_discount_quota`, `member_discount_remaining`, `timestamps`.
 2. **`customers`** (Data & Profil Pelanggan): `id`, `user_id` (nullable, foreign key ke `users`), `name`, `phone`, `email`, `address`, `is_member`, `member_discount`, `member_discount_type`, `member_discount_quota`, `member_discount_remaining`, `notes`, `timestamps`.
 3. **`services`**: `id`, `category` (`barbershop`, `mua`), `name`, `description`, `price`, `duration_minutes`, `image`, `is_active`, `timestamps`.
-4. **`staffs`**: `id`, `name`, `role` (`kapster`, `mua`), `phone`, `is_active`, `timestamps`.
-5. **`operating_hours`**: `id`, `category` (`barbershop`, `mua`), `day_of_week` (0=Minggu s/d 6=Sabtu), `open_time`, `close_time`, `is_closed`, `max_bookings_per_slot`, `timestamps`.
-6. **`category_contents`**: `id`, `category` (`barbershop`, `mua`), `title`, `subtitle`, `description`, `facilities` (JSON), `rules` (JSON), `banner_url`, `timestamps`.
-7. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261025-XXXX`), `user_id` (nullable untuk walk-in), `customer_id` (nullable, foreign key ke `customers`), `customer_name`, `customer_phone`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (`B-001`, `M-001`), `notes`, `total_price`, `discount_amount`, `status`, `timestamps`.
-8. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
-9. **`password_reset_tokens`**: `email`, `token`, `created_at` (token hashed kode OTP 6-digit untuk pemulihan kata sandi).
+4. **`service_user`** (Pivot Layanan Kasir): `user_id` (foreign key ke `users`), `service_id` (foreign key ke `services`). Mengatur spesialisasi layanan per kasir.
+5. **`staffs`**: `id`, `name`, `role` (`kapster`, `mua`), `phone`, `email`, `is_active`, `timestamps`.
+6. **`operating_hours`**: `id`, `category` (`barbershop`, `mua`), `day_of_week` (0=Minggu s/d 6=Sabtu), `open_time`, `close_time`, `is_closed`, `max_bookings_per_slot`, `timestamps`.
+7. **`category_contents`**: `id`, `category` (`barbershop`, `mua`), `title`, `subtitle`, `description`, `facilities` (JSON), `rules` (JSON), `banner_url`, `timestamps`.
+8. **`bookings`**: `id`, `booking_code` (e.g. `BK-20261025-XXXX`), `user_id` (nullable untuk walk-in), `customer_id` (nullable, foreign key ke `customers`), `customer_name`, `customer_phone`, `cashier_id` (nullable), `staff_id` (nullable), `service_category` (`barbershop`, `mua`), `booking_date`, `booking_time`, `queue_number` (`B-001`, `M-001`), `notes`, `total_price`, `discount_amount`, `status`, `timestamps`.
+9. **`booking_items`**: `id`, `booking_id`, `service_id`, `price`, `timestamps`.
+10. **`password_reset_tokens`**: `email`, `token`, `created_at` (token hashed kode OTP 6-digit untuk pemulihan kata sandi).
 
 ---
 
@@ -255,18 +279,24 @@ Aplikasi ini mengimplementasikan serangkaian algoritma, model komputasi, dan ars
 
 ### 2. Modul Pelanggan (Customer Experience)
 - **Home:** Banner promo, katalog layanan dengan estimasi durasi dan tarif, kartu antrian aktif jika memiliki pesanan hari ini.
-- **Formulir Booking:**
-  - Multi-select paket layanan dengan live hitung total harga & estimasi waktu.
-  - Kalender dinamis 7 hari ke depan (hari libur otomatis tidak dapat dipilih).
-  - Pilihan slot waktu sesuai kapasitas dan jam operasional.
-  - Penerapan otomatis potongan harga bagi pemegang Member VIP aktif.
+- **Formulir Booking 6 Langkah Terstruktur:**
+  1. *Pilih Hari & Tanggal:* Kalender 7 hari ke depan berbahasa Indonesia dengan deteksi otomatis tanggal merah & hari libur operasional.
+  2. *Pilih 1 Layanan:* Pemilihan paket layanan dengan visual kartu berdaya kontras tinggi di mode terang maupun gelap.
+  3. *Pilih Kapster / MUA Bertugas:* Menampilkan status `● Tersedia` bagi kapster yang bertugas pada hari tersebut dan kompeten melayani layanan yang dipilih pelanggan, atau `● Tidak Tersedia` jika sedang libur atau tidak melayani layanan tersebut. Opsi netral *"Siapa Saja yang Tersedia"* tetap tersedia.
+  4. *Pilih Sesi Jam (Rentang 1 Jam):* Slot waktu jam 09.00 s/d 21.00 WIB dengan indikator sisa kuota dan perlindungan sesi terlewat.
+  5. *Catatan Khusus (Opsional):* Kolom input preferensi potongan rambut atau preferensi riasan wajah.
+  6. *Ringkasan Estimasi Biaya & Modal Konfirmasi:* Kalkulasi harga normal, potongan member VIP otomatis, dan konfirmasi pesanan interaktif.
 - **Tiket Antrian (Menu Order):**
   - Nomor antrian besar dengan kartu pemantau nomor yang sedang dilayani di kursi kapster/studio.
   - Auto-sync 5 detik secara background.
   - Tombol batalkan pesanan selama antrian belum diproses.
-- **Riwayat & Profil:**
-  - Riwayat lengkap transaksi selesai dan dibatalkan.
-  - Halaman profil dengan kartu Member VIP digital, status kuota diskon, dan ubah sandi.
+- **Riwayat Order:**
+  - Riwayat lengkap pesanan selesai dan dibatalkan tanpa menampilkan kode booking teknis yang membingungkan.
+  - Filter kategori instan (Semua, Barbershop, MUA Studio).
+- **Profil Pelanggan:**
+  - Kartu Member VIP digital eksklusif dengan info kuota diskon tersisa.
+  - Formulir Ubah Data Diri dan Ubah Kata Sandi dengan transisi akordeon yang mulus (*smooth collapse/expand*).
+  - Tampilan ID akun teknis disembunyikan agar profil lebih rapi dan personal.
 
 ### 3. Modul Kasir (Front-Desk Operations)
 - **Operasional Hari Ini (Dashboard):**
@@ -283,12 +313,15 @@ Aplikasi ini mengimplementasikan serangkaian algoritma, model komputasi, dan ars
 ### 4. Modul Admin (Back-Office & Executive Reporting)
 - **Dashboard Ringkasan Eksekutif:** Metrik performa, transaksi hari berjalan, pendapatan bulanan, dan tabel 10 pesanan terkini dengan status single-line.
 - **Kelola Data Pelanggan & Member:** Pencarian data, histori booking, tombol blokir/buka blokir, reset password, dan tombol **Atur Member** untuk pendaftaran status VIP serta kuota diskon.
-- **Kelola Kasir:** Pembuatan dan pemeliharaan akun-akun kasir untuk mendukung multi-kasir.
+- **Kelola Kasir & Jadwal:**
+  - Pembuatan akun kasir terintegrasi langsung dengan data karyawan staf (dropdown otomatis menyaring staf yang belum berakun kasir).
+  - Pengaturan spesialisasi layanan kasir (hanya checklist Barbershop untuk Barberman, dan checklist MUA untuk penata rias).
+  - Tabel kasir yang rapi dengan kolom peran terpisah dan status ketersediaan *Tersedia / Tidak Tersedia*.
+- **Kelola Master Staf:** Manajemen data kapster & MUA, lengkap dengan kontak WhatsApp, alamat email, dan radio button status keaktifan staf.
 - **Kelola Katalog Layanan:** Tambah/edit layanan Barbershop dan MUA, tarif, durasi menit, dan foto.
 - **Kelola Jam Kerja:** Konfigurasi jam operasional per kategori (Barbershop & MUA terpisah), batas kuota per slot, dan status tutup toko.
-- **Kelola Staf:** Data master kapster dan MUA dengan toggle status keaktifan kerja.
-- **Kelola Konten Kategori (CMS):** Pembaruan teks fasilitas, kebijakan studio, dan foto banner halaman publik.
-- **Laporan Komprehensif Admin:** Filter rentang tanggal bebas, filter kategori, ringkasan omzet, pencatatan kasir yang melayani, ekspor berkas Excel (.csv UTF-8 BOM), dan cetak struk rekap PDF.
+- **Kelola Konten Kategori & Login (CMS):** Pembaruan teks fasilitas, kebijakan studio, foto banner publik, dan konfigurasi teks halaman login dengan tombol pratinjau login interaktif.
+- **Laporan Komprehensif Admin:** Pencarian multikriteria instan (kode booking, nomor antrian, nama pelanggan, telepon, nama kasir), filter rentang tanggal, filter kategori, ringkasan omzet, ekspor Excel (.xlsx/.csv), dan cetak PDF.
 
 ---
 
@@ -375,23 +408,28 @@ Aplikasi memiliki rangkaian pengujian fitur otomatis (*Feature & Unit Tests*) ko
 php artisan test
 ```
 
-### Lingkup Pengujian (50 Feature Tests — 320 Assertions):
-- [x] Registrasi pelanggan dengan validasi nomor seluler
+### Lingkup Pengujian (83 Feature & Unit Tests — 631 Assertions):
+- [x] Registrasi pelanggan dengan validasi format nomor seluler
 - [x] Pengalihan login berbasis peran pengguna (Admin, Kasir, Pelanggan)
+- [x] Alur booking terstruktur (Hari/Tanggal Indo, Layanan, Kapster Bertugas, Sesi Jam, Catatan, Ringkasan)
 - [x] Pembuatan booking mandiri & auto-generate nomor antrian (`B-001`, `M-001`)
+- [x] Notifikasi WhatsApp otomatis ke Admin saat ada booking baru & proteksi fail-safe
+- [x] Sinkronisasi spesialisasi layanan kasir/kapster & proteksi pemilihan kapster yang kompeten
 - [x] Siklus hidup kontrol antrian kasir (*Waiting &rarr; Called &rarr; In Progress &rarr; Completed*)
 - [x] Konkurensi multi-kasir (multi-cashier concurrency & proteksi penyelesaian order)
 - [x] Pendaftaran member pelanggan & pemotongan otomatis kuota diskon saat booking
 - [x] Pembuatan pesanan Walk-in kasir dengan waktu terkini
+- [x] Fitur pencarian multikriteria laporan transaksi admin (kode booking, antrian, nama, HP, staf/kasir)
 - [x] Ekspor laporan transaksi CSV / Excel admin & kasir dengan kolom pencatatan kasir
-- [x] Pengelolaan konten dinamis halaman publik kategori oleh Admin
+- [x] Pengelolaan konten dinamis halaman publik kategori dan halaman login oleh Admin
 - [x] Alur reset kata sandi dengan kode OTP 6-digit & fitur kirim ulang kode
+- [x] Pengujian antarmuka mode gelap (dual theme), kebersihan tampilan tanggal tanpa angka dobel
 - [x] Pengujian keamanan otorisasi rute per peran pengguna
 
 **Hasil Verifikasi Terakhir:**
 ```text
-Tests:    50 passed (320 assertions)
-Duration: 4.26s
+Tests:    83 passed (631 assertions)
+Duration: 5.48s
 ```
 
 ---

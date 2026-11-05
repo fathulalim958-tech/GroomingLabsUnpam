@@ -8,19 +8,33 @@
 
             <div class="flex items-center gap-3">
                 <form method="GET" action="{{ route('admin.services.index') }}" class="flex items-center gap-2">
-                    <select name="category" onchange="this.form.submit()"
-                            class="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm">
-                        <option value="">Semua Kategori</option>
-                        <option value="barbershop" {{ request('category') === 'barbershop' ? 'selected' : '' }}>Barbershop</option>
-                        <option value="mua" {{ request('category') === 'mua' ? 'selected' : '' }}>MUA Studio</option>
-                    </select>
+                    <div class="relative">
+                        <select name="category" onchange="this.form.submit()"
+                                class="pl-3.5 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm cursor-pointer appearance-none">
+                            <option value="">Semua Kategori</option>
+                            <option value="barbershop" {{ request('category') === 'barbershop' ? 'selected' : '' }}>💈 Barbershop</option>
+                            <option value="mua" {{ request('category') === 'mua' ? 'selected' : '' }}>✨ MUA Studio</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
 
-                    <select name="status" onchange="this.form.submit()"
-                            class="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm">
-                        <option value="">Semua Status</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
-                    </select>
+                    <div class="relative">
+                        <select name="status" onchange="this.form.submit()"
+                                class="pl-3.5 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm cursor-pointer appearance-none">
+                            <option value="">Semua Status</option>
+                            <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </form>
 
                 <a href="{{ route('admin.services.create') }}"

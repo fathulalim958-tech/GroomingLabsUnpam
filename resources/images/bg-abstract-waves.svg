@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="none" width="100%" height="100%">
+  <defs>
+    <!-- Top-left wave gradients -->
+    <linearGradient id="tlGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D7E7FA" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#EAF3FF" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#F7FAFE" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="tlGrad2" x1="0%" y1="0%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#EAF3FF" stop-opacity="0.9" />
+      <stop offset="70%" stop-color="#D7E7FA" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#F7FAFE" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Bottom-right wave gradients -->
+    <linearGradient id="brGrad1" x1="100%" y1="50%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D7E7FA" stop-opacity="0.7" />
+      <stop offset="50%" stop-color="#EAF3FF" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#F7FAFE" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="brGrad2" x1="100%" y1="20%" x2="20%" y2="100%">
+      <stop offset="0%" stop-color="#EAF3FF" stop-opacity="0.85" />
+      <stop offset="60%" stop-color="#D7E7FA" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#F7FAFE" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Top Left Ambient Abstract Waves -->
+  <path d="M 0,0 L 280,0 C 240,110 180,180 120,240 C 60,300 20,330 0,360 Z" fill="url(#tlGrad2)" />
+  <path d="M 0,0 L 380,0 C 330,160 250,260 170,340 C 90,420 30,460 0,490 Z" fill="url(#tlGrad1)" />
+
+  <!-- Right Side Ambient Waves -->
+  <path d="M 1440,180 C 1320,280 1260,420 1280,580 C 1300,700 1360,800 1440,880 Z" fill="url(#tlGrad1)" />
+  <path d="M 1440,80 C 1240,220 1160,420 1190,640 C 1215,780 1300,890 1440,900 Z" fill="url(#brGrad1)" />
+  <path d="M 1440,320 C 1350,420 1300,560 1330,700 C 1350,780 1390,850 1440,900 Z" fill="url(#brGrad2)" />
+</svg>

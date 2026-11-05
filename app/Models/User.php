@@ -23,12 +23,15 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'phone',
         'role',
+        'service_category',
         'avatar',
         'is_active',
+        'work_days',
         'is_member',
         'member_discount',
         'member_discount_type',
@@ -66,11 +69,85 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'work_days' => 'array',
             'is_member' => 'boolean',
             'member_discount' => 'float',
             'member_discount_quota' => 'integer',
             'member_discount_remaining' => 'integer',
         ];
+    }
+
+    /**
+     * Indonesian Day Mapping.
+     */
+    public const DAY_NAMES = [
+        1 => 'Senin',
+        2 => 'Selasa',
+        3 => 'Rabu',
+        4 => 'Kamis',
+        5 => 'Jumat',
+        6 => 'Sabtu',
+        0 => 'Minggu',
+    ];
+
+    /**
+     * Check if user (cashier) is available on a specific day of week (0=Minggu, 1=Senin, ..., 6=Sabtu).
+     */
+    public function isAvailableOnDay(int $dayOfWeek): bool
+    {
+        if (empty($this->work_days)) {
+            return true;
+        }
+
+        return in_array($dayOfWeek, array_map('intval', (array) $this->work_days), true);
+    }
+
+    /**
+     * Check if user (cashier) is scheduled to work today.
+     */
+    public function isScheduledToday(): bool
+    {
+        $todayDayOfWeek = \Carbon\Carbon::now('Asia/Jakarta')->dayOfWeek;
+        return $this->isAvailableOnDay($todayDayOfWeek);
+    }
+
+    /**
+     * Get human-readable work schedule string.
+     */
+    public function getWorkDaysFormattedAttribute(): string
+    {
+        if (empty($this->work_days)) {
+            return 'Setiap Hari (Senin - Minggu)';
+        }
+
+        $days = array_map('intval', (array) $this->work_days);
+        sort($days);
+
+        if ($days === [1, 2, 3, 4, 5]) {
+            return 'Senin - Jumat';
+        }
+
+        if ($days === [1, 2, 3, 4, 5, 6]) {
+            return 'Senin - Sabtu';
+        }
+
+        if (count($days) === 7) {
+            return 'Setiap Hari (Senin - Minggu)';
+        }
+
+        if ($days === [0, 6] || $days === [6, 0]) {
+            return 'Sabtu & Minggu';
+        }
+
+        $labels = [];
+        $order = [1, 2, 3, 4, 5, 6, 0];
+        foreach ($order as $d) {
+            if (in_array($d, $days, true)) {
+                $labels[] = self::DAY_NAMES[$d];
+            }
+        }
+
+        return !empty($labels) ? implode(', ', $labels) : 'Tidak Ada Jadwal';
     }
 
     /**
@@ -188,6 +265,25 @@ class User extends Authenticatable
     public function cashierBookings(): HasMany
     {
         return $this->hasMany(Booking::class, 'cashier_id');
+    }
+
+    /**
+     * Get services this cashier can perform.
+     */
+    public function services(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'service_user');
+    }
+
+    /**
+     * Get label for cashier specialization category.
+     */
+    public function getServiceCategoryLabelAttribute(): string
+    {
+        return match ($this->service_category) {
+            'mua' => 'MUA',
+            default => 'Barberman',
+        };
     }
 
     /*

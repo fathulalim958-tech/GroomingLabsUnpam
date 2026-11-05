@@ -54,6 +54,14 @@ class Service extends Model
         return $this->hasMany(BookingItem::class);
     }
 
+    /**
+     * Get cashiers/staff who can perform this service.
+     */
+    public function cashiers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'service_user');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Scopes

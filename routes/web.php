@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryContentController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OperatingHourController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\StaffController;
@@ -25,6 +26,15 @@ use Illuminate\Support\Facades\Route;
 // FR-AUTH-01: Landing page redirects to login
 Route::get('/', function () {
     return redirect()->route('login');
+});
+
+// Clear application cache (useful after uploading updates to hosting / cPanel)
+Route::get('/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    return response('<h3>Semua Cache Laravel (View, Route, Config, App Cache) berhasil dibersihkan!</h3><p><a href="/pelanggan/booking">Kembali ke Booking</a></p>');
 });
 
 // Category Explanation Page (Public & Customer - DOES NOT force login)
@@ -122,9 +132,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // CRUD Kasir (Cashiers)
     Route::resource('cashiers', CashierController::class);
     Route::post('/cashiers/{cashier}/toggle-active', [CashierController::class, 'toggleActive'])->name('cashiers.toggle-active');
+    Route::put('/cashiers/{cashier}/schedule', [CashierController::class, 'updateSchedule'])->name('cashiers.schedule');
 
     // CRUD Customers
-    Route::resource('customers', CustomerController::class)->only(['index', 'show', 'destroy']);
+    Route::resource('customers', CustomerController::class)->only(['index', 'show', 'update', 'destroy']);
     Route::post('/customers/{customer}/toggle-block', [CustomerController::class, 'toggleBlock'])->name('customers.toggle-block');
     Route::post('/customers/{customer}/reset-password', [CustomerController::class, 'resetPassword'])->name('customers.reset-password');
     Route::post('/customers/{customer}/membership', [CustomerController::class, 'updateMembership'])->name('customers.membership');
@@ -135,17 +146,26 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // CRUD Staff (Kapster & MUA)
     Route::resource('staffs', StaffController::class);
 
-    // Operating Hours
+    // Operating Hours & Holidays Calendar
     Route::get('/operating-hours', [OperatingHourController::class, 'index'])->name('operating-hours.index');
     Route::put('/operating-hours', [OperatingHourController::class, 'update'])->name('operating-hours.update');
+    Route::post('/operating-hours/holidays', [OperatingHourController::class, 'storeHoliday'])->name('operating-hours.holidays.store');
+    Route::delete('/operating-hours/holidays/{holiday}', [OperatingHourController::class, 'destroyHoliday'])->name('operating-hours.holidays.destroy');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::delete('/reports/destroy-all', [ReportController::class, 'destroyAll'])->name('reports.destroy-all');
     Route::get('/reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.export-pdf');
     Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export-excel');
 
     // Manage Category Explanation Contents
+    Route::get('/category-contents/preview-login', [CategoryContentController::class, 'previewLogin'])->name('category-contents.preview-login');
     Route::resource('category-contents', CategoryContentController::class)->only(['index', 'edit', 'update']);
+
+    // Admin Profile & Account Settings (Ganti Gmail, Username, Password)
+    Route::get('/pengaturan-akun', [AdminProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/pengaturan-akun', [AdminProfileController::class, 'update'])->name('profile.update');
+    Route::put('/pengaturan-akun/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 require __DIR__.'/auth.php';

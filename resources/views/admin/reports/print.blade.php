@@ -85,7 +85,7 @@
     <div class="header">
         <h1>GROOMING LAB & MUA STUDIO</h1>
         <p>Laporan Rekapitulasi Transaksi Layanan & Pendapatan</p>
-        <p>Periode: {{ \Carbon\Carbon::parse($startDate)->format('d F Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->format('d F Y') }} | Kategori: {{ ucfirst($category) }}</p>
+        <p>Periode: {{ \Carbon\Carbon::parse($startDate)->format('d F Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->format('d F Y') }} | Kategori: {{ ucfirst($category) }} @if(!empty($search)) | Kata Kunci: "{{ $search }}" @endif</p>
     </div>
 
     <div class="meta">

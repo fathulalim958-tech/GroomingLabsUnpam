@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $content->title }} - Grooming Lab</title>
+    <title>{{ $content->title }} - LPKKS GROOMING LAB</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
-    <!-- Anti-FOUC Theme Switcher Script (GlowCut Dark Default) -->
+    <!-- Anti-FOUC Theme Switcher Script (Light Default) -->
     <script>
-        if (localStorage.theme === 'light') {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-        } else {
+        if (localStorage.theme === 'dark') {
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
         }
     </script>
 
@@ -25,26 +26,24 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-slate-900 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 min-h-screen antialiased selection:bg-amber-500 selection:text-white transition-colors duration-200 {{ auth()->check() && auth()->user()->role === 'pelanggan' ? 'pb-24' : 'pb-12' }}">
+<body class="font-sans text-[#14243A] bg-[#F7FAFE] dark:bg-slate-950 dark:text-slate-100 min-h-screen antialiased selection:bg-[#1769AA] selection:text-white transition-colors duration-200 {{ auth()->check() && auth()->user()->role === 'pelanggan' ? 'pb-24' : 'pb-12' }}">
     <!-- Top Bar -->
-    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-[#E2EAF4] dark:border-slate-800">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="{{ auth()->check() ? (auth()->user()->role === 'pelanggan' ? route('pelanggan.home') : route('dashboard')) : route('login') }}"
-                   class="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 transition"
+                   class="p-2 text-[#64748B] dark:text-slate-400 hover:text-[#0B2D50] dark:hover:text-white rounded-xl bg-white dark:bg-slate-800/60 border border-[#E2EAF4] dark:border-slate-700/60 transition"
                    title="Kembali">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </a>
 
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr {{ $category === 'barbershop' ? 'from-amber-500 to-yellow-400 text-slate-950' : 'from-pink-500 to-rose-400 text-white' }} flex items-center justify-center font-black text-xs shadow">
-                        GL
-                    </div>
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ asset('images/logo.png') }}" alt="LPKKS GROOMING LAB" class="w-8 h-8 rounded-full object-cover shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 flex-shrink-0">
                     <div>
-                        <span class="font-extrabold text-sm tracking-wide text-slate-900 dark:text-white block leading-tight">GROOMING LAB</span>
-                        <span class="text-[9px] uppercase tracking-wider font-semibold {{ $category === 'barbershop' ? 'text-amber-600 dark:text-amber-400' : 'text-pink-600 dark:text-pink-400' }}">
+                        <span class="font-extrabold text-sm tracking-wide text-[#0B2D50] dark:text-white block leading-tight">LPKKS GROOMING LAB</span>
+                        <span class="text-[9px] uppercase tracking-wider font-semibold {{ $category === 'barbershop' ? 'text-[#1769AA] dark:text-[#93C5FD]' : 'text-pink-600 dark:text-pink-400' }}">
                             {{ $category === 'barbershop' ? 'BARBERSHOP SERVICE' : 'MUA STUDIO SERVICE' }}
                         </span>
                     </div>
@@ -58,7 +57,7 @@
                 @auth
                     @if (auth()->user()->role === 'pelanggan')
                         <a href="{{ route('pelanggan.booking.create', $category) }}"
-                           class="px-4 py-2 bg-gradient-to-r {{ $category === 'barbershop' ? 'from-amber-500 to-yellow-400 text-slate-950' : 'from-pink-500 to-rose-500 text-white' }} font-bold text-xs rounded-xl shadow-lg transition transform active:scale-95 flex items-center gap-1.5">
+                           class="px-4 py-2 {{ $category === 'barbershop' ? 'bg-[#0B2D50] hover:bg-[#164A7A] text-white' : 'bg-gradient-to-r from-pink-500 to-rose-500 text-white' }} font-bold text-xs rounded-xl shadow-md transition transform active:scale-95 flex items-center gap-1.5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -73,7 +72,7 @@
                 @else
                     <div class="flex items-center gap-2">
                         <a href="{{ route('login') }}" class="px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-300 dark:border-slate-700 rounded-lg">Masuk</a>
-                        <a href="{{ route('register') }}" class="px-3 py-1.5 text-xs bg-amber-500 text-slate-950 font-bold rounded-lg">Daftar</a>
+                        <a href="{{ route('register') }}" class="px-3 py-1.5 text-xs bg-[#0B2D50] hover:bg-[#164A7A] text-white font-bold rounded-lg shadow-sm">Daftar</a>
                     </div>
                 @endauth
             </div>
@@ -83,10 +82,10 @@
     <!-- Main Container -->
     <main class="max-w-4xl mx-auto px-4 py-6 space-y-8">
         <!-- Hero Header Card -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br {{ $category === 'barbershop' ? 'from-amber-50 via-white to-amber-100/40 dark:from-slate-900 dark:via-slate-900 dark:to-amber-950/40 border-amber-300 dark:border-amber-500/30' : 'from-pink-50 via-white to-pink-100/40 dark:from-slate-900 dark:via-slate-900 dark:to-pink-950/40 border-pink-300 dark:border-pink-500/30' }} border-2 p-6 sm:p-8 shadow-md dark:shadow-2xl">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br {{ $category === 'barbershop' ? 'from-blue-50/70 via-white to-blue-50/40 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 border-blue-200/80 dark:border-blue-900/40' : 'from-pink-50 via-white to-pink-100/40 dark:from-slate-900 dark:via-slate-900 dark:to-pink-950/40 border-pink-300 dark:border-pink-500/30' }} border-2 p-6 sm:p-8 shadow-sm">
             <div class="relative z-10 space-y-3">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ $category === 'barbershop' ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30' : 'bg-pink-500/10 text-pink-700 dark:text-pink-400 border border-pink-500/30' }}">
-                    <span class="w-2 h-2 rounded-full {{ $category === 'barbershop' ? 'bg-amber-500' : 'bg-pink-500' }}"></span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ $category === 'barbershop' ? 'bg-blue-100/70 text-[#0B2D50] dark:bg-slate-800 dark:text-sky-300 border border-blue-200 dark:border-slate-700' : 'bg-pink-500/10 text-pink-700 dark:text-pink-400 border border-pink-500/30' }}">
+                    <span class="w-2 h-2 rounded-full {{ $category === 'barbershop' ? 'bg-[#1769AA]' : 'bg-pink-500' }}"></span>
                     Kategori Layanan Resmi
                 </span>
 
@@ -95,7 +94,7 @@
                 </h1>
 
                 @if ($content->tagline)
-                    <p class="text-base sm:text-lg font-semibold {{ $category === 'barbershop' ? 'text-amber-700 dark:text-amber-300' : 'text-pink-700 dark:text-pink-300' }}">
+                    <p class="text-base sm:text-lg font-semibold {{ $category === 'barbershop' ? 'text-[#1769AA] dark:text-sky-300' : 'text-pink-700 dark:text-pink-300' }}">
                         {{ $content->tagline }}
                     </p>
                 @endif
@@ -109,7 +108,7 @@
                     @auth
                         @if (auth()->user()->role === 'pelanggan')
                             <a href="{{ route('pelanggan.booking.create', $category) }}"
-                               class="px-6 py-3 bg-gradient-to-r {{ $category === 'barbershop' ? 'from-amber-500 to-yellow-400 text-slate-950 hover:from-amber-600 hover:to-yellow-500' : 'from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600' }} font-extrabold text-sm rounded-xl shadow-xl transition transform active:scale-95 flex items-center gap-2">
+                               class="px-6 py-3 {{ $category === 'barbershop' ? 'bg-[#0B2D50] hover:bg-[#164A7A] text-white' : 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600' }} font-extrabold text-sm rounded-xl shadow-md transition transform active:scale-95 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -122,7 +121,7 @@
                         @endif
                     @else
                         <a href="{{ route('login') }}"
-                           class="px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-extrabold text-sm rounded-xl shadow-xl transition flex items-center gap-2">
+                           class="px-6 py-3 bg-[#0B2D50] hover:bg-[#164A7A] text-white font-extrabold text-sm rounded-xl shadow-md transition flex items-center gap-2">
                             <span>Masuk / Daftar untuk Booking</span> &rarr;
                         </a>
                     @endauth
@@ -136,21 +135,21 @@
             </div>
 
             <!-- Background glowing blur -->
-            <div class="absolute -right-12 -bottom-12 w-64 h-64 {{ $category === 'barbershop' ? 'bg-amber-500/10' : 'bg-pink-500/10' }} rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -right-12 -bottom-12 w-64 h-64 {{ $category === 'barbershop' ? 'bg-blue-400/10' : 'bg-pink-500/10' }} rounded-full blur-3xl pointer-events-none"></div>
         </div>
 
         <!-- Facilities & Advantages (Fasilitas & Keunggulan) -->
         @if (!empty($content->facilities_list))
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl space-y-4">
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full {{ $category === 'barbershop' ? 'bg-amber-500' : 'bg-pink-500' }}"></span>
+                    <span class="w-3 h-3 rounded-full {{ $category === 'barbershop' ? 'bg-[#1769AA]' : 'bg-pink-500' }}"></span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Fasilitas & Keunggulan Kami</h2>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     @foreach ($content->facilities_list as $facility)
                         <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-750">
-                            <div class="w-6 h-6 rounded-lg {{ $category === 'barbershop' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/30' }} flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <div class="w-6 h-6 rounded-lg {{ $category === 'barbershop' ? 'bg-blue-50 text-[#1769AA] dark:bg-slate-800 dark:text-sky-400 border border-blue-200 dark:border-slate-700' : 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/30' }} flex items-center justify-center flex-shrink-0 mt-0.5">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
@@ -166,14 +165,14 @@
         @if (!empty($content->terms_list))
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm dark:shadow-xl space-y-4">
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#1769AA]"></span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Ketentuan & Panduan Antrian</h2>
                 </div>
 
                 <div class="space-y-2 pt-1">
                     @foreach ($content->terms_list as $index => $term)
                         <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300">
-                            <span class="font-bold text-blue-600 dark:text-blue-400 font-mono">{{ $index + 1 }}.</span>
+                            <span class="font-bold text-[#1769AA] dark:text-sky-400 font-mono">{{ $index + 1 }}.</span>
                             <span>{{ $term }}</span>
                         </div>
                     @endforeach
@@ -186,7 +185,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full {{ $category === 'barbershop' ? 'bg-amber-500' : 'bg-pink-500' }}"></span>
+                        <span class="w-3 h-3 rounded-full {{ $category === 'barbershop' ? 'bg-[#1769AA]' : 'bg-pink-500' }}"></span>
                         Pilihan Menu Layanan & Tarif
                     </h2>
                     <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Daftar tarif resmi yang dapat Anda pilih saat reservasi</p>
@@ -195,7 +194,7 @@
                 @auth
                     @if (auth()->user()->role === 'pelanggan')
                         <a href="{{ route('pelanggan.booking.create', $category) }}"
-                           class="text-xs font-bold {{ $category === 'barbershop' ? 'text-amber-600 dark:text-amber-400' : 'text-pink-600 dark:text-pink-400' }} hover:underline">
+                           class="text-xs font-bold {{ $category === 'barbershop' ? 'text-[#1769AA] dark:text-sky-400' : 'text-pink-600 dark:text-pink-400' }} hover:underline">
                             Reservasi Sekarang &rarr;
                         </a>
                     @endif
@@ -204,11 +203,11 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @forelse ($services as $service)
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl p-5 shadow-sm dark:shadow-xl flex flex-col justify-between transition">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl p-5 shadow-sm flex flex-col justify-between transition">
                         <div class="space-y-2">
                             <div class="flex items-start justify-between gap-2">
                                 <h3 class="font-bold text-slate-900 dark:text-white text-base">{{ $service->name }}</h3>
-                                <span class="font-extrabold text-base whitespace-nowrap {{ $category === 'barbershop' ? 'text-amber-600 dark:text-amber-400' : 'text-pink-600 dark:text-pink-400' }}">
+                                <span class="font-extrabold text-base whitespace-nowrap {{ $category === 'barbershop' ? 'text-[#1769AA] dark:text-sky-400' : 'text-pink-600 dark:text-pink-400' }}">
                                     {{ $service->formatted_price }}
                                 </span>
                             </div>
@@ -229,7 +228,7 @@
                             @auth
                                 @if (auth()->user()->role === 'pelanggan')
                                     <a href="{{ route('pelanggan.booking.create', $category) }}"
-                                       class="px-3 py-1.5 rounded-lg {{ $category === 'barbershop' ? 'bg-amber-500/10 hover:bg-amber-500 text-amber-700 hover:text-slate-950 dark:text-amber-400 dark:hover:text-slate-950 border border-amber-500/30' : 'bg-pink-500/10 hover:bg-pink-500 text-pink-700 hover:text-white dark:text-pink-400 dark:hover:text-white border border-pink-500/30' }} text-[11px] font-bold transition">
+                                       class="px-3 py-1.5 rounded-lg {{ $category === 'barbershop' ? 'bg-blue-50 hover:bg-[#0B2D50] text-[#0B2D50] hover:text-white border border-blue-200 dark:bg-slate-800 dark:text-sky-400 dark:hover:bg-[#0B2D50] dark:hover:text-white dark:border-slate-700' : 'bg-pink-500/10 hover:bg-pink-500 text-pink-700 hover:text-white dark:text-pink-400 dark:hover:text-white border border-pink-500/30' }} text-[11px] font-bold transition">
                                         Pilih &rarr;
                                     </a>
                                 @endif
@@ -245,22 +244,22 @@
         </div>
 
         <!-- Final Booking Call to Action Banner -->
-        <div class="rounded-3xl bg-gradient-to-r {{ $category === 'barbershop' ? 'from-amber-500 via-amber-400 to-yellow-400 text-slate-950' : 'from-pink-600 to-rose-500 text-white' }} p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+        <div class="rounded-3xl {{ $category === 'barbershop' ? 'bg-gradient-to-r from-[#0B2D50] via-[#0D3866] to-[#164A7A]' : 'bg-gradient-to-r from-pink-600 to-rose-500' }} text-white p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
             <div class="space-y-1 text-center sm:text-left">
                 <h3 class="text-xl sm:text-2xl font-black">Siap Menikmati Layanan {{ ucfirst($category) }}?</h3>
-                <p class="text-xs sm:text-sm font-medium {{ $category === 'barbershop' ? 'text-slate-900/90' : 'text-white/90' }}">Ambil nomor antrian Anda secara digital tanpa perlu menunggu lama di tempat.</p>
+                <p class="text-xs sm:text-sm font-medium text-white/90">Ambil nomor antrian Anda secara digital tanpa perlu menunggu lama di tempat.</p>
             </div>
 
             @auth
                 @if (auth()->user()->role === 'pelanggan')
                     <a href="{{ route('pelanggan.booking.create', $category) }}"
-                       class="px-6 py-3.5 bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-sm rounded-xl shadow-xl transition transform active:scale-95 flex-shrink-0">
+                       class="px-6 py-3.5 bg-white hover:bg-slate-100 text-[#0B2D50] font-extrabold text-sm rounded-xl shadow-lg transition transform active:scale-95 flex-shrink-0">
                         Buat Pesanan Sekarang &rarr;
                     </a>
                 @endif
             @else
                 <a href="{{ route('login') }}"
-                   class="px-6 py-3.5 bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-sm rounded-xl shadow-xl transition transform active:scale-95 flex-shrink-0">
+                   class="px-6 py-3.5 bg-white hover:bg-slate-100 text-[#0B2D50] font-extrabold text-sm rounded-xl shadow-lg transition transform active:scale-95 flex-shrink-0">
                     Login Untuk Reservasi &rarr;
                 </a>
             @endauth

@@ -40,7 +40,31 @@ class BookingController extends Controller
         // Precompute slot availability for all available dates
         $slotsAvailability = $this->getSlotsAvailability($category, $availableDates, Auth::id());
 
-        return view('pelanggan.booking.create', compact('category', 'services', 'availableDates', 'slotsAvailability'));
+        // Get active staff for this category (kapster for barbershop, mua for mua)
+        $staffRole = ($category === 'mua') ? 'mua' : 'kapster';
+        $staffs = \App\Models\Staff::active()->where('role', $staffRole)->orderBy('name')->get();
+        $cashiers = \App\Models\User::where('role', 'kasir')->with('services')->get()->keyBy('name');
+
+        $staffList = $staffs->map(function ($s) use ($cashiers) {
+            $cashierUser = $cashiers->get($s->name);
+            $workDays = $cashierUser && !empty($cashierUser->work_days)
+                ? array_map('intval', (array) $cashierUser->work_days)
+                : [1, 2, 3, 4, 5, 6];
+            $serviceIds = $cashierUser ? $cashierUser->services->pluck('id')->toArray() : [];
+
+            return [
+                'id' => $s->id,
+                'name' => $s->name,
+                'role' => $s->role,
+                'avatar' => $cashierUser?->avatar ? asset('storage/' . $cashierUser->avatar) : null,
+                'initials' => strtoupper(substr($s->name, 0, 2)),
+                'work_days' => $workDays,
+                'service_ids' => $serviceIds,
+                'has_cashier' => $cashierUser !== null,
+            ];
+        })->values()->toArray();
+
+        return view('pelanggan.booking.create', compact('category', 'services', 'availableDates', 'slotsAvailability', 'staffList'));
     }
 
     /**
@@ -53,6 +77,20 @@ class BookingController extends Controller
 
         if (!in_array($category, ['barbershop', 'mua'])) {
             return response()->json(['error' => 'Kategori tidak valid'], 400);
+        }
+
+        // Tanggal Merah / Libur Nasional check
+        $holiday = \App\Services\HolidayService::getHoliday($date);
+        if ($holiday) {
+            return response()->json([
+                'is_closed' => true,
+                'is_holiday' => true,
+                'holiday_name' => $holiday['name'],
+                'category' => $category,
+                'date' => $date,
+                'message' => "Tutup pada hari libur nasional ({$holiday['name']})",
+                'slots' => [],
+            ]);
         }
 
         $operatingHours = OperatingHour::where('category', $category)->get()->keyBy('day_of_week');
@@ -68,9 +106,24 @@ class BookingController extends Controller
             ]);
         }
 
+        $dayNamesIndo = [
+            0 => 'Minggu', 1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu'
+        ];
+        $monthNamesIndo = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
+        ];
+        $pDate = Carbon::parse($date);
+        $dayNameIndo = $dayNamesIndo[$dayOfWeek];
+        $formattedDateIndo = $pDate->format('d') . ' ' . $monthNamesIndo[$pDate->month] . ' ' . $pDate->format('Y');
+
         $dummyDates = [[
             'date' => $date,
-            'label' => Carbon::parse($date)->translatedFormat('l, d M Y'),
+            'day_name' => $dayNameIndo,
+            'day_of_week' => $dayOfWeek,
+            'date_formatted' => $formattedDateIndo,
+            'month_year' => $monthNamesIndo[$pDate->month] . ' ' . $pDate->format('Y'),
+            'label' => $dayNameIndo . ', ' . $formattedDateIndo,
             'open_time' => $oh ? substr($oh->open_time, 0, 5) : '09:00',
             'close_time' => $oh ? substr($oh->close_time, 0, 5) : '21:00',
         ]];
@@ -98,6 +151,7 @@ class BookingController extends Controller
             'category' => 'required|in:barbershop,mua',
             'services' => 'required|array|min:1|max:1',
             'services.*' => 'exists:services,id',
+            'staff_id' => 'nullable|exists:staffs,id',
             'booking_date' => 'required|date|after_or_equal:today',
             'booking_time' => 'required',
             'notes' => 'nullable|string|max:500',
@@ -105,6 +159,27 @@ class BookingController extends Controller
             'services.required' => 'Silakan pilih 1 layanan.',
             'services.max' => 'Hanya dapat memilih 1 layanan per pesanan.',
         ]);
+
+        // Validate if selected staff can perform the selected service
+        if ($request->filled('staff_id')) {
+            $staff = \App\Models\Staff::find($request->input('staff_id'));
+            if ($staff) {
+                $cashierUser = \App\Models\User::where('role', 'kasir')
+                    ->where('name', $staff->name)
+                    ->with('services')
+                    ->first();
+                if ($cashierUser && $cashierUser->services()->exists()) {
+                    $canHandle = $cashierUser->services()
+                        ->whereIn('services.id', (array) $validated['services'])
+                        ->exists();
+                    if (! $canHandle) {
+                        return back()->withErrors([
+                            'staff_id' => "Staf '{$staff->name}' tidak melayani layanan yang dipilih. Silakan pilih staf lain atau opsi Siapa Saja.",
+                        ])->withInput();
+                    }
+                }
+            }
+        }
 
         // Check if the selected date is not a closed day for this category
         $dayOfWeek = Carbon::parse($validated['booking_date'])->dayOfWeek;
@@ -117,6 +192,14 @@ class BookingController extends Controller
             return back()->withErrors(['booking_date' => "Maaf, pada hari tersebut {$catLabel} tutup."])->withInput();
         }
 
+        // Tanggal Merah / Libur Nasional check
+        $holiday = \App\Services\HolidayService::getHoliday($validated['booking_date']);
+        if ($holiday) {
+            return back()->withErrors([
+                'booking_date' => "Maaf, tanggal tersebut tutup karena hari libur nasional ({$holiday['name']}). Booking tidak dapat dilakukan pada tanggal merah."
+            ])->withInput();
+        }
+
         // Check booking time is within operating hours
         if ($operatingHour) {
             $bookingTime = substr($validated['booking_time'], 0, 5);
@@ -126,6 +209,20 @@ class BookingController extends Controller
             if ($bookingTime < $openTime || $bookingTime >= $closeTime) {
                 return back()->withErrors([
                     'booking_time' => "Waktu booking di luar jam operasional ({$openTime} - {$closeTime} WIB)."
+                ])->withInput();
+            }
+        }
+
+        // Prevent booking a time slot that has completely passed its 1-hour window for today
+        $nowJakarta = Carbon::now('Asia/Jakarta');
+        $todayStr = $nowJakarta->toDateString();
+        if ($validated['booking_date'] === $todayStr) {
+            $currentTimeStr = $nowJakarta->format('H:i');
+            $timePrefix = substr($validated['booking_time'], 0, 5);
+            $slotEndTime = Carbon::parse($timePrefix)->addHour()->format('H:i');
+            if ($currentTimeStr >= $slotEndTime) {
+                return back()->withErrors([
+                    'booking_time' => 'Sesi jam booking yang dipilih sudah terlewat. Silakan pilih sesi jam berikutnya.'
                 ])->withInput();
             }
         }
@@ -174,19 +271,10 @@ class BookingController extends Controller
         $discountAmount = 0;
 
         $user = Auth::user();
-        if ($user && $user->hasActiveMemberDiscount()) {
-            $discountAmount = $user->calculateDiscount($originalPrice);
-            $user->decrement('member_discount_remaining');
-        } else {
-            $membership = $user?->membership;
-            $hasActiveDiscount = $membership
-                && $membership->is_active
-                && (int) $membership->discount_remaining > 0;
-
-            if ($hasActiveDiscount) {
-                $discountAmount = $originalPrice * ((float) $membership->discount_percentage / 100);
-                $membership->decrement('discount_remaining');
-            }
+        if ($user && $user->membership && $user->membership->is_active && (int) $user->membership->discount_remaining > 0) {
+            $membership = $user->membership;
+            $discountAmount = $originalPrice * ((float) $membership->discount_percentage / 100);
+            $membership->decrement('discount_remaining');
         }
 
         $totalPrice = max(0, $originalPrice - $discountAmount);
@@ -199,6 +287,7 @@ class BookingController extends Controller
         $booking = Booking::create([
             'booking_code' => $bookingCode,
             'user_id' => $user->id,
+            'staff_id' => $request->filled('staff_id') ? (int) $request->input('staff_id') : null,
             'service_category' => $validated['category'],
             'booking_date' => $validated['booking_date'],
             'booking_time' => $validated['booking_time'],
@@ -218,6 +307,9 @@ class BookingController extends Controller
             ]);
         }
 
+        // Kirim notifikasi WhatsApp ke Admin via Fonnte
+        \App\Services\WhatsAppNotificationService::sendNewBookingNotification($booking);
+
         return redirect()->route('pelanggan.order.index')
             ->with('success', 'Booking berhasil dibuat! Nomor antrian Anda: ' . $queueNumber);
     }
@@ -230,19 +322,44 @@ class BookingController extends Controller
         $dates = [];
         $operatingHours = OperatingHour::where('category', $category)->get()->keyBy('day_of_week');
 
+        $dayNamesIndo = [
+            0 => 'Minggu',
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+        ];
+        $monthNamesIndo = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+
         for ($i = 0; $i < 7; $i++) {
             $date = Carbon::today()->addDays($i);
             $dayOfWeek = $date->dayOfWeek;
             $oh = $operatingHours->get($dayOfWeek);
+            $holiday = \App\Services\HolidayService::getHoliday($date);
+            $isHoliday = ($holiday !== null);
+            $isClosed = ($oh && $oh->is_closed) || $isHoliday;
 
-            if (!$oh || !$oh->is_closed) {
-                $dates[] = [
-                    'date' => $date->format('Y-m-d'),
-                    'label' => $date->translatedFormat('l, d M Y'),
-                    'open_time' => $oh ? substr($oh->open_time, 0, 5) : '09:00',
-                    'close_time' => $oh ? substr($oh->close_time, 0, 5) : '21:00',
-                ];
-            }
+            $dayNameIndo = $dayNamesIndo[$dayOfWeek];
+            $formattedDateIndo = $date->format('d') . ' ' . $monthNamesIndo[$date->month] . ' ' . $date->format('Y');
+
+            $dates[] = [
+                'date' => $date->format('Y-m-d'),
+                'day_name' => $dayNameIndo,
+                'day_of_week' => $dayOfWeek,
+                'date_formatted' => $formattedDateIndo,
+                'month_year' => $monthNamesIndo[$date->month] . ' ' . $date->format('Y'),
+                'label' => $dayNameIndo . ', ' . $formattedDateIndo,
+                'open_time' => $oh ? substr($oh->open_time, 0, 5) : '09:00',
+                'close_time' => $oh ? substr($oh->close_time, 0, 5) : '21:00',
+                'is_closed' => $isClosed,
+                'is_holiday' => $isHoliday,
+                'holiday_name' => $holiday ? $holiday['name'] : null,
+            ];
         }
 
         return $dates;
@@ -298,6 +415,9 @@ class BookingController extends Controller
 
         $availability = [];
         $slots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+        $nowJakarta = Carbon::now('Asia/Jakarta');
+        $todayStr = $nowJakarta->toDateString();
+        $currentTimeStr = $nowJakarta->format('H:i');
 
         foreach ($availableDates as $d) {
             $dateStr = $d['date'];
@@ -315,12 +435,15 @@ class BookingController extends Controller
                 $isFull = $booked >= $maxPerSlot;
                 $userAlreadyBooked = !empty($userBookedSlots[$dateStr][$slot]);
                 $remaining = max(0, $maxPerSlot - $booked);
+                $slotEndTime = Carbon::parse($slot)->addHour()->format('H:i');
+                $isPast = ($dateStr < $todayStr) || ($dateStr === $todayStr && $currentTimeStr >= $slotEndTime);
 
                 $availability[$dateStr][$slot] = [
                     'booked' => $booked,
                     'max' => $maxPerSlot,
                     'is_full' => $isFull,
                     'is_within_hours' => $isWithinHours,
+                    'is_past' => $isPast,
                     'user_already_booked' => $userAlreadyBooked,
                     'remaining' => $remaining,
                 ];

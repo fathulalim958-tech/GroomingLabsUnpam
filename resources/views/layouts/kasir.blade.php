@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Kasir Front-Desk - Grooming Lab & MUA' }}</title>
+    <title>{{ $title ?? 'Kasir Front-Desk - LPKKS GROOMING LAB' }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
-    <!-- Anti-FOUC Theme Switcher Script (GlowCut Dark Default) -->
+    <!-- Anti-FOUC Theme Switcher Script (Light Default) -->
     <script>
-        if (localStorage.theme === 'light') {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-        } else {
+        if (localStorage.theme === 'dark') {
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
         }
     </script>
 
@@ -25,18 +26,16 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body x-data="{ showLogoutModal: false }" class="font-['Inter',sans-serif] text-slate-900 bg-slate-100 dark:bg-slate-900 dark:text-slate-100 min-h-screen antialiased selection:bg-blue-500 selection:text-white transition-colors duration-200 pb-28">
+<body x-data="{ showLogoutModal: false }" class="font-['Inter',sans-serif] text-slate-900 bg-slate-100 dark:bg-slate-900 dark:text-slate-100 min-h-screen antialiased selection:bg-[#1769AA] selection:text-white transition-colors duration-200 pb-28">
     <!-- Kasir Header Bar -->
     <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <a href="{{ route('kasir.dashboard') }}" class="flex items-center gap-2 min-w-0">
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 flex-shrink-0">
-                        GL
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="LPKKS GROOMING LAB" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 flex-shrink-0">
                     <div class="min-w-0">
-                        <span class="font-black text-xs sm:text-sm tracking-wide text-slate-900 dark:text-white uppercase block leading-tight truncate">GROOMING LAB</span>
-                        <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-amber-500 dark:text-amber-400 font-bold block truncate">KASIR & ANTRIAN</span>
+                        <span class="font-extrabold text-xs sm:text-sm tracking-wide text-[#0B2D50] dark:text-white uppercase block leading-tight truncate">LPKKS GROOMING LAB</span>
+                        <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-[#1769AA] dark:text-[#93C5FD] font-bold block truncate">KASIR & ANTRIAN</span>
                     </div>
                 </a>
 
@@ -165,10 +164,10 @@
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4"
          style="display: none;">
-        
+
         <div @click.away="showLogoutModal = false"
              class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
-            
+
             <div class="w-14 h-14 mx-auto rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center shadow-inner">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

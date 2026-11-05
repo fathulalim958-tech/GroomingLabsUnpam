@@ -13,68 +13,46 @@ export default {
     theme: {
         extend: {
             colors: {
-                // GlowCut Deep High-Contrast Obsidian & Jet Black Palette
+                // Official LPKKS GROOMING LAB UNPAM Palette
+                navy: {
+                    DEFAULT: '#0B2D50',
+                    50: '#F0F5FA',
+                    100: '#EAF3FF', // Light Blue
+                    200: '#D7E7FA', // Soft Blue
+                    300: '#B0CEF2',
+                    400: '#64A0E0',
+                    500: '#1769AA', // Primary Blue
+                    600: '#1769AA',
+                    700: '#164A7A', // Secondary Navy
+                    800: '#103B63',
+                    900: '#0B2D50', // Primary Navy
+                    950: '#061A2F',
+                },
+                lpkks: {
+                    bg: '#F7FAFE',
+                    surface: '#FFFFFF',
+                    border: '#E2EAF4',
+                    text: '#14243A',
+                    muted: '#64748B',
+                    navy: '#0B2D50',
+                    'navy-dark': '#061A2F',
+                    'navy-light': '#164A7A',
+                    blue: '#1769AA',
+                    'blue-light': '#EAF3FF',
+                    'blue-soft': '#D7E7FA',
+                },
                 slate: {
-                    50: '#FAFAFA',
-                    100: '#FFFFFF', // Pure crisp white text (kontras tinggi, tidak kusam)
-                    200: '#ECECEC',
-                    300: '#D4D4D4',
-                    400: '#B0B0B0', // Neutral bright gray secondary text
-                    500: '#737373',
-                    600: '#404040',
-                    700: '#2A2A2A', // Crisp fine border
-                    750: '#1E1E1E',
-                    800: '#141414', // Deep obsidian card & panel
-                    850: '#0E0E0E', // Deep jet input field
-                    900: '#0C0C0C', // Deep black secondary surface / headers
-                    950: '#050505', // Deep Jet Black (pekat, tidak pucat keabuan)
-                },
-                gray: {
-                    50: '#FAFAFA',
-                    100: '#FFFFFF',
-                    200: '#ECECEC',
-                    300: '#D4D4D4',
-                    400: '#B0B0B0',
-                    500: '#737373',
-                    600: '#404040',
-                    700: '#2A2A2A',
-                    750: '#1E1E1E',
-                    800: '#141414',
-                    850: '#0E0E0E',
-                    900: '#0C0C0C',
-                    950: '#050505',
-                },
-                // Rich Vibrant Royal Gold Palette (pekat, berkilau, mewah, tidak pucat)
-                gold: {
-                    50: '#FFFDF5',
-                    100: '#FFF4D4',
-                    200: '#FCE6A3',
-                    300: '#FBD778',
-                    400: '#F7C754', // Vibrant shining light gold
-                    500: '#E5A823', // Rich Warm Royal Gold (pekat & menyala)
-                    600: '#C88A14', // Deep burnished hover gold
-                    700: '#A6700E',
-                    800: '#7A5007',
-                    900: '#4D3203',
-                    950: '#2B1B01',
-                },
-                amber: {
-                    50: '#FFFDF5',
-                    100: '#FFF4D4',
-                    200: '#FCE6A3',
-                    300: '#FBD778',
-                    400: '#F7C754', // Vibrant shining light gold
-                    500: '#E5A823', // Rich Warm Royal Gold
-                    600: '#C88A14', // Deep burnished hover gold
-                    700: '#A6700E',
-                    800: '#7A5007',
-                    900: '#4D3203',
-                    950: '#2B1B01',
-                },
-                yellow: {
-                    400: '#F7C754',
-                    500: '#E5A823',
-                    600: '#C88A14',
+                    50: '#F8FAFC',
+                    100: '#F1F5F9',
+                    200: '#E2E8F0',
+                    300: '#CBD5E1',
+                    400: '#94A3B8',
+                    500: '#64748B',
+                    600: '#475569',
+                    700: '#334155',
+                    800: '#1E293B',
+                    900: '#0F172A',
+                    950: '#0A0F1D',
                 },
                 emerald: {
                     400: '#34D399',
@@ -85,18 +63,6 @@ export default {
                     400: '#F87171',
                     500: '#EF4444',
                     600: '#DC2626',
-                },
-                glowcut: {
-                    bg: '#050505',
-                    surface: '#0C0C0C',
-                    card: '#141414',
-                    input: '#0E0E0E',
-                    border: '#2A2A2A',
-                    gold: '#E5A823',
-                    'gold-light': '#F7C754',
-                    'gold-dark': '#C88A14',
-                    text: '#FFFFFF',
-                    'text-muted': '#B0B0B0',
                 },
             },
             fontFamily: {

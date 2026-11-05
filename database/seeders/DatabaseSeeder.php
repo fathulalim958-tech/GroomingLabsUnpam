@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // ── Users ──────────────────────────────────────────────
         User::create([
             'name'     => 'Administrator',
+            'username' => 'admin',
             'email'    => 'admin@barbershop.com',
             'password' => Hash::make('password'),
             'role'     => 'admin',
@@ -227,6 +228,16 @@ class DatabaseSeeder extends Seeder
             'description'   => "Grooming Lab MUA Studio adalah studio tata rias profesional yang siap menyempurnakan penampilan Anda di setiap momen berharga. Mulai dari riasan wisuda yang fresh dan tahan seharian, pesta formal yang glamor, pre-wedding outdoor yang awet, hingga riasan pengantin (Bridal) yang memukau.\n\nTim MUA bersertifikat kami hanya menggunakan produk kosmetik premium original (high-end brands) yang ramah untuk semua jenis kulit, termasuk kulit sensitif dan acne-prone.",
             'facilities'    => "Makeup Artist (MUA) Profesional Bersertifikat\nKosmetik Premium 100% Original & Hipoalergenik\nPrivate Makeup Room dengan Pencahayaan Ring Light Standar Studio\nKonsultasi Tone Kulit & Gaya Riasan Sebelum Dimulai\nFree Touch-Up Kit Sederhana untuk Acara Penting\nRuangan Rias Nyaman & Full AC",
             'terms'         => "Harap hadir dengan wajah bersih bebas makeup tebal.\nDisarankan membawa foto referensi riasan atau pakaian yang akan dikenakan.\nBeri tahu MUA mengenai alergi atau sensitivitas kulit tertentu sebelum aplikasi produk.",
+            'is_active'     => true,
+        ]);
+
+        \App\Models\CategoryContent::create([
+            'category'      => 'login',
+            'title'         => 'Selamat Datang',
+            'tagline'       => 'Grooming Experience',
+            'description'   => 'Masuk untuk memesan layanan atau mengelola antrian',
+            'facilities'    => 'Better Together',
+            'terms'         => 'Akses akun Anda untuk melanjutkan',
             'is_active'     => true,
         ]);
     }

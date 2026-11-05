@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+        'admin_phone' => env('WA_ADMIN_PHONE', '085975455515'),
+        'url' => env('FONNTE_URL', 'https://api.fonnte.com/send'),
+    ],
+
 ];

@@ -1,9 +1,9 @@
-<x-pelanggan-layout title="Order Aktif & Antrian - Grooming Lab & MUA">
+<x-pelanggan-layout title="Order Aktif & Antrian - LPKKS GROOMING LAB">
     <div class="max-w-xl mx-auto py-4 space-y-5" x-data="queueMonitor()">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Tiket Antrian Aktif</h1>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Pantau giliran Anda secara real-time</p>
+                <h1 class="text-2xl font-extrabold text-[#0B2D50] dark:text-white">Tiket Antrian Aktif</h1>
+                <p class="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">Pantau giliran Anda secara real-time</p>
             </div>
             <!-- Live Indicator Badge -->
             <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
@@ -13,13 +13,13 @@
         </div>
 
         <!-- Category Switcher Tabs: Barbershop vs MUA Studio -->
-        <div class="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
+        <div class="grid grid-cols-2 gap-2 p-1.5 bg-white dark:bg-slate-900 border border-[#E2EAF4] dark:border-slate-800 rounded-2xl shadow-sm">
             <!-- Tab Barbershop -->
             <button type="button"
                     @click="activeTab = 'barbershop'"
-                    :class="activeTab === 'barbershop' 
-                        ? 'bg-amber-500 text-slate-950 font-bold shadow-sm' 
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'"
+                    :class="activeTab === 'barbershop'
+                        ? 'bg-[#0B2D50] text-white font-bold shadow-sm'
+                        : 'text-[#64748B] dark:text-slate-400 hover:text-[#0B2D50] dark:hover:text-white font-semibold'"
                     class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879a3 3 0 11-4.242-4.242L7.757 7.757m0 0l-2.879-2.879a3 3 0 10-4.242 4.242L3.515 12" />
@@ -27,7 +27,7 @@
                 <span>Barbershop</span>
                 @if ($barbershopBookings->count() > 0)
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-black"
-                          :class="activeTab === 'barbershop' ? 'bg-slate-950 text-amber-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'">
+                          :class="activeTab === 'barbershop' ? 'bg-white text-[#0B2D50]' : 'bg-[#EAF3FF] text-[#1769AA]'">
                         {{ $barbershopBookings->count() }}
                     </span>
                 @endif
@@ -36,9 +36,9 @@
             <!-- Tab MUA Studio -->
             <button type="button"
                     @click="activeTab = 'mua'"
-                    :class="activeTab === 'mua' 
-                        ? 'bg-pink-500 text-white font-bold shadow-sm' 
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold'"
+                    :class="activeTab === 'mua'
+                        ? 'bg-[#1769AA] text-white font-bold shadow-sm'
+                        : 'text-[#64748B] dark:text-slate-400 hover:text-[#0B2D50] dark:hover:text-white font-semibold'"
                     class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -46,7 +46,7 @@
                 <span>MUA Studio</span>
                 @if ($muaBookings->count() > 0)
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-black"
-                          :class="activeTab === 'mua' ? 'bg-white text-pink-600' : 'bg-pink-500/20 text-pink-600 dark:text-pink-400'">
+                          :class="activeTab === 'mua' ? 'bg-white text-[#1769AA]' : 'bg-[#EAF3FF] text-[#1769AA]'">
                         {{ $muaBookings->count() }}
                     </span>
                 @endif
@@ -58,23 +58,23 @@
         <!-- ========================================== -->
         <div x-show="activeTab === 'barbershop'" class="space-y-4" x-cloak>
             <!-- Barbershop Current Serving Card -->
-            <div class="bg-gradient-to-br from-amber-50 to-amber-100/40 dark:from-slate-900 dark:to-amber-950/30 border border-amber-300 dark:border-amber-500/30 rounded-2xl p-4 text-center shadow-sm dark:shadow-lg">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Sedang Dilayani Hari Ini</span>
-                <p class="text-xs text-slate-600 dark:text-slate-400">Barbershop</p>
-                <div class="mt-2 text-4xl font-black text-amber-600 dark:text-amber-300 font-mono tracking-wider" x-text="currentServing.barbershop || '—'">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center shadow-sm">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sedang Dilayani Hari Ini</span>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Barbershop</p>
+                <div class="mt-2 text-4xl font-black text-[#0B2D50] dark:text-sky-300 font-mono tracking-wider" x-text="currentServing.barbershop || '—'">
                     {{ $currentServing['barbershop']?->queue_number ?? '—' }}
                 </div>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block mt-1">Antrian Di Kursi</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 block mt-1">Antrian Di Kursi</span>
             </div>
 
             <!-- Barbershop Bookings List -->
             <div class="space-y-4">
                 @forelse ($barbershopBookings as $booking)
-                    <div class="bg-white dark:bg-slate-900 border-2 {{ $booking->status === 'called' ? 'border-indigo-500 shadow-indigo-500/20 ring-2 ring-indigo-500/30' : ($booking->status === 'in_progress' ? 'border-emerald-500 shadow-emerald-500/10' : ($booking->status === 'skipped' ? 'border-amber-500 shadow-amber-500/10' : 'border-slate-200 dark:border-slate-800')) }} rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-2xl relative overflow-hidden transition-all duration-300">
+                    <div class="bg-white dark:bg-slate-900 border-2 {{ $booking->status === 'called' ? 'border-indigo-500 shadow-indigo-500/20 ring-2 ring-indigo-500/30' : ($booking->status === 'in_progress' ? 'border-emerald-500 shadow-emerald-500/10' : ($booking->status === 'skipped' ? 'border-[#0B2D50] shadow-md' : 'border-slate-200 dark:border-slate-800')) }} rounded-3xl p-5 sm:p-6 shadow-sm dark:shadow-2xl relative overflow-hidden transition-all duration-300">
                         <!-- Category & Status Badge -->
                         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 dark:bg-slate-800 text-[#0B2D50] dark:text-sky-300 border border-blue-100 dark:border-slate-700">
                                     Barbershop
                                 </span>
 
@@ -84,7 +84,7 @@
                                         Hari Ini
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 dark:bg-slate-800 text-[#1769AA] dark:text-sky-300 border border-blue-100 dark:border-slate-700">
                                         📅 {{ $booking->booking_date->translatedFormat('d M Y') }}
                                     </span>
                                 @endif
@@ -110,13 +110,13 @@
 
                         <!-- Skipped Warning Notification -->
                         @if ($booking->status === 'skipped')
-                            <div class="mb-4 p-3 bg-amber-500/10 border border-amber-500/40 rounded-xl text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2">
-                                <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="mb-4 p-3 bg-[#EAF3FF] border border-[#D7E7FA] rounded-xl text-xs text-[#0B2D50] flex items-start gap-2">
+                                <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-[#1769AA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                                 <div>
                                     <span class="font-bold">Antrian Terlewat!</span>
-                                    <p class="text-amber-700 dark:text-amber-400/90 mt-0.5">Tiket Anda tetap aktif dan tidak hangus. Harap segera melapor ke meja kasir agar nomor Anda dipanggil kembali.</p>
+                                    <p class="text-[#64748B] mt-0.5">Tiket Anda tetap aktif dan tidak hangus. Harap segera melapor ke meja kasir agar nomor Anda dipanggil kembali.</p>
                                 </div>
                             </div>
                         @endif
@@ -131,51 +131,51 @@
                         @endif
 
                         <!-- Large Queue Number Display -->
-                        <div class="text-center py-4 my-2 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800/80">
-                            <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-semibold block">Nomor Antrian Anda</span>
-                            <div class="text-5xl sm:text-6xl font-black text-amber-600 dark:text-amber-400 font-mono tracking-widest my-1">
+                        <div class="text-center py-4 my-2 bg-[#F7FAFE] dark:bg-slate-950/60 rounded-2xl border border-[#E2EAF4] dark:border-slate-800/80">
+                            <span class="text-xs text-[#64748B] dark:text-slate-400 uppercase tracking-widest font-semibold block">Nomor Antrian Anda</span>
+                            <div class="text-5xl sm:text-6xl font-black text-[#0B2D50] dark:text-[#93C5FD] font-mono tracking-widest my-1">
                                 {{ $booking->queue_number }}
                             </div>
-                            <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Kode: {{ $booking->booking_code }}</span>
+                            <span class="text-xs text-[#64748B] dark:text-slate-400 font-mono">Kode: {{ $booking->booking_code }}</span>
                         </div>
 
                         <!-- Details Table -->
-                        <div class="space-y-2 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 text-xs">
+                        <div class="space-y-2 mt-4 pt-4 border-t border-[#E2EAF4] dark:border-slate-800 text-xs">
                             <div class="flex justify-between py-1">
-                                <span class="text-slate-500 dark:text-slate-400">Tanggal & Jam:</span>
-                                <span class="font-semibold text-slate-900 dark:text-white text-right">
+                                <span class="text-[#64748B] dark:text-slate-400">Tanggal & Jam:</span>
+                                <span class="font-semibold text-[#0B2D50] dark:text-white text-right">
                                     @if ($booking->booking_date->isToday())
                                         <span class="text-emerald-600 dark:text-emerald-400 font-bold">Hari Ini,</span>
                                     @else
-                                        <span class="text-blue-600 dark:text-blue-400 font-bold">{{ $booking->booking_date->translatedFormat('l, d M Y') }},</span>
+                                        <span class="text-[#1769AA] dark:text-[#93C5FD] font-bold">{{ $booking->booking_date->translatedFormat('l, d M Y') }},</span>
                                     @endif
                                     {{ $booking->booking_time }} WIB
                                 </span>
                             </div>
 
                             <div class="flex justify-between py-1">
-                                <span class="text-slate-500 dark:text-slate-400">Layanan:</span>
-                                <span class="font-semibold text-slate-900 dark:text-white text-right max-w-[60%]">
+                                <span class="text-[#64748B] dark:text-slate-400">Layanan:</span>
+                                <span class="font-semibold text-[#0B2D50] dark:text-white text-right max-w-[60%]">
                                     {{ $booking->items->map(fn($item) => $item->service->name)->join(', ') }}
                                 </span>
                             </div>
 
                             @if ($booking->notes)
                                 <div class="flex justify-between py-1">
-                                    <span class="text-slate-500 dark:text-slate-400">Catatan Khusus:</span>
-                                    <span class="text-slate-700 dark:text-slate-300 text-right italic max-w-[60%]">{{ $booking->notes }}</span>
+                                    <span class="text-[#64748B] dark:text-slate-400">Catatan Khusus:</span>
+                                    <span class="text-[#0B2D50] dark:text-slate-300 text-right italic max-w-[60%]">{{ $booking->notes }}</span>
                                 </div>
                             @endif
 
-                            <div class="flex justify-between py-1 border-t border-slate-200 dark:border-slate-800/60 pt-2 text-sm">
-                                <span class="font-bold text-slate-900 dark:text-white">Total Biaya:</span>
-                                <span class="font-extrabold text-amber-600 dark:text-amber-400">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
+                            <div class="flex justify-between py-1 border-t border-[#E2EAF4] dark:border-slate-800/60 pt-2 text-sm">
+                                <span class="font-bold text-[#0B2D50] dark:text-white">Total Biaya:</span>
+                                <span class="font-extrabold text-[#1769AA] dark:text-[#93C5FD]">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
                             </div>
                         </div>
 
                         <!-- Cancel Button (Only if waiting, called, or skipped) -->
                         @if (in_array($booking->status, ['waiting', 'called', 'skipped']))
-                            <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                            <div class="mt-5 pt-4 border-t border-[#E2EAF4] dark:border-slate-800 flex justify-end">
                                 <button type="button"
                                         @click="openCancelModal({{ json_encode([
                                             'id' => $booking->id,
@@ -195,18 +195,18 @@
                         @endif
                     </div>
                 @empty
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 text-center space-y-4 shadow-sm">
-                        <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+                    <div class="bg-white dark:bg-slate-900 border border-[#E2EAF4] dark:border-slate-800 rounded-3xl p-8 text-center space-y-4 shadow-sm">
+                        <div class="w-16 h-16 rounded-2xl bg-[#EAF3FF] text-[#1769AA] flex items-center justify-center mx-auto">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879a3 3 0 11-4.242-4.242L7.757 7.757m0 0l-2.879-2.879a3 3 0 10-4.242 4.242L3.515 12" />
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">Tidak Ada Antrian Aktif Barbershop</h3>
-                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Anda belum memiliki pesanan antrian aktif untuk Barbershop.</p>
+                            <h3 class="text-base font-bold text-[#0B2D50] dark:text-white">Tidak Ada Antrian Aktif Barbershop</h3>
+                            <p class="text-xs text-[#64748B] dark:text-slate-400 mt-1">Anda belum memiliki pesanan antrian aktif untuk Barbershop.</p>
                         </div>
                         <div>
-                            <a href="{{ route('pelanggan.booking.create', 'barbershop') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition shadow">
+                            <a href="{{ route('pelanggan.booking.create', 'barbershop') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0B2D50] hover:bg-[#164A7A] text-white font-bold text-xs rounded-xl transition shadow">
                                 Ambil Nomor Antrian Barbershop &rarr;
                             </a>
                         </div>
@@ -389,13 +389,13 @@
              x-transition:leave-end="opacity-0"
              class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4"
              style="display: none;">
-            
+
             <div @click.away="closeCancelModal()"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 scale-95"
                  x-transition:enter-end="opacity-100 scale-100"
                  class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
-                
+
                 <!-- Red Warning Icon with Soft Glow -->
                 <div class="w-14 h-14 mx-auto rounded-2xl bg-red-500/10 border border-red-500/30 text-red-500 flex items-center justify-center shadow-inner">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
